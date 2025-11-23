@@ -1,0 +1,2259 @@
+{
+  "meta": {
+    "date": "2025-11-21T19:32:23.224Z",
+    "sources": [
+      "dribbble",
+      "awwwards",
+      "siteinspire",
+      "behance"
+    ],
+    "shotsAnalyzed": 120,
+    "designsExtracted": 55,
+    "dimensions": [
+      "colors",
+      "whitespace",
+      "complexity",
+      "imageText",
+      "typography",
+      "layout",
+      "ctaProminence",
+      "hierarchy"
+    ],
+    "patternsGenerated": {
+      "colors": 4,
+      "whitespace": 4,
+      "complexity": 2,
+      "imageText": 1,
+      "typography": 1,
+      "layout": 6,
+      "ctaProminence": 4,
+      "hierarchy": 3,
+      "total": 25
+    },
+    "awaitingReview": true
+  },
+  "patterns": {
+    "colors": [
+      {
+        "id": "pattern-6",
+        "name": "Neutral Gray",
+        "primary": {
+          "hex": "#6E7C7D",
+          "rgb": [
+            110,
+            124,
+            125
+          ]
+        },
+        "prevalence": "20%",
+        "examples": [
+          "Healthcare Website Design - Weight Loss fitness landing page health wellness website healthcare webs",
+          "SDCO Partners",
+          "SDCO Partners"
+        ],
+        "sources": [
+          "dribbble",
+          "awwwards"
+        ],
+        "firstSeen": "2025-11-21",
+        "lastUpdated": "2025-11-21",
+        "sampleSize": 11,
+        "qualityScore": 0.891,
+        "trending": false
+      },
+      {
+        "id": "pattern-3",
+        "name": "Red Spectrum",
+        "primary": {
+          "hex": "#B35A46",
+          "rgb": [
+            179,
+            90,
+            70
+          ]
+        },
+        "prevalence": "18%",
+        "examples": [
+          "Naterra - Skincare Landing Page 10am space aesthetic beuty calm clean elegant landing page minimal m",
+          "Semanak Authentic Art Traditional Travel Package Agency agency art authentic branding community comp",
+          "Packaging website. boxes cosmetics delivery design food packaging homepage landing page package pack"
+        ],
+        "sources": [
+          "dribbble",
+          "awwwards"
+        ],
+        "firstSeen": "2025-11-21",
+        "lastUpdated": "2025-11-21",
+        "sampleSize": 10,
+        "qualityScore": 0.84,
+        "trending": false
+      },
+      {
+        "id": "pattern-7",
+        "name": "Red Spectrum",
+        "primary": {
+          "hex": "#E9813F",
+          "rgb": [
+            233,
+            129,
+            63
+          ]
+        },
+        "prevalence": "11%",
+        "examples": [
+          "Logistics Service Website Design cargo cargotransport landing page landingpagedesign logisticsdesign",
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "The Guardian: A Security Metaphor | Geometric Vector Series abstract artdirection concept geometric "
+        ],
+        "sources": [
+          "dribbble",
+          "awwwards"
+        ],
+        "firstSeen": "2025-11-21",
+        "lastUpdated": "2025-11-21",
+        "sampleSize": 6,
+        "qualityScore": 0.673,
+        "trending": false
+      },
+      {
+        "id": "pattern-0",
+        "name": "Green Spectrum",
+        "primary": {
+          "hex": "#91BE54",
+          "rgb": [
+            145,
+            190,
+            84
+          ]
+        },
+        "prevalence": "11%",
+        "examples": [
+          "AI Smart Home Website Landing Page ai automation website ai landing page ai saas landing page ai saa",
+          "Web Design for Reputation Recovery creative design graphic design hero design landing landing page s",
+          "UI-UX for Digital Banking design interface product service startup ui uiux ux web website"
+        ],
+        "sources": [
+          "dribbble",
+          "behance"
+        ],
+        "firstSeen": "2025-11-21",
+        "lastUpdated": "2025-11-21",
+        "sampleSize": 6,
+        "qualityScore": 0.65,
+        "trending": false
+      }
+    ],
+    "whitespace": [
+      {
+        "name": "Premium Spacious",
+        "range": "60-75%",
+        "averageRatio": 0.64,
+        "prevalence": "9%",
+        "sampleSize": 5,
+        "examples": [
+          "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric",
+          "Adventure Travel Agency Website UI/UX Design interface product service startup ui ux web",
+          "Virtual Assistant Website — Homepage Design design product service startup ui ux web website"
+        ],
+        "pattern": "Luxury/Premium"
+      },
+      {
+        "name": "Professional Balanced",
+        "range": "45-60%",
+        "averageRatio": 0.534,
+        "prevalence": "16%",
+        "sampleSize": 9,
+        "examples": [
+          "Solma - Your mental-health friend app glass health landing page mental health minimal design platfor",
+          "Thy - Fitness & Wellness Landing Page cardio fitness habit health healthy landing page motivation pe",
+          "Delivery management SaaS landing page design product service startup ui ux web website"
+        ],
+        "pattern": "Professional SaaS"
+      },
+      {
+        "name": "Content-Rich",
+        "range": "30-45%",
+        "averageRatio": 0.365,
+        "prevalence": "18%",
+        "sampleSize": 10,
+        "examples": [
+          "Travel Website design holiday website journey planner landing page tour website tourism website trav",
+          "Logistics Service Website Design cargo cargotransport landing page landingpagedesign logisticsdesign",
+          "Naterra - Skincare Landing Page 10am space aesthetic beuty calm clean elegant landing page minimal m"
+        ],
+        "pattern": "E-commerce"
+      },
+      {
+        "name": "Dense Layout",
+        "range": "0-30%",
+        "averageRatio": 0.026,
+        "prevalence": "49%",
+        "sampleSize": 27,
+        "examples": [
+          "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "CMAND Behind the Scenes branding design graphic design website"
+        ],
+        "pattern": "Budget/Dense"
+      }
+    ],
+    "complexity": [
+      {
+        "name": "Clean Minimalist",
+        "scoreRange": "0-30",
+        "averageScore": 0.262,
+        "averageEdgeDensity": 0.069,
+        "averageColorComplexity": 6,
+        "prevalence": "55%",
+        "sampleSize": 30,
+        "examples": [
+          "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "Zentro — B2B SaaS Lead Generation Website Design interface product service startup ui ux web"
+        ],
+        "pattern": "Minimalist Design"
+      },
+      {
+        "name": "Balanced Professional",
+        "scoreRange": "30-60",
+        "averageScore": 0.323,
+        "averageEdgeDensity": 0.136,
+        "averageColorComplexity": 6,
+        "prevalence": "45%",
+        "sampleSize": 25,
+        "examples": [
+          "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric",
+          "Adventure Travel Agency Website UI/UX Design interface product service startup ui ux web",
+          "Travel Website design holiday website journey planner landing page tour website tourism website trav"
+        ],
+        "pattern": "Balanced SaaS"
+      }
+    ],
+    "imageText": [
+      {
+        "name": "Visual-First",
+        "averageImageRatio": 1,
+        "averageTextRatio": 0,
+        "prevalence": "100%",
+        "sampleSize": 55,
+        "examples": [
+          "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric"
+        ],
+        "pattern": "Portfolio/Visual-First"
+      }
+    ],
+    "typography": [
+      {
+        "scaleType": "Unknown",
+        "prevalence": "100%",
+        "sampleSize": 55,
+        "avgConsistency": 0,
+        "avgSizeCount": 0,
+        "examples": [
+          "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric"
+        ],
+        "industryPattern": "Unknown"
+      }
+    ],
+    "layout": [
+      {
+        "layoutType": "Single Column",
+        "prevalence": "13%",
+        "sampleSize": 7,
+        "avgColumns": 1.9,
+        "heroPercentage": "14%",
+        "examples": [
+          "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+          "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric",
+          "Travel Website design holiday website journey planner landing page tour website tourism website trav"
+        ],
+        "industryPattern": "Two-Column Blog"
+      },
+      {
+        "layoutType": "Split-Screen",
+        "prevalence": "24%",
+        "sampleSize": 13,
+        "avgColumns": 2.9,
+        "heroPercentage": "0%",
+        "examples": [
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "CMAND Behind the Scenes branding design graphic design website",
+          "Free Trial To Increase Website Conversion business coach coaching business conversion elementor free"
+        ],
+        "industryPattern": "Split-Screen Hero"
+      },
+      {
+        "layoutType": "Multi-Column",
+        "prevalence": "33%",
+        "sampleSize": 18,
+        "avgColumns": 3.2,
+        "heroPercentage": "0%",
+        "examples": [
+          "Adventure Travel Agency Website UI/UX Design interface product service startup ui ux web",
+          "Zentro — B2B SaaS Lead Generation Website Design interface product service startup ui ux web",
+          "Solma - Your mental-health friend app glass health landing page mental health minimal design platfor"
+        ],
+        "industryPattern": "Single Column"
+      },
+      {
+        "layoutType": "Masonry",
+        "prevalence": "15%",
+        "sampleSize": 8,
+        "avgColumns": 1,
+        "heroPercentage": "0%",
+        "examples": [
+          "Web Design for Reputation Recovery creative design graphic design hero design landing landing page s",
+          "Deep Digital",
+          "Deep Digital"
+        ],
+        "industryPattern": "Masonry Portfolio"
+      },
+      {
+        "layoutType": "Bento Box Grid",
+        "prevalence": "13%",
+        "sampleSize": 7,
+        "avgColumns": 3,
+        "heroPercentage": "0%",
+        "examples": [
+          "Health care website ui design figma ui figma website ui framer developer framer website health care ",
+          "Jokula",
+          "Jokula"
+        ],
+        "industryPattern": "Bento Grid (2024 Trend)"
+      },
+      {
+        "layoutType": "Two-Column Grid",
+        "prevalence": "4%",
+        "sampleSize": 2,
+        "avgColumns": 2,
+        "heroPercentage": "0%",
+        "examples": [
+          "Sven Matse",
+          "Sven Matse"
+        ],
+        "industryPattern": "Two-Column Blog"
+      }
+    ],
+    "ctaProminence": [
+      {
+        "pattern": "High-Converting (1-2 CTAs, Strong Prominence)",
+        "prevalence": "9%",
+        "sampleSize": 5,
+        "avgProminence": 8.17,
+        "avgCount": 1.6,
+        "examples": [
+          "Solma - Your mental-health friend app glass health landing page mental health minimal design platfor",
+          "Naterra - Skincare Landing Page 10am space aesthetic beuty calm clean elegant landing page minimal m",
+          "Solaris - Solar Energy Landing Page clean design eco electricity energy home landing page minimal ne"
+        ]
+      },
+      {
+        "pattern": "Focused (1 CTA)",
+        "prevalence": "9%",
+        "sampleSize": 5,
+        "avgProminence": 3.41,
+        "avgCount": 1,
+        "examples": [
+          "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+          "Thy - Fitness & Wellness Landing Page cardio fitness habit health healthy landing page motivation pe",
+          "Web Design for Reputation Recovery creative design graphic design hero design landing landing page s"
+        ]
+      },
+      {
+        "pattern": "Multiple (3+ CTAs)",
+        "prevalence": "4%",
+        "sampleSize": 2,
+        "avgProminence": 6.04,
+        "avgCount": 3,
+        "examples": [
+          "Semanak Authentic Art Traditional Travel Package Agency agency art authentic branding community comp",
+          "The Guardian: A Security Metaphor | Geometric Vector Series abstract artdirection concept geometric "
+        ]
+      },
+      {
+        "pattern": "Subtle/Hidden",
+        "prevalence": "78%",
+        "sampleSize": 43,
+        "avgProminence": 0.07,
+        "avgCount": 0,
+        "examples": [
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric",
+          "Adventure Travel Agency Website UI/UX Design interface product service startup ui ux web"
+        ]
+      }
+    ],
+    "hierarchy": [
+      {
+        "pattern": "Image-Driven (Visual-First, High Clarity)",
+        "prevalence": "80%",
+        "sampleSize": 44,
+        "avgClarity": 38.02,
+        "avgAboveFoldRatio": 0.529,
+        "avgFocalPoints": 10,
+        "topFocalType": "a",
+        "examples": [
+          "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+          "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric",
+          "Adventure Travel Agency Website UI/UX Design interface product service startup ui ux web"
+        ]
+      },
+      {
+        "pattern": "Content-Rich (Balanced, Moderate Clarity)",
+        "prevalence": "16%",
+        "sampleSize": 9,
+        "avgClarity": 13.95,
+        "avgAboveFoldRatio": 0.22,
+        "avgFocalPoints": 10,
+        "topFocalType": "a",
+        "examples": [
+          "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+          "CMAND Behind the Scenes branding design graphic design website",
+          "Logistics Service Website Design cargo cargotransport landing page landingpagedesign logisticsdesign"
+        ]
+      },
+      {
+        "pattern": "Hero-Driven (H1-First, High Clarity)",
+        "prevalence": "4%",
+        "sampleSize": 2,
+        "avgClarity": 93.55,
+        "avgAboveFoldRatio": 0.735,
+        "avgFocalPoints": 10,
+        "topFocalType": "h1",
+        "examples": [
+          "Your Creative",
+          "Your Creative"
+        ]
+      }
+    ]
+  },
+  "rawData": {
+    "shots": [
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45787852/file/still-ed48f9da3b4aaa21162a2df5624b82bd.png?format=webp&resize=400x300&vertical=center",
+        "title": "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+        "likes": "8.1k",
+        "url": "https://dribbble.com/shots/26799807-Homepage-Website-Design-The-Haven-Church",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45788269/file/c6079fd4713bd83758ce8342ebb05587.png?format=webp&resize=400x300&vertical=center",
+        "title": "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+        "likes": "60",
+        "url": "https://dribbble.com/shots/26799969-Website-for-an-Ecommerce-Company-Urbancy",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45786266/file/99d6ef256f574eb4f490a9ca03bb882c.png?format=webp&resize=400x300&vertical=center",
+        "title": "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric",
+        "likes": "4.1k",
+        "url": "https://dribbble.com/shots/26799227-AI-Farm-Agriculture-Website-Landing-Page-Design-by-Taqwah",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45782883/file/03c68205e5bd683373ea7d8c096b58d9.png?format=webp&resize=400x300&vertical=center",
+        "title": "Adventure Travel Agency Website UI/UX Design interface product service startup ui ux web",
+        "likes": "6.6k",
+        "url": "https://dribbble.com/shots/26797989-Adventure-Travel-Agency-Website-UI-UX-Design",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45782753/file/f79586cb6d47e13f066606de4d4280dd.png?format=webp&resize=400x300&vertical=center",
+        "title": "Zentro — B2B SaaS Lead Generation Website Design interface product service startup ui ux web",
+        "likes": "6.2k",
+        "url": "https://dribbble.com/shots/26797952-Zentro-B2B-SaaS-Lead-Generation-Website-Design",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45782800/file/9f6f49870e7c16bd2c016ec5b69f3f71.png?format=webp&resize=400x300&vertical=center",
+        "title": "Solma - Your mental-health friend app glass health landing page mental health minimal design platfor",
+        "likes": "90",
+        "url": "https://dribbble.com/shots/26797965-Solma-Your-mental-health-friend",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45782204/file/8440c6d529b5fed3a7bc706bc8ee300c.png?format=webp&resize=400x300&vertical=center",
+        "title": "Travel Website design holiday website journey planner landing page tour website tourism website trav",
+        "likes": "10.5k",
+        "url": "https://dribbble.com/shots/26797824-Travel-Website",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45781887/file/6688a99436bf7480c71d894b663c1da9.png?format=webp&resize=400x300&vertical=center",
+        "title": "Thy - Fitness & Wellness Landing Page cardio fitness habit health healthy landing page motivation pe",
+        "likes": "9.6k",
+        "url": "https://dribbble.com/shots/26797736-Thy-Fitness-Wellness-Landing-Page",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45781705/file/still-cac77621d3352833c348f24cdd819291.png?format=webp&resize=400x300&vertical=center",
+        "title": "CMAND Behind the Scenes branding design graphic design website",
+        "likes": "7",
+        "url": "https://dribbble.com/shots/26797670-CMAND-Behind-the-Scenes",
+        "source": "dribbble"
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45783171/file/7f1886f2201d5e236eefebb1c619b7e8.png?format=webp&resize=400x300&vertical=center",
+        "title": "Virtual Assistant Website — Homepage Design design product service startup ui ux web website",
+        "likes": "4.2k",
+        "url": "https://dribbble.com/shots/26798091-Virtual-Assistant-Website-Homepage-Design",
+        "source": "dribbble"
+      }
+    ],
+    "topDesigns": [
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45787852/file/still-ed48f9da3b4aaa21162a2df5624b82bd.png?format=webp&resize=400x300&vertical=center",
+        "title": "Homepage Website Design – The Haven Church ai assistant ui calm aesthetic church banner church websi",
+        "likes": "8.1k",
+        "url": "https://dribbble.com/shots/26799807-Homepage-Website-Design-The-Haven-Church",
+        "source": "dribbble",
+        "colors": [
+          {
+            "hex": "#eb570e",
+            "rgb": [
+              235,
+              87,
+              14
+            ],
+            "population": 259,
+            "context": "vibrant"
+          },
+          {
+            "hex": "#741c04",
+            "rgb": [
+              116,
+              28,
+              4
+            ],
+            "population": 1,
+            "context": "darkvibrant"
+          },
+          {
+            "hex": "#fcc181",
+            "rgb": [
+              252,
+              193,
+              129
+            ],
+            "population": 7,
+            "context": "lightvibrant"
+          },
+          {
+            "hex": "#8c7178",
+            "rgb": [
+              140,
+              113,
+              120
+            ],
+            "population": 70,
+            "context": "muted"
+          },
+          {
+            "hex": "#512d32",
+            "rgb": [
+              81,
+              45,
+              50
+            ],
+            "population": 204,
+            "context": "darkmuted"
+          }
+        ],
+        "whitespace": {
+          "ratio": 0.016,
+          "category": "cramped",
+          "premiumFeel": false,
+          "industryMatch": {
+            "pattern": "Budget/Dense",
+            "examples": [
+              "eBay",
+              "Craigslist",
+              "Reddit"
+            ],
+            "description": "Information-dense layout"
+          }
+        },
+        "complexity": {
+          "score": 0.282,
+          "category": "minimalist",
+          "metrics": {
+            "edgeDensity": 0.049,
+            "colorComplexity": 6,
+            "contrastVariance": 0.277
+          },
+          "industryMatch": {
+            "pattern": "Minimalist Design",
+            "examples": [
+              "Apple",
+              "Stripe",
+              "Linear"
+            ],
+            "description": "Ultra-clean, focused on single action",
+            "scoreRange": "0.1-0.3"
+          }
+        },
+        "imageTextRatio": {
+          "textRatio": 0,
+          "imageRatio": 1,
+          "category": "image-heavy",
+          "textRegions": 0,
+          "industryMatch": {
+            "pattern": "Portfolio/Visual-First",
+            "examples": [
+              "Dribbble",
+              "Behance",
+              "Awwwards"
+            ],
+            "description": "Image-dominant, minimal text",
+            "typical": "10-20% text, 60-75% images, 10-20% whitespace"
+          }
+        },
+        "typography": {
+          "sizes": [],
+          "uniqueSizes": [],
+          "scaleType": "Unknown",
+          "scaleRatio": 0,
+          "consistency": 0,
+          "totalTextElements": 0,
+          "industryMatch": {
+            "pattern": "Unknown",
+            "description": "No text detected"
+          }
+        },
+        "layout": {
+          "layoutType": "Single Column",
+          "hasHero": false,
+          "heroSize": 0,
+          "columns": 2,
+          "cardLayout": false,
+          "splitScreen": false,
+          "gridType": "traditional",
+          "industryMatch": {
+            "pattern": "Two-Column Blog",
+            "examples": [
+              "Medium",
+              "Substack",
+              "Ghost"
+            ],
+            "description": "Content + sidebar layout",
+            "typical": "70/30 or 60/40 split",
+            "prevalence": "45% of blogs",
+            "trend": "Traditional"
+          }
+        },
+        "ctaProminence": {
+          "ctaCount": 1,
+          "avgCtaSize": 0.0353,
+          "totalProminence": 3.53,
+          "aboveFold": 1,
+          "primaryCtaColor": "#eb570e",
+          "primaryCtaSize": 3.53,
+          "ctaPlacement": "middle-optimal",
+          "industryMatch": {
+            "pattern": "High-Converting",
+            "examples": [
+              "Stripe",
+              "Linear",
+              "Notion"
+            ],
+            "description": "1-2 clear CTAs with strong prominence",
+            "typical": "3-5% screen area, above fold",
+            "score": 9,
+            "recommendation": "Optimal CTA strategy - maintain this"
+          }
+        },
+        "hierarchy": {
+          "hierarchyRating": "excellent",
+          "hierarchyClarity": 12.05,
+          "aboveFoldRatio": 0.059,
+          "focalPoints": [
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1399,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1399,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 2503,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 2503,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 3639,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 3639,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 4743,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 4743,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 5879,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 5879,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            }
+          ],
+          "totalElements": 180,
+          "aboveFoldElements": 63,
+          "industryMatch": {
+            "pattern": "No Clear Hierarchy",
+            "examples": [
+              "Low-quality sites"
+            ],
+            "description": "Very weak visual hierarchy, confusing for users",
+            "typical": "<1.5x clarity ratio, no clear focus",
+            "score": 2,
+            "recommendation": "Major redesign needed - establish clear focal points"
+          }
+        }
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45788269/file/c6079fd4713bd83758ce8342ebb05587.png?format=webp&resize=400x300&vertical=center",
+        "title": "Website for an Ecommerce Company ✦ Urbancy design interface product service startup ui ux web websit",
+        "likes": "60",
+        "url": "https://dribbble.com/shots/26799969-Website-for-an-Ecommerce-Company-Urbancy",
+        "source": "dribbble",
+        "colors": [
+          {
+            "hex": "#e86c45",
+            "rgb": [
+              232,
+              108,
+              69
+            ],
+            "population": 11,
+            "context": "vibrant"
+          },
+          {
+            "hex": "#2c1c3c",
+            "rgb": [
+              44,
+              28,
+              60
+            ],
+            "population": 1,
+            "context": "darkvibrant"
+          },
+          {
+            "hex": "#9988da",
+            "rgb": [
+              153,
+              136,
+              218
+            ],
+            "population": 307,
+            "context": "lightvibrant"
+          },
+          {
+            "hex": "#a2654e",
+            "rgb": [
+              162,
+              101,
+              78
+            ],
+            "population": 23,
+            "context": "muted"
+          },
+          {
+            "hex": "#3f2c24",
+            "rgb": [
+              63,
+              44,
+              36
+            ],
+            "population": 73,
+            "context": "darkmuted"
+          }
+        ],
+        "whitespace": {
+          "ratio": 0.028,
+          "category": "cramped",
+          "premiumFeel": false,
+          "industryMatch": {
+            "pattern": "Budget/Dense",
+            "examples": [
+              "eBay",
+              "Craigslist",
+              "Reddit"
+            ],
+            "description": "Information-dense layout"
+          }
+        },
+        "complexity": {
+          "score": 0.288,
+          "category": "minimalist",
+          "metrics": {
+            "edgeDensity": 0.113,
+            "colorComplexity": 6,
+            "contrastVariance": 0.208
+          },
+          "industryMatch": {
+            "pattern": "Minimalist Design",
+            "examples": [
+              "Apple",
+              "Stripe",
+              "Linear"
+            ],
+            "description": "Ultra-clean, focused on single action",
+            "scoreRange": "0.1-0.3"
+          }
+        },
+        "imageTextRatio": {
+          "textRatio": 0,
+          "imageRatio": 1,
+          "category": "image-heavy",
+          "textRegions": 0,
+          "industryMatch": {
+            "pattern": "Portfolio/Visual-First",
+            "examples": [
+              "Dribbble",
+              "Behance",
+              "Awwwards"
+            ],
+            "description": "Image-dominant, minimal text",
+            "typical": "10-20% text, 60-75% images, 10-20% whitespace"
+          }
+        },
+        "typography": {
+          "sizes": [],
+          "uniqueSizes": [],
+          "scaleType": "Unknown",
+          "scaleRatio": 0,
+          "consistency": 0,
+          "totalTextElements": 0,
+          "industryMatch": {
+            "pattern": "Unknown",
+            "description": "No text detected"
+          }
+        },
+        "layout": {
+          "layoutType": "Split-Screen",
+          "hasHero": false,
+          "heroSize": 0,
+          "columns": 3,
+          "cardLayout": false,
+          "splitScreen": true,
+          "gridType": "traditional",
+          "industryMatch": {
+            "pattern": "Split-Screen Hero",
+            "examples": [
+              "Airbnb",
+              "Medium",
+              "Spotify"
+            ],
+            "description": "50/50 split with imagery and content",
+            "typical": "Equal halves, visual-text balance",
+            "prevalence": "42% prevalence",
+            "trend": "Trending (+15% in 2024)"
+          }
+        },
+        "ctaProminence": {
+          "ctaCount": 0,
+          "avgCtaSize": 0,
+          "totalProminence": 0,
+          "aboveFold": 0,
+          "primaryCtaColor": null,
+          "primaryCtaSize": 0,
+          "ctaPlacement": "none",
+          "industryMatch": {
+            "pattern": "No CTAs Detected",
+            "examples": [],
+            "description": "No clear call-to-action buttons found",
+            "typical": "Missing critical conversion element",
+            "score": 0,
+            "recommendation": "Add 1-2 prominent CTA buttons above fold"
+          }
+        },
+        "hierarchy": {
+          "hierarchyRating": "excellent",
+          "hierarchyClarity": 35.18,
+          "aboveFoldRatio": 0.56,
+          "focalPoints": [
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 295,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 295,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "h1",
+              "text": "Website for an Ecommerce Company ✦ Urbancy",
+              "area": 29696,
+              "position": {
+                "top": 156,
+                "left": 128,
+                "width": 1024,
+                "height": 29
+              },
+              "isAboveFold": true,
+              "fontSize": 24,
+              "fontWeight": 600,
+              "visualWeight": 21.75,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "button",
+              "text": "Dedicated Team\n    From $7,000",
+              "area": 53230,
+              "position": {
+                "top": 2287,
+                "left": 120,
+                "width": 238,
+                "height": 224
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 11.12,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "button",
+              "text": "UX/UI Design\n    From $7,000",
+              "area": 53230,
+              "position": {
+                "top": 2287,
+                "left": 388,
+                "width": 238,
+                "height": 224
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 11.12,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "button",
+              "text": "Website Design & Development\n    From $15,000",
+              "area": 53230,
+              "position": {
+                "top": 2287,
+                "left": 655,
+                "width": 238,
+                "height": 224
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 11.12,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "button",
+              "text": "Website Design (10 Pages)\n    From $12,000",
+              "area": 53230,
+              "position": {
+                "top": 2287,
+                "left": 923,
+                "width": 238,
+                "height": 224
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 11.12,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "a",
+              "text": "Branding",
+              "area": 39576,
+              "position": {
+                "top": 2806,
+                "left": -116,
+                "width": 204,
+                "height": 194
+              },
+              "isAboveFold": false,
+              "fontSize": 16,
+              "fontWeight": 400,
+              "visualWeight": 4.29,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "a",
+              "text": "Animation",
+              "area": 39576,
+              "position": {
+                "top": 2806,
+                "left": 120,
+                "width": 204,
+                "height": 194
+              },
+              "isAboveFold": false,
+              "fontSize": 16,
+              "fontWeight": 400,
+              "visualWeight": 4.29,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "a",
+              "text": "Illustration",
+              "area": 39576,
+              "position": {
+                "top": 2806,
+                "left": 356,
+                "width": 204,
+                "height": 194
+              },
+              "isAboveFold": false,
+              "fontSize": 16,
+              "fontWeight": 400,
+              "visualWeight": 4.29,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            }
+          ],
+          "totalElements": 162,
+          "aboveFoldElements": 66,
+          "industryMatch": {
+            "pattern": "No Clear Hierarchy",
+            "examples": [
+              "Low-quality sites"
+            ],
+            "description": "Very weak visual hierarchy, confusing for users",
+            "typical": "<1.5x clarity ratio, no clear focus",
+            "score": 2,
+            "recommendation": "Major redesign needed - establish clear focal points"
+          }
+        }
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45786266/file/99d6ef256f574eb4f490a9ca03bb882c.png?format=webp&resize=400x300&vertical=center",
+        "title": "AI Farm Agriculture Website Landing Page Design by Taqwah agriculture agriculture landing page agric",
+        "likes": "4.1k",
+        "url": "https://dribbble.com/shots/26799227-AI-Farm-Agriculture-Website-Landing-Page-Design-by-Taqwah",
+        "source": "dribbble",
+        "colors": [
+          {
+            "hex": "#b4be72",
+            "rgb": [
+              180,
+              190,
+              114
+            ],
+            "population": 4,
+            "context": "vibrant"
+          },
+          {
+            "hex": "#545a29",
+            "rgb": [
+              84.32330097087379,
+              90.76019417475729,
+              41.83980582524271
+            ],
+            "population": 0,
+            "context": "darkvibrant"
+          },
+          {
+            "hex": "#98d3e8",
+            "rgb": [
+              152,
+              211,
+              232
+            ],
+            "population": 105,
+            "context": "lightvibrant"
+          },
+          {
+            "hex": "#6a95a2",
+            "rgb": [
+              106,
+              149,
+              162
+            ],
+            "population": 15,
+            "context": "muted"
+          },
+          {
+            "hex": "#445c34",
+            "rgb": [
+              68,
+              92,
+              52
+            ],
+            "population": 1,
+            "context": "darkmuted"
+          }
+        ],
+        "whitespace": {
+          "ratio": 0.6,
+          "category": "spacious",
+          "premiumFeel": true,
+          "industryMatch": {
+            "pattern": "Professional SaaS",
+            "examples": [
+              "Notion",
+              "Linear",
+              "Stripe"
+            ],
+            "description": "Clean, focused design"
+          }
+        },
+        "complexity": {
+          "score": 0.318,
+          "category": "balanced",
+          "metrics": {
+            "edgeDensity": 0.087,
+            "colorComplexity": 6,
+            "contrastVariance": 0.342
+          },
+          "industryMatch": {
+            "pattern": "Balanced SaaS",
+            "examples": [
+              "Notion",
+              "Figma",
+              "Slack"
+            ],
+            "description": "Professional with moderate visual richness",
+            "scoreRange": "0.3-0.6"
+          }
+        },
+        "imageTextRatio": {
+          "textRatio": 0,
+          "imageRatio": 1,
+          "category": "image-heavy",
+          "textRegions": 0,
+          "industryMatch": {
+            "pattern": "Portfolio/Visual-First",
+            "examples": [
+              "Dribbble",
+              "Behance",
+              "Awwwards"
+            ],
+            "description": "Image-dominant, minimal text",
+            "typical": "10-20% text, 60-75% images, 10-20% whitespace"
+          }
+        },
+        "typography": {
+          "sizes": [],
+          "uniqueSizes": [],
+          "scaleType": "Unknown",
+          "scaleRatio": 0,
+          "consistency": 0,
+          "totalTextElements": 0,
+          "industryMatch": {
+            "pattern": "Unknown",
+            "description": "No text detected"
+          }
+        },
+        "layout": {
+          "layoutType": "Single Column",
+          "hasHero": false,
+          "heroSize": 0,
+          "columns": 2,
+          "cardLayout": false,
+          "splitScreen": false,
+          "gridType": "traditional",
+          "industryMatch": {
+            "pattern": "Two-Column Blog",
+            "examples": [
+              "Medium",
+              "Substack",
+              "Ghost"
+            ],
+            "description": "Content + sidebar layout",
+            "typical": "70/30 or 60/40 split",
+            "prevalence": "45% of blogs",
+            "trend": "Traditional"
+          }
+        },
+        "ctaProminence": {
+          "ctaCount": 0,
+          "avgCtaSize": 0,
+          "totalProminence": 0,
+          "aboveFold": 0,
+          "primaryCtaColor": null,
+          "primaryCtaSize": 0,
+          "ctaPlacement": "none",
+          "industryMatch": {
+            "pattern": "No CTAs Detected",
+            "examples": [],
+            "description": "No clear call-to-action buttons found",
+            "typical": "Missing critical conversion element",
+            "score": 0,
+            "recommendation": "Add 1-2 prominent CTA buttons above fold"
+          }
+        },
+        "hierarchy": {
+          "hierarchyRating": "excellent",
+          "hierarchyClarity": 43.23,
+          "aboveFoldRatio": 0.108,
+          "focalPoints": [
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 6131152,
+              "position": {
+                "top": 6510,
+                "left": 128,
+                "width": 1024,
+                "height": 5987
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 582.11,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 6131152,
+              "position": {
+                "top": 6510,
+                "left": 128,
+                "width": 1024,
+                "height": 5987
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 582.11,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 293,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 293,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1426,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1426,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 2495,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 2495,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 3660,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 3660,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            }
+          ],
+          "totalElements": 198,
+          "aboveFoldElements": 62,
+          "industryMatch": {
+            "pattern": "No Clear Hierarchy",
+            "examples": [
+              "Low-quality sites"
+            ],
+            "description": "Very weak visual hierarchy, confusing for users",
+            "typical": "<1.5x clarity ratio, no clear focus",
+            "score": 2,
+            "recommendation": "Major redesign needed - establish clear focal points"
+          }
+        }
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45782883/file/03c68205e5bd683373ea7d8c096b58d9.png?format=webp&resize=400x300&vertical=center",
+        "title": "Adventure Travel Agency Website UI/UX Design interface product service startup ui ux web",
+        "likes": "6.6k",
+        "url": "https://dribbble.com/shots/26797989-Adventure-Travel-Agency-Website-UI-UX-Design",
+        "source": "dribbble",
+        "colors": [
+          {
+            "hex": "#ac343a",
+            "rgb": [
+              172,
+              52,
+              58
+            ],
+            "population": 33,
+            "context": "vibrant"
+          },
+          {
+            "hex": "#651e22",
+            "rgb": [
+              101.81785714285715,
+              30.78214285714286,
+              34.333928571428515
+            ],
+            "population": 0,
+            "context": "darkvibrant"
+          },
+          {
+            "hex": "#9fc7e1",
+            "rgb": [
+              159,
+              199,
+              225
+            ],
+            "population": 18,
+            "context": "lightvibrant"
+          },
+          {
+            "hex": "#ad8062",
+            "rgb": [
+              173,
+              128,
+              98
+            ],
+            "population": 67,
+            "context": "muted"
+          },
+          {
+            "hex": "#48403c",
+            "rgb": [
+              72,
+              64,
+              60
+            ],
+            "population": 63,
+            "context": "darkmuted"
+          }
+        ],
+        "whitespace": {
+          "ratio": 0.612,
+          "category": "spacious",
+          "premiumFeel": true,
+          "industryMatch": {
+            "pattern": "Luxury/Premium",
+            "examples": [
+              "Rolex",
+              "Tesla",
+              "Apple"
+            ],
+            "description": "High-end minimalist aesthetic"
+          }
+        },
+        "complexity": {
+          "score": 0.327,
+          "category": "balanced",
+          "metrics": {
+            "edgeDensity": 0.162,
+            "colorComplexity": 6,
+            "contrastVariance": 0.273
+          },
+          "industryMatch": {
+            "pattern": "Balanced SaaS",
+            "examples": [
+              "Notion",
+              "Figma",
+              "Slack"
+            ],
+            "description": "Professional with moderate visual richness",
+            "scoreRange": "0.3-0.6"
+          }
+        },
+        "imageTextRatio": {
+          "textRatio": 0,
+          "imageRatio": 1,
+          "category": "image-heavy",
+          "textRegions": 0,
+          "industryMatch": {
+            "pattern": "Portfolio/Visual-First",
+            "examples": [
+              "Dribbble",
+              "Behance",
+              "Awwwards"
+            ],
+            "description": "Image-dominant, minimal text",
+            "typical": "10-20% text, 60-75% images, 10-20% whitespace"
+          }
+        },
+        "typography": {
+          "sizes": [],
+          "uniqueSizes": [],
+          "scaleType": "Unknown",
+          "scaleRatio": 0,
+          "consistency": 0,
+          "totalTextElements": 0,
+          "industryMatch": {
+            "pattern": "Unknown",
+            "description": "No text detected"
+          }
+        },
+        "layout": {
+          "layoutType": "Multi-Column",
+          "hasHero": false,
+          "heroSize": 0,
+          "columns": 4,
+          "cardLayout": false,
+          "splitScreen": false,
+          "gridType": "traditional",
+          "industryMatch": {
+            "pattern": "Single Column",
+            "examples": [
+              "Mobile-first sites",
+              "Minimalist brands"
+            ],
+            "description": "Simple linear flow",
+            "typical": "Full-width sections, stacked",
+            "prevalence": "35% of modern sites",
+            "trend": "Mobile-optimized"
+          }
+        },
+        "ctaProminence": {
+          "ctaCount": 0,
+          "avgCtaSize": 0,
+          "totalProminence": 0,
+          "aboveFold": 0,
+          "primaryCtaColor": null,
+          "primaryCtaSize": 0,
+          "ctaPlacement": "none",
+          "industryMatch": {
+            "pattern": "No CTAs Detected",
+            "examples": [],
+            "description": "No clear call-to-action buttons found",
+            "typical": "Missing critical conversion element",
+            "score": 0,
+            "recommendation": "Add 1-2 prominent CTA buttons above fold"
+          }
+        },
+        "hierarchy": {
+          "hierarchyRating": "excellent",
+          "hierarchyClarity": 34.35,
+          "aboveFoldRatio": 0.1,
+          "focalPoints": [
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 5151377,
+              "position": {
+                "top": 3258,
+                "left": 128,
+                "width": 1024,
+                "height": 5031
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 489.09,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 5151377,
+              "position": {
+                "top": 3258,
+                "left": 128,
+                "width": 1024,
+                "height": 5031
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 489.09,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 293,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 293,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "section",
+              "text": "",
+              "area": 873472,
+              "position": {
+                "top": 1749,
+                "left": 128,
+                "width": 1024,
+                "height": 853
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 82.93,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786740,
+              "position": {
+                "top": 8361,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.7,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786740,
+              "position": {
+                "top": 8361,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.7,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1749,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1749,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1749,
+                "left": 1152,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            }
+          ],
+          "totalElements": 203,
+          "aboveFoldElements": 63,
+          "industryMatch": {
+            "pattern": "No Clear Hierarchy",
+            "examples": [
+              "Low-quality sites"
+            ],
+            "description": "Very weak visual hierarchy, confusing for users",
+            "typical": "<1.5x clarity ratio, no clear focus",
+            "score": 2,
+            "recommendation": "Major redesign needed - establish clear focal points"
+          }
+        }
+      },
+      {
+        "imageUrl": "https://cdn.dribbble.com/userupload/45782753/file/f79586cb6d47e13f066606de4d4280dd.png?format=webp&resize=400x300&vertical=center",
+        "title": "Zentro — B2B SaaS Lead Generation Website Design interface product service startup ui ux web",
+        "likes": "6.2k",
+        "url": "https://dribbble.com/shots/26797952-Zentro-B2B-SaaS-Lead-Generation-Website-Design",
+        "source": "dribbble",
+        "colors": [
+          {
+            "hex": "#5890ed",
+            "rgb": [
+              88,
+              144,
+              237
+            ],
+            "population": 6,
+            "context": "vibrant"
+          },
+          {
+            "hex": "#0c3577",
+            "rgb": [
+              12.901621621621606,
+              53.039999999999964,
+              119.6983783783784
+            ],
+            "population": 0,
+            "context": "darkvibrant"
+          },
+          {
+            "hex": "#7ca4f4",
+            "rgb": [
+              124,
+              164,
+              244
+            ],
+            "population": 2,
+            "context": "lightvibrant"
+          },
+          {
+            "hex": "#9c8470",
+            "rgb": [
+              156,
+              132,
+              112
+            ],
+            "population": 2,
+            "context": "muted"
+          },
+          {
+            "hex": "#0e3d8a",
+            "rgb": [
+              14.886486486486476,
+              61.19999999999987,
+              138.1135135135135
+            ],
+            "population": 0,
+            "context": "darkmuted"
+          }
+        ],
+        "whitespace": {
+          "ratio": 0.789,
+          "category": "minimal",
+          "premiumFeel": true,
+          "industryMatch": {
+            "pattern": "Budget/Dense",
+            "examples": [
+              "eBay",
+              "Craigslist",
+              "Reddit"
+            ],
+            "description": "Information-dense layout"
+          }
+        },
+        "complexity": {
+          "score": 0.241,
+          "category": "minimalist",
+          "metrics": {
+            "edgeDensity": 0.08,
+            "colorComplexity": 6,
+            "contrastVariance": 0.098
+          },
+          "industryMatch": {
+            "pattern": "Minimalist Design",
+            "examples": [
+              "Apple",
+              "Stripe",
+              "Linear"
+            ],
+            "description": "Ultra-clean, focused on single action",
+            "scoreRange": "0.1-0.3"
+          }
+        },
+        "imageTextRatio": {
+          "textRatio": 0,
+          "imageRatio": 1,
+          "category": "image-heavy",
+          "textRegions": 0,
+          "industryMatch": {
+            "pattern": "Portfolio/Visual-First",
+            "examples": [
+              "Dribbble",
+              "Behance",
+              "Awwwards"
+            ],
+            "description": "Image-dominant, minimal text",
+            "typical": "10-20% text, 60-75% images, 10-20% whitespace"
+          }
+        },
+        "typography": {
+          "sizes": [],
+          "uniqueSizes": [],
+          "scaleType": "Unknown",
+          "scaleRatio": 0,
+          "consistency": 0,
+          "totalTextElements": 0,
+          "industryMatch": {
+            "pattern": "Unknown",
+            "description": "No text detected"
+          }
+        },
+        "layout": {
+          "layoutType": "Multi-Column",
+          "hasHero": false,
+          "heroSize": 0,
+          "columns": 3,
+          "cardLayout": false,
+          "splitScreen": false,
+          "gridType": "traditional",
+          "industryMatch": {
+            "pattern": "Single Column",
+            "examples": [
+              "Mobile-first sites",
+              "Minimalist brands"
+            ],
+            "description": "Simple linear flow",
+            "typical": "Full-width sections, stacked",
+            "prevalence": "35% of modern sites",
+            "trend": "Mobile-optimized"
+          }
+        },
+        "ctaProminence": {
+          "ctaCount": 0,
+          "avgCtaSize": 0,
+          "totalProminence": 0,
+          "aboveFold": 0,
+          "primaryCtaColor": null,
+          "primaryCtaSize": 0,
+          "ctaPlacement": "none",
+          "industryMatch": {
+            "pattern": "No CTAs Detected",
+            "examples": [],
+            "description": "No clear call-to-action buttons found",
+            "typical": "Missing critical conversion element",
+            "score": 0,
+            "recommendation": "Add 1-2 prominent CTA buttons above fold"
+          }
+        },
+        "hierarchy": {
+          "hierarchyRating": "excellent",
+          "hierarchyClarity": 27.06,
+          "aboveFoldRatio": 0.093,
+          "focalPoints": [
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 4140577,
+              "position": {
+                "top": 4183,
+                "left": 128,
+                "width": 1024,
+                "height": 4044
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 393.12,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 4140577,
+              "position": {
+                "top": 4183,
+                "left": 128,
+                "width": 1024,
+                "height": 4044
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 393.12,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 293,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 293,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": true,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 112,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "section",
+              "text": "",
+              "area": 873472,
+              "position": {
+                "top": 1781,
+                "left": 128,
+                "width": 1024,
+                "height": 853
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 82.93,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "section",
+              "text": "",
+              "area": 873472,
+              "position": {
+                "top": 2706,
+                "left": 128,
+                "width": 1024,
+                "height": 853
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 82.93,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786740,
+              "position": {
+                "top": 8299,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.7,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786740,
+              "position": {
+                "top": 8299,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.7,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            },
+            {
+              "tagName": "a",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1781,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgba(0, 0, 0, 0)"
+            },
+            {
+              "tagName": "img",
+              "text": "",
+              "area": 786432,
+              "position": {
+                "top": 1781,
+                "left": 128,
+                "width": 1024,
+                "height": 768
+              },
+              "isAboveFold": false,
+              "fontSize": 14,
+              "fontWeight": 400,
+              "visualWeight": 74.67,
+              "color": "rgb(13, 12, 34)",
+              "bgColor": "rgb(243, 243, 244)"
+            }
+          ],
+          "totalElements": 212,
+          "aboveFoldElements": 63,
+          "industryMatch": {
+            "pattern": "No Clear Hierarchy",
+            "examples": [
+              "Low-quality sites"
+            ],
+            "description": "Very weak visual hierarchy, confusing for users",
+            "typical": "<1.5x clarity ratio, no clear focus",
+            "score": 2,
+            "recommendation": "Major redesign needed - establish clear focal points"
+          }
+        }
+      }
+    ],
+    "sourceBreakdown": {
+      "dribbble": 42,
+      "awwwards": 27,
+      "siteinspire": 50
+    }
+  },
+  "qualityMetrics": {
+    "avgQualityScore": "0.763",
+    "highQualityPatterns": 2,
+    "multiSourcePatterns": 4,
+    "dimensionsCaptured": 7,
+    "totalPatterns": 11
+  }
+}
