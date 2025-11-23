@@ -10,11 +10,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@clerk/nextjs": "^6.35.4",
     "@supabase/supabase-js": "^2.78.0",
     "@tailwindcss/postcss": "^4.1.17",
     "next": "^15.0.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "svix": "^1.81.0"
   },
   "devDependencies": {
     "@types/node": "^20",
