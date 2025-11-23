@@ -7,7 +7,19 @@
  */
 
 import { PlaywrightBrowser } from '../utils/browser';
-import { analyzeLandingPage, loadDefaultPatterns } from '../../../src/lib/analysis';
+import { loadDefaultPatterns } from '../../../src/lib/analysis';
+import {
+  analyzeColors,
+  analyzeTypography,
+  analyzeCTAs,
+  analyzeComplexity,
+  analyzeWhitespace,
+  analyzeLayout,
+  analyzeImageTextRatio,
+  analyzeHierarchy,
+  generateRecommendations,
+} from '../../../src/lib/analysis/analyzer-bridge';
+import { uploadScreenshot, updateJobProgress, saveReport, updateJobStatus } from '../utils/supabase';
 import type { AnalysisReport, PatternLibrary } from '../../../src/lib/analysis';
 
 export interface AnalysisJob {
@@ -34,6 +46,7 @@ export async function analyzeWebsite(
   onProgress?: ProgressCallback
 ): Promise<AnalysisReport> {
   const { jobId, url, userId } = job;
+  const startTime = Date.now();
   
   console.log(`[Analyzer] Starting analysis for job ${jobId}: ${url}`);
   
@@ -41,10 +54,15 @@ export async function analyzeWebsite(
     if (onProgress) {
       await onProgress({ jobId, progress, step, message });
     }
+    // Update progress in Supabase
+    await updateJobProgress(jobId, progress, step, message);
     console.log(`[Analyzer] ${progress}% - ${step}: ${message}`);
   };
 
   try {
+    // Update job status to processing
+    await updateJobStatus(jobId, 'processing');
+    
     // Step 1: Load pattern library (5%)
     await reportProgress(5, 'initialization', 'Loading pattern library...');
     const patterns = loadDefaultPatterns();
@@ -74,8 +92,13 @@ export async function analyzeWebsite(
       const screenshotBuffer = await browser.captureScreenshot(page);
       console.log(`[Analyzer] Screenshot captured: ${screenshotBuffer.length} bytes`);
 
-      // TODO: Upload screenshot to Supabase Storage
-      const screenshotUrl = undefined; // Will implement in next step
+      // Step 4.5: Upload screenshot to Supabase (35%)
+      await reportProgress(35, 'upload', 'Uploading screenshot...');
+      const screenshotUrl = await uploadScreenshot(jobId, screenshotBuffer);
+      
+      if (!screenshotUrl) {
+        console.warn('[Analyzer] Screenshot upload failed, continuing without it');
+      }
 
       // Step 5: Extract raw data from page (40%)
       await reportProgress(40, 'extraction', 'Extracting design data...');
@@ -94,38 +117,90 @@ export async function analyzeWebsite(
         ctasFound: ctas.length,
       });
 
-      // Step 6: Run 7-dimensional analysis (60%)
-      await reportProgress(60, 'analysis', 'Analyzing 7 dimensions...');
+      // Step 6: Run 7-dimensional analysis (50-80%)
+      await reportProgress(50, 'analysis', 'Analyzing colors...');
+      const colorAnalysis = analyzeColors(colors, patterns);
       
-      // For now, use the mock implementation from index.ts
-      // TODO: Integrate actual visual-design-analyzer.ts logic
-      const report = await analyzeLandingPage({
-        url,
-        patterns,
-        options: {
-          verbose: true,
-          skipScreenshot: true, // We already have it
-        },
-      });
+      await reportProgress(55, 'analysis', 'Analyzing typography...');
+      const typographyAnalysis = analyzeTypography(typography);
+      
+      await reportProgress(60, 'analysis', 'Analyzing CTAs...');
+      const ctaAnalysis = analyzeCTAs(ctas, patterns);
+      
+      await reportProgress(65, 'analysis', 'Analyzing complexity...');
+      const complexityAnalysis = analyzeComplexity(elementCount);
+      
+      await reportProgress(70, 'analysis', 'Analyzing whitespace...');
+      const whitespaceAnalysis = analyzeWhitespace(patterns);
+      
+      await reportProgress(75, 'analysis', 'Analyzing layout...');
+      const layoutAnalysis = analyzeLayout(patterns);
+      
+      const imageTextAnalysis = analyzeImageTextRatio();
+      const hierarchyAnalysis = analyzeHierarchy();
 
-      // Enhance report with captured data
-      report.screenshot = screenshotUrl;
+      // Calculate overall score
+      const dimensionScores = {
+        colors: colorAnalysis.score,
+        whitespace: whitespaceAnalysis.score,
+        complexity: complexityAnalysis.score,
+        imageText: imageTextAnalysis.score,
+        typography: typographyAnalysis.score,
+        layout: layoutAnalysis.score,
+        ctaProminence: ctaAnalysis.score,
+        hierarchy: hierarchyAnalysis.score,
+      };
+
+      const overallScore = Math.round(
+        Object.values(dimensionScores).reduce((a, b) => a + b, 0) / 
+        Object.values(dimensionScores).length
+      );
+
+      // Build report
+      const report: AnalysisReport = {
+        id: jobId,
+        url,
+        timestamp: new Date().toISOString(),
+        screenshot: screenshotUrl,
+        dimensions: {
+          colors: colorAnalysis,
+          whitespace: whitespaceAnalysis,
+          complexity: complexityAnalysis,
+          imageText: imageTextAnalysis,
+          typography: typographyAnalysis,
+          layout: layoutAnalysis,
+          ctaProminence: ctaAnalysis,
+          hierarchy: hierarchyAnalysis,
+        },
+        overallScore,
+        dimensionScores,
+        recommendations: [],
+        analysisTime: 0, // Will be calculated
+        version: '1.0.0',
+      };
       
       // Step 7: Generate recommendations (80%)
       await reportProgress(80, 'recommendations', 'Generating recommendations...');
-      // Recommendations are generated as part of analyzeLandingPage
+      report.recommendations = generateRecommendations(report.dimensions);
       
-      // Step 8: Finalize report (90%)
-      await reportProgress(90, 'finalization', 'Finalizing report...');
+      // Step 8: Save to database (90%)
+      await reportProgress(90, 'saving', 'Saving report...');
+      
+      const endTime = Date.now();
+      report.analysisTime = endTime - startTime;
+      
+      await saveReport(jobId, userId, url, report);
       
       console.log(`[Analyzer] Analysis complete:`, {
         overallScore: report.overallScore,
         dimensions: Object.keys(report.dimensionScores).length,
         recommendations: report.recommendations.length,
+        time: `${report.analysisTime}ms`,
       });
 
       // Step 9: Complete (100%)
       await reportProgress(100, 'complete', 'Analysis complete!');
+      await updateJobStatus(jobId, 'completed');
       
       return report;
 
@@ -136,7 +211,8 @@ export async function analyzeWebsite(
 
   } catch (error) {
     console.error(`[Analyzer] Analysis failed for ${jobId}:`, error);
-    await reportProgress(0, 'error', error instanceof Error ? error.message : 'Unknown error');
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    await updateJobStatus(jobId, 'failed', errorMessage);
     throw error;
   }
 }
