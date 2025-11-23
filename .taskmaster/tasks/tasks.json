@@ -2,7 +2,7 @@
   "master": {
     "tasks": [
       {
-        "id": "1",
+        "id": 1,
         "title": "Set up Next.js 14 project with TypeScript and Tailwind CSS",
         "description": "Initialize the project with Next.js 14 App Router, TypeScript, and Tailwind CSS for styling.",
         "details": "Create a new Next.js 14 project using the App Router architecture. Configure TypeScript for type safety and Tailwind CSS for styling. Set up the project structure with appropriate folders for components, pages, and API routes. Include Radix UI for accessible component primitives. Configure ESLint and Prettier for code quality. Set up the basic routing structure according to the App Router pattern.",
@@ -14,7 +14,7 @@
         "updatedAt": "2025-11-22T14:26:34.511Z"
       },
       {
-        "id": "2",
+        "id": 2,
         "title": "Deploy to Vercel and set up CI/CD pipeline",
         "description": "Set up the project on Vercel with continuous deployment from GitHub repository.",
         "details": "Create a GitHub repository for the project. Connect the repository to Vercel for continuous deployment. Configure environment variables in Vercel for development, preview, and production environments. Set up build settings to optimize for performance. Configure domain settings for pirouette.app. Implement preview deployments for pull requests. Set up automatic HTTPS with Vercel's SSL certificates.",
@@ -27,7 +27,7 @@
         "subtasks": []
       },
       {
-        "id": "3",
+        "id": 3,
         "title": "Set up Supabase project and database schema",
         "description": "Create a Supabase project and implement the database schema as defined in the PRD.",
         "details": "Create a new Supabase project. Implement the database schema with tables for users, jobs, reports, and patterns as specified in the PRD. Set up appropriate indexes for performance optimization. Configure Row Level Security (RLS) policies for data protection. Create database migrations for version control. Set up Supabase Storage buckets for screenshots. Configure database backups and monitoring.",
@@ -40,7 +40,7 @@
         "subtasks": []
       },
       {
-        "id": "4",
+        "id": 4,
         "title": "Integrate Clerk for authentication",
         "description": "Implement user authentication using Clerk with email/password and social OAuth providers.",
         "details": "Set up a Clerk account and configure the application. Implement sign-up and sign-in flows with email/password authentication. Add social OAuth providers (Google, GitHub). Set up email verification flow. Implement password reset functionality. Configure session management with JWT tokens. Create protected routes using Next.js middleware. Sync Clerk user data with Supabase users table.",
@@ -54,7 +54,7 @@
         "subtasks": []
       },
       {
-        "id": "5",
+        "id": 5,
         "title": "Design and implement landing page",
         "description": "Create a responsive landing page with hero section, value proposition, pricing, and call-to-action.",
         "details": "Design a compelling hero section with clear value proposition. Implement responsive design using Tailwind CSS. Create sections for features, testimonials (placeholder for now), and pricing comparison. Add a prominent CTA for 'Analyze Your Site Free'. Implement SEO optimization with proper meta tags. Ensure accessibility compliance. Add analytics integration with Plausible (cookieless analytics). Optimize for Core Web Vitals.",
@@ -68,7 +68,7 @@
         "subtasks": []
       },
       {
-        "id": "6",
+        "id": 6,
         "title": "Set up Railway project for analysis engine",
         "description": "Create a Railway project with Docker configuration for the analysis engine backend.",
         "details": "Set up a Railway account. Create a new project for the analysis engine. Configure the Dockerfile as specified in the PRD. Set up environment variables for Supabase connection, Redis, and secrets. Implement the Express.js server for handling analysis requests. Configure health checks and monitoring. Set up Redis for BullMQ job queue. Implement error handling and logging.",
@@ -81,7 +81,7 @@
         "subtasks": []
       },
       {
-        "id": "7",
+        "id": 7,
         "title": "Implement Playwright analyzer for design metrics",
         "description": "Create the core analysis engine using Playwright to extract design metrics from websites.",
         "details": "Set up Playwright in the Railway project. Implement browser automation to navigate to user-submitted URLs. Create functions to capture screenshots of the target website. Develop algorithms to extract the 7 design dimensions: colors, whitespace, complexity, typography, layout, CTA prominence, and visual hierarchy. Implement error handling for site access issues. Add progress reporting during analysis. Optimize for performance and reliability.",
@@ -90,11 +90,105 @@
         "dependencies": [
           "6"
         ],
-        "status": "pending",
-        "subtasks": []
+        "status": "in-progress",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Playwright in Railway project",
+            "description": "Configure and integrate Playwright into the existing Railway project structure for browser automation.",
+            "dependencies": [],
+            "details": "Install Playwright npm package. Configure browser settings (headless Chrome). Set up environment variables for Playwright configuration. Create a basic browser launch utility. Test basic browser automation functionality. Document the setup process for team reference.",
+            "status": "done",
+            "testStrategy": "Verify Playwright installation and configuration. Test browser launch and navigation to sample URLs. Confirm headless mode works correctly in the Railway environment."
+          },
+          {
+            "id": 2,
+            "title": "Implement URL navigation and screenshot capture",
+            "description": "Create functions to navigate to user-submitted URLs and capture full-page screenshots for analysis.",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop URL validation and normalization functions. Implement browser navigation with timeout handling. Create screenshot capture functionality with configurable viewport sizes. Implement retry logic for failed navigation attempts. Store screenshots in an appropriate format and location. Add logging for navigation events.",
+            "status": "done",
+            "testStrategy": "Test URL navigation with valid and invalid URLs. Verify screenshot capture quality and resolution. Test timeout handling and retry logic. Confirm screenshots are stored correctly."
+          },
+          {
+            "id": 3,
+            "title": "Develop color analysis algorithm",
+            "description": "Create an algorithm to extract and analyze color usage from captured website screenshots.",
+            "dependencies": [
+              2
+            ],
+            "details": "Implement color extraction from screenshots using image processing libraries. Identify primary, secondary, and accent colors. Calculate color contrast ratios for accessibility. Analyze color harmony and consistency. Detect potential color-related issues. Generate color palette report with usage statistics.",
+            "status": "pending",
+            "testStrategy": "Test color extraction with websites of varying color schemes. Verify color contrast calculations against WCAG standards. Confirm color palette generation accuracy. Test with both simple and complex website designs."
+          },
+          {
+            "id": 4,
+            "title": "Implement whitespace and layout analysis",
+            "description": "Develop algorithms to analyze whitespace usage, layout structure, and visual hierarchy of websites.",
+            "dependencies": [
+              2
+            ],
+            "details": "Create functions to detect whitespace distribution and density. Analyze margin and padding patterns. Identify layout structure (grid, flex, etc.). Measure content-to-whitespace ratio. Detect visual hierarchy through element sizing and positioning. Generate metrics for whitespace effectiveness and layout consistency.",
+            "status": "pending",
+            "testStrategy": "Test whitespace analysis with minimalist and cluttered websites. Verify layout structure detection with various website designs. Confirm visual hierarchy analysis matches human perception. Test with responsive and fixed-width layouts."
+          },
+          {
+            "id": 5,
+            "title": "Implement typography and complexity analysis",
+            "description": "Create algorithms to analyze typography usage and overall visual complexity of websites.",
+            "dependencies": [
+              2
+            ],
+            "details": "Extract font families, sizes, and weights from websites. Analyze text readability and line spacing. Calculate typography consistency scores. Measure visual complexity through element count and density. Analyze information hierarchy through typography. Generate typography and complexity metrics with recommendations.",
+            "status": "pending",
+            "testStrategy": "Test typography analysis with various font combinations. Verify readability metrics against established standards. Test complexity analysis with simple and complex websites. Confirm metrics align with user perception of complexity."
+          },
+          {
+            "id": 6,
+            "title": "Develop CTA prominence analysis",
+            "description": "Create algorithms to detect and analyze call-to-action elements and their visual prominence on websites.",
+            "dependencies": [
+              3,
+              4,
+              5
+            ],
+            "details": "Implement detection of CTA elements through visual and semantic analysis. Measure CTA contrast against surrounding elements. Analyze CTA positioning and size relative to page layout. Calculate CTA visibility scores. Generate recommendations for improving CTA prominence and effectiveness.",
+            "status": "pending",
+            "testStrategy": "Test CTA detection with various website types (e-commerce, SaaS, blogs). Verify prominence scoring against human perception. Test with websites having multiple CTAs of varying importance. Confirm recommendations are actionable and relevant."
+          },
+          {
+            "id": 7,
+            "title": "Implement error handling and progress reporting",
+            "description": "Develop comprehensive error handling for the analysis process and implement progress reporting during analysis.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create error handling for common failure scenarios (navigation errors, timeouts, access denied). Implement graceful degradation when specific metrics cannot be calculated. Develop a progress reporting system to track analysis stages. Create user-friendly error messages. Implement logging for debugging and monitoring. Add retry mechanisms for transient failures.",
+            "status": "done",
+            "testStrategy": "Test error handling with various failure scenarios. Verify progress reporting accuracy during analysis. Test retry mechanisms with simulated transient failures. Confirm error messages are clear and actionable for users."
+          },
+          {
+            "id": 8,
+            "title": "Optimize analyzer performance and reliability",
+            "description": "Improve the performance and reliability of the Playwright analyzer through optimization and testing.",
+            "dependencies": [
+              3,
+              4,
+              5,
+              6,
+              7
+            ],
+            "details": "Profile analyzer performance to identify bottlenecks. Implement parallel processing where possible. Optimize image processing algorithms. Add caching for repeated calculations. Implement resource cleanup to prevent memory leaks. Create performance benchmarks. Test with a wide variety of websites to ensure reliability. Document optimization strategies and results.",
+            "status": "pending",
+            "testStrategy": "Measure performance before and after optimization. Test with complex websites to verify reliability improvements. Verify memory usage remains stable during extended use. Test with high-traffic websites to ensure consistent performance."
+          }
+        ]
       },
       {
-        "id": "8",
+        "id": 8,
         "title": "Create pattern library and matching algorithm",
         "description": "Develop the pattern library from design sources and implement the pattern matching algorithm.",
         "details": "Create an initial pattern library from 50+ award-winning sites (Dribbble, Awwwards, SiteInspire). Develop algorithms to identify common design patterns across dimensions. Implement pattern matching logic to compare user sites against the library. Calculate prevalence scores for each pattern. Store patterns in the Supabase patterns table. Implement versioning for pattern updates. Create a weekly refresh mechanism via Railway cron jobs.",
@@ -108,7 +202,7 @@
         "subtasks": []
       },
       {
-        "id": "9",
+        "id": 9,
         "title": "Implement recommendation generation algorithm",
         "description": "Create an algorithm to generate prioritized, actionable recommendations based on analysis results.",
         "details": "Develop logic to identify design issues based on pattern matching results. Create algorithms to prioritize recommendations by impact. Generate specific, actionable recommendations with clear steps. Include effort estimates for each recommendation. Format recommendations with before/after comparisons when possible. Implement benchmarking against industry standards. Store recommendations in the reports table.",
@@ -121,7 +215,7 @@
         "subtasks": []
       },
       {
-        "id": "10",
+        "id": 10,
         "title": "Create URL submission form and analysis request API",
         "description": "Implement the frontend form for URL submission and the API endpoint to trigger analysis.",
         "details": "Create a form component for URL input with validation. Implement the /api/analyze endpoint in Next.js API routes. Generate a unique job ID for each analysis request. Insert the job into the Supabase jobs table with 'queued' status. Trigger the Railway analysis engine with the job details. Return job ID and status to the client for polling. Implement rate limiting based on user plan (free: 1/week, pro: unlimited).",
@@ -136,7 +230,7 @@
         "subtasks": []
       },
       {
-        "id": "11",
+        "id": 11,
         "title": "Implement job status polling and progress indicator",
         "description": "Create the status polling mechanism and real-time progress indicator for analysis jobs.",
         "details": "Implement the /api/status/[jobId] endpoint to check job status. Create a frontend progress indicator component with percentage and step description. Set up polling logic to check status every 3 seconds. Display estimated time remaining based on progress. Show current analysis step (loading site, capturing screenshot, etc.). Handle completion by redirecting to the report page. Implement error handling for failed jobs.",
@@ -149,7 +243,7 @@
         "subtasks": []
       },
       {
-        "id": "12",
+        "id": 12,
         "title": "Design and implement report page",
         "description": "Create the report page showing analysis results with all 7 dimensions and recommendations.",
         "details": "Design the report page layout with overall score, dimension breakdown, and recommendations. Implement the /reports/[id] page in Next.js. Fetch report data from Supabase based on report ID. Display the screenshot with annotations. Create visualizations for each dimension score. Implement expandable sections for detailed breakdowns. Display prioritized recommendations with impact and effort estimates. Add sharing and export options (if time permits).",
@@ -164,7 +258,7 @@
         "subtasks": []
       },
       {
-        "id": "13",
+        "id": 13,
         "title": "Set up Stripe integration for payments",
         "description": "Implement Stripe for subscription payments with multiple pricing tiers.",
         "details": "Create a Stripe account and configure products for different pricing tiers ($29/mo, $49/mo). Implement Stripe Checkout for payment processing. Create the /api/webhooks/stripe endpoint to handle subscription events. Update user plan status based on subscription events. Implement the billing portal for subscription management. Handle subscription cancellations and updates. Implement proration for plan changes. Set up test mode for development.",
@@ -177,7 +271,7 @@
         "subtasks": []
       },
       {
-        "id": "14",
+        "id": 14,
         "title": "Implement user dashboard",
         "description": "Create a dashboard for users to view analysis history, usage quota, and account settings.",
         "details": "Design the dashboard layout with sections for analysis history, usage quota, and account settings. Implement the /dashboard page in Next.js. Fetch user data and analysis history from Supabase. Display usage quota based on user plan (free: 1/week, pro: unlimited). Create a table of past analyses with links to reports. Implement account settings for email, password, and plan management. Add Stripe Customer Portal integration for billing management.",
@@ -192,7 +286,7 @@
         "subtasks": []
       },
       {
-        "id": "15",
+        "id": 15,
         "title": "Implement rate limiting based on user plan",
         "description": "Create a rate limiting system to restrict analysis requests based on user subscription plan.",
         "details": "Implement logic to track analyses per user per time period. Set limits based on user plan: free (1/week), pro (unlimited). Create a counter in the users table for analyses_this_month. Update the counter when analyses are performed. Check the limit before allowing new analyses. Show appropriate messages when limits are reached. Implement upgrade prompts for free users who hit limits.",
@@ -207,7 +301,7 @@
         "subtasks": []
       },
       {
-        "id": "16",
+        "id": 16,
         "title": "Create BullMQ worker for analysis jobs",
         "description": "Implement the BullMQ worker to process analysis jobs in the background.",
         "details": "Set up BullMQ with Redis in the Railway project. Create a worker to process analysis jobs from the queue. Implement job handling logic to update status and progress in Supabase. Connect the worker to the Playwright analyzer. Handle job completion by saving results to the reports table. Implement error handling and retries for failed jobs. Add monitoring and logging for job processing.",
@@ -223,7 +317,7 @@
         "subtasks": []
       },
       {
-        "id": "17",
+        "id": 17,
         "title": "Implement screenshot capture and storage",
         "description": "Create functionality to capture website screenshots and store them in Supabase Storage.",
         "details": "Use Playwright to capture full-page screenshots of analyzed websites. Implement image processing to optimize screenshot size and quality. Create a Supabase Storage bucket for screenshots. Upload screenshots to Supabase Storage with appropriate metadata. Generate public URLs for screenshot access. Update the reports table with screenshot URLs. Implement error handling for screenshot failures.",
@@ -237,7 +331,7 @@
         "subtasks": []
       },
       {
-        "id": "18",
+        "id": 18,
         "title": "Set up Railway cron jobs for pattern library refresh",
         "description": "Configure scheduled jobs to refresh the pattern library and handle other recurring tasks.",
         "details": "Set up Railway cron jobs as specified in the PRD. Implement the refresh-patterns.js script to crawl design sources and update patterns. Create the send-digest.js script for daily email digests. Implement the retry-failed.js script to retry failed analysis jobs. Configure appropriate schedules for each job. Add logging and monitoring for cron job execution. Implement error handling and notifications for job failures.",
@@ -252,7 +346,7 @@
         "subtasks": []
       },
       {
-        "id": "19",
+        "id": 19,
         "title": "Implement error handling and monitoring",
         "description": "Set up comprehensive error handling and monitoring for the entire application.",
         "details": "Implement global error handling for frontend and backend. Set up Sentry for error tracking and monitoring. Create custom error pages for different error types. Implement logging for important events and errors. Set up alerts for critical errors. Create a status page for system health. Implement graceful degradation for service outages. Add performance monitoring for key metrics.",
@@ -266,7 +360,7 @@
         "subtasks": []
       },
       {
-        "id": "20",
+        "id": 20,
         "title": "Write Terms of Service and Privacy Policy",
         "description": "Create legally compliant Terms of Service and Privacy Policy documents.",
         "details": "Draft Terms of Service covering acceptable use, data collection, intellectual property, and liability. Create a GDPR-compliant Privacy Policy detailing data collection, usage, sharing, and user rights. Implement cookie consent if needed (though using cookieless analytics). Create a crawler ethics policy as specified in the PRD. Implement DMCA compliance procedures. Review all documents with legal expertise if possible. Create pages to display these documents on the website.",
@@ -279,7 +373,7 @@
         "subtasks": []
       },
       {
-        "id": "21",
+        "id": 21,
         "title": "Implement A/B testing for pricing tiers",
         "description": "Set up A/B testing to compare conversion rates between $29/mo and $49/mo pricing tiers.",
         "details": "Implement A/B testing logic to show different pricing tiers to different users. Create variants for $29/mo (control) and $49/mo (treatment) with appropriate feature differences. Set up 50/50 traffic split between variants. Track conversion rates and revenue per user for each variant. Implement analytics to measure test results. Create a mechanism to declare a winner based on success criteria. Prepare for full deployment of the winning variant.",
@@ -293,7 +387,7 @@
         "subtasks": []
       },
       {
-        "id": "22",
+        "id": 22,
         "title": "Implement analytics with Plausible",
         "description": "Set up cookieless analytics using Plausible to track user behavior and conversion metrics.",
         "details": "Create a Plausible Analytics account. Implement the Plausible tracking script on the website. Set up custom events for important user actions (signup, analysis, upgrade). Create goals for conversion tracking. Implement UTM parameter tracking for marketing campaigns. Set up a dashboard for key metrics. Configure weekly reports for team review. Ensure GDPR compliance with cookieless tracking.",
@@ -306,7 +400,7 @@
         "subtasks": []
       },
       {
-        "id": "23",
+        "id": 23,
         "title": "Create email templates for transactional emails",
         "description": "Design and implement email templates for verification, welcome, reports, and other transactional emails.",
         "details": "Design email templates with consistent branding. Implement templates for: email verification, welcome emails, password reset, analysis complete notifications, weekly digests, and subscription updates. Set up email sending infrastructure (consider Resend.com or similar). Implement email sending logic in the application. Test deliverability and spam scores. Ensure mobile responsiveness for all templates. Add unsubscribe options for marketing emails.",
@@ -320,7 +414,7 @@
         "subtasks": []
       },
       {
-        "id": "24",
+        "id": 24,
         "title": "Implement onboarding flow for new users",
         "description": "Create a guided onboarding experience for new users to increase activation and retention.",
         "details": "Design an onboarding flow to guide new users through key features. Implement a welcome screen with value proposition reinforcement. Create a guided tour of the dashboard and analysis process. Implement progress tracking for onboarding steps. Add tooltips for key features. Create an email sequence for user activation. Implement re-engagement prompts for inactive users. Track onboarding completion rates for optimization.",
@@ -335,7 +429,7 @@
         "subtasks": []
       },
       {
-        "id": "25",
+        "id": 25,
         "title": "Prepare for Product Hunt launch",
         "description": "Create assets and strategy for a successful Product Hunt launch.",
         "details": "Design Product Hunt assets (thumbnail, gallery images, GIFs). Write compelling product description and first comment. Create a launch day plan with team responsibilities. Prepare social media announcements for Twitter, LinkedIn, and Reddit. Set up tracking for Product Hunt traffic and conversions. Create a special offer for Product Hunt users. Prepare responses for common questions. Schedule the launch for optimal timing (Tuesday or Wednesday). Coordinate with potential upvoters in advance.",
@@ -359,7 +453,10 @@
       "completedCount": 1,
       "tags": [
         "master"
-      ]
+      ],
+      "created": "2025-11-23T17:50:08.898Z",
+      "description": "Tasks for master context",
+      "updated": "2025-11-23T17:53:24.201Z"
     }
   }
 }
