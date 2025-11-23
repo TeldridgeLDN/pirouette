@@ -31,18 +31,18 @@ ALTER TABLE patterns ENABLE ROW LEVEL SECURITY;
 -- ================================================================
 
 -- Get current user's UUID from Clerk JWT
-CREATE OR REPLACE FUNCTION auth.current_user_id()
+CREATE OR REPLACE FUNCTION public.current_user_id()
 RETURNS UUID AS $$
-  SELECT id FROM users 
-  WHERE clerk_id = auth.jwt()->>'sub'
+  SELECT id FROM public.users 
+  WHERE clerk_id = (auth.jwt()->>'sub')
   LIMIT 1;
 $$ LANGUAGE SQL SECURITY DEFINER;
 
 -- Check if current user is authenticated
-CREATE OR REPLACE FUNCTION auth.is_authenticated()
+CREATE OR REPLACE FUNCTION public.is_authenticated()
 RETURNS BOOLEAN AS $$
-  SELECT auth.jwt() IS NOT NULL 
-  AND auth.jwt()->>'sub' IS NOT NULL;
+  SELECT (auth.jwt() IS NOT NULL) 
+  AND (auth.jwt()->>'sub' IS NOT NULL);
 $$ LANGUAGE SQL SECURITY DEFINER;
 
 -- ================================================================
@@ -53,14 +53,14 @@ $$ LANGUAGE SQL SECURITY DEFINER;
 CREATE POLICY "Users can view own profile"
   ON users
   FOR SELECT
-  USING (id = auth.current_user_id());
+  USING (id = public.current_user_id());
 
 -- Policy: Users can update their own profile
 CREATE POLICY "Users can update own profile"
   ON users
   FOR UPDATE
-  USING (id = auth.current_user_id())
-  WITH CHECK (id = auth.current_user_id());
+  USING (id = public.current_user_id())
+  WITH CHECK (id = public.current_user_id());
 
 -- Policy: Service role can insert users (for Clerk webhook)
 -- Note: This is handled via service_role key, which bypasses RLS
@@ -70,7 +70,7 @@ CREATE POLICY "Users can update own profile"
 CREATE POLICY "Users can delete own account"
   ON users
   FOR DELETE
-  USING (id = auth.current_user_id());
+  USING (id = public.current_user_id());
 
 -- ================================================================
 -- JOBS TABLE POLICIES
@@ -80,29 +80,29 @@ CREATE POLICY "Users can delete own account"
 CREATE POLICY "Users can view own jobs"
   ON jobs
   FOR SELECT
-  USING (user_id = auth.current_user_id());
+  USING (user_id = public.current_user_id());
 
 -- Policy: Authenticated users can create jobs
 CREATE POLICY "Authenticated users can create jobs"
   ON jobs
   FOR INSERT
   WITH CHECK (
-    auth.is_authenticated() 
-    AND user_id = auth.current_user_id()
+    public.is_authenticated() 
+    AND user_id = public.current_user_id()
   );
 
 -- Policy: Users can update their own jobs (for cancel operation)
 CREATE POLICY "Users can update own jobs"
   ON jobs
   FOR UPDATE
-  USING (user_id = auth.current_user_id())
-  WITH CHECK (user_id = auth.current_user_id());
+  USING (user_id = public.current_user_id())
+  WITH CHECK (user_id = public.current_user_id());
 
 -- Policy: Users can delete their own jobs
 CREATE POLICY "Users can delete own jobs"
   ON jobs
   FOR DELETE
-  USING (user_id = auth.current_user_id());
+  USING (user_id = public.current_user_id());
 
 -- Note: Railway worker updates jobs via service_role key (bypasses RLS)
 
@@ -114,13 +114,13 @@ CREATE POLICY "Users can delete own jobs"
 CREATE POLICY "Users can view own reports"
   ON reports
   FOR SELECT
-  USING (user_id = auth.current_user_id());
+  USING (user_id = public.current_user_id());
 
 -- Policy: Users can delete their own reports
 CREATE POLICY "Users can delete own reports"
   ON reports
   FOR DELETE
-  USING (user_id = auth.current_user_id());
+  USING (user_id = public.current_user_id());
 
 -- Note: Railway worker creates reports via service_role key (bypasses RLS)
 -- Users cannot create or update reports directly
@@ -154,6 +154,7 @@ CREATE POLICY "Anyone can view patterns"
 --   (Applied via service_role key, bypasses RLS)
 --
 -- Note: Screenshots are stored as: screenshots/{user_id}/{job_id}.png
+-- Note: Update bucket policies manually in Supabase dashboard or use auth.uid() for user ID
 -- ================================================================
 
 -- ================================================================
