@@ -1,0 +1,40 @@
+{
+  "mcpServers": {
+    "task-master-ai": {
+      "command": "npx",
+      "args": ["-y", "task-master-ai"],
+      "env": {
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}",
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}"
+      },
+      "description": "TaskMaster AI for task-driven development workflows"
+    },
+    "context7": {
+      "type": "http",
+      "url": "https://mcp.context7.com/mcp",
+      "description": "Context7 - Up-to-date library documentation lookup"
+    },
+    "sequential-thinking": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Sequential thinking for complex problem-solving"
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp-server"],
+      "description": "Playwright browser automation for testing"
+    }
+  },
+  "_metadata": {
+    "project": "pirouette",
+    "description": "Design Confidence SaaS - Landing page analysis tool",
+    "version": "0.1.0",
+    "notes": [
+      "API keys should be set in your environment or .env file",
+      "Additional servers can be added to .cursor/mcp.json for personal use",
+      "See docs/ai-config-sync-README.md for configuration details"
+    ]
+  }
+}
+
