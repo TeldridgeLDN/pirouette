@@ -327,3 +327,5 @@ supabase db dump -f backup.sql
 
 Your Supabase project is now ready for Pirouette development.
 
+
+

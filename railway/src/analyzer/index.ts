@@ -161,7 +161,7 @@ export async function analyzeWebsite(
         id: jobId,
         url,
         timestamp: new Date().toISOString(),
-        screenshot: screenshotUrl,
+        screenshot: screenshotUrl || undefined,
         dimensions: {
           colors: colorAnalysis,
           whitespace: whitespaceAnalysis,

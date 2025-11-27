@@ -53,3 +53,5 @@ export function createAuthenticatedClient(clerkToken: string) {
 
 export default supabase;
 
+
+

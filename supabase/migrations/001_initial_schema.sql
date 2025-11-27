@@ -241,3 +241,5 @@ CREATE TRIGGER update_patterns_updated_at
 -- ORDER BY tablename, indexname;
 -- ================================================================
 
+
+

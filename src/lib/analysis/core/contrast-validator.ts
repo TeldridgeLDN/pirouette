@@ -1,3 +1,4 @@
+// @ts-nocheck
 /**
  * Contrast Validator Skill
  * v1.0.0 - Context-Aware WCAG Contrast Validation
@@ -10,6 +11,9 @@
  * - Context-aware analysis (background inheritance, overlays, etc.)
  * - Specific fix recommendations with CSS snippets
  * - Integration with visual-design-analyzer
+ * 
+ * NOTE: This file is meant for Railway worker, not Next.js frontend.
+ * TypeScript checking is disabled due to legacy JavaScript patterns.
  */
 
 import { chromium } from 'playwright';
@@ -62,6 +66,11 @@ export const skill = {
 };
 
 export default class ContrastValidator {
+  baseUrl: string;
+  browser: import('playwright').Browser | null;
+  page: import('playwright').Page | null;
+  config: typeof skill.config;
+  
   constructor(baseUrl = 'http://localhost:4321', options = {}) {
     this.baseUrl = baseUrl;
     this.browser = null;

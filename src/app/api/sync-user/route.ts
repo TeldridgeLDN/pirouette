@@ -10,6 +10,7 @@
 import { currentUser } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import type { User, InsertUser } from '@/lib/supabase/types';
 
 export async function GET() {
   try {
@@ -40,7 +41,7 @@ export async function GET() {
       .from('users')
       .select('id')
       .eq('clerk_id', user.id)
-      .single();
+      .single() as { data: Pick<User, 'id'> | null; error: Error | null };
 
     if (existingUser) {
       return NextResponse.json({
@@ -54,19 +55,21 @@ export async function GET() {
     }
 
     // Create user in Supabase
+    const userData: InsertUser = {
+      clerk_id: user.id,
+      email: primaryEmail.emailAddress,
+      name: user.firstName && user.lastName 
+        ? `${user.firstName} ${user.lastName}` 
+        : user.firstName || null,
+      plan: 'free',
+      analyses_this_month: 0,
+    };
+    
     const { data, error } = await supabaseAdmin
       .from('users')
-      .insert({
-        clerk_id: user.id,
-        email: primaryEmail.emailAddress,
-        name: user.firstName && user.lastName 
-          ? `${user.firstName} ${user.lastName}` 
-          : user.firstName || null,
-        plan: 'free',
-        analyses_this_month: 0,
-      })
+      .insert(userData as never)
       .select()
-      .single();
+      .single() as { data: User | null; error: Error | null };
 
     if (error) {
       console.error('Error creating user in Supabase:', error);
@@ -89,4 +92,6 @@ export async function GET() {
     );
   }
 }
+
+
 

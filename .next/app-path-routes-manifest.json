@@ -1,4 +1,16 @@
 {
   "/_not-found/page": "/_not-found",
-  "/page": "/"
+  "/api/jobs/[jobId]/route": "/api/jobs/[jobId]",
+  "/api/admin/seed-patterns/route": "/api/admin/seed-patterns",
+  "/api/analyze/route": "/api/analyze",
+  "/api/reports/[id]/recommendations/route": "/api/reports/[id]/recommendations",
+  "/api/reports/route": "/api/reports",
+  "/api/reports/[id]/route": "/api/reports/[id]",
+  "/api/sync-user/route": "/api/sync-user",
+  "/api/webhooks/clerk/route": "/api/webhooks/clerk",
+  "/api/test-supabase/route": "/api/test-supabase",
+  "/page": "/",
+  "/dashboard/page": "/dashboard",
+  "/sign-up/[[...sign-up]]/page": "/sign-up/[[...sign-up]]",
+  "/sign-in/[[...sign-in]]/page": "/sign-in/[[...sign-in]]"
 }

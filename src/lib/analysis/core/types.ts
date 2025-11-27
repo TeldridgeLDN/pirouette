@@ -269,6 +269,35 @@ export interface Recommendation {
   effort: 'low' | 'medium' | 'high';
   example?: string;
   pattern?: string; // Pattern ID this recommendation is based on
+  revenueImpact?: RevenueImpact;
+  successMetrics?: SuccessMetrics;
+  roiScore?: ROIScoreData;
+  timeToResultsWeeks?: number; // Time to see results (defaults based on change type)
+  changeType?: 'ui' | 'content' | 'structural' | 'performance' | 'accessibility' | 'other';
+}
+
+export interface ROIScoreData {
+  score: number; // Raw ROI score (unbounded)
+  normalizedScore: number; // 0-10 scale for display
+  category: 'quick-win' | 'strategic' | 'long-term';
+  breakdown: {
+    impactScore: number;
+    effortMinutes: number;
+    timeToResultsWeeks: number;
+  };
+}
+
+export interface RevenueImpact {
+  potentialRevenue: number; // Monthly recurring revenue potential in USD
+  confidenceLevel: 'low' | 'medium' | 'high';
+  timeToValidate: string; // Human-readable timeframe (e.g., "1-2 weeks")
+  calculationMethod: string; // Description of how this was calculated
+}
+
+export interface SuccessMetrics {
+  improvementRange: string; // Expected improvement (e.g., "15-25%")
+  visitorThreshold: number; // Minimum weekly visitors for reliable measurement
+  measurementPeriod: string; // How long to measure (e.g., "2 weeks")
 }
 
 // ============================================================================
@@ -335,43 +364,4 @@ export interface ColorInfo {
   name?: string;
 }
 
-// ============================================================================
-// Export all types
-// ============================================================================
-
-export type {
-  // Patterns
-  PatternMeta,
-  ColorPattern,
-  WhitespacePattern,
-  LayoutPattern,
-  CTAPattern,
-  PatternLibrary,
-  
-  // Analysis Results
-  ColorAnalysis,
-  ContrastRatio,
-  WhitespaceAnalysis,
-  TypographyAnalysis,
-  LayoutAnalysis,
-  CTAAnalysis,
-  ComplexityAnalysis,
-  ImageTextRatioAnalysis,
-  HierarchyAnalysis,
-  AnalysisReport,
-  Recommendation,
-  
-  // Configuration
-  AnalyzerConfig,
-  
-  // Jobs
-  AnalysisJob,
-  JobProgress,
-  
-  // Utilities
-  RGB,
-  HSL,
-  ColorInfo,
-};
-
-
+// All types are exported inline with their definitions above

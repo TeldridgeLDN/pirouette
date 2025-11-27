@@ -38,3 +38,5 @@ export const supabaseAdmin = createClient<Database>(
 
 export default supabaseAdmin;
 
+
+

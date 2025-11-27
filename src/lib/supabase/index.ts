@@ -35,3 +35,5 @@ export type {
 // Re-export Supabase client type for convenience
 export type { SupabaseClient } from '@supabase/supabase-js';
 
+
+

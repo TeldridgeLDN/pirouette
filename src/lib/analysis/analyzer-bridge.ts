@@ -23,7 +23,7 @@ import type {
   Recommendation,
 } from './core/types';
 
-import { colorUtils } from './utils/color-utils';
+import colorUtils from './utils/color-utils';
 import {
   matchColorPattern,
   matchWhitespacePattern,
@@ -471,4 +471,6 @@ export default {
   analyzeHierarchy,
   generateRecommendations,
 };
+
+
 

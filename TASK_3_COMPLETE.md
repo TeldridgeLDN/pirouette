@@ -469,3 +469,5 @@ const { data: { signedUrl } } = await supabase.storage
 
 **Supabase setup is production-ready and waiting for integration!** 🚀
 
+
+

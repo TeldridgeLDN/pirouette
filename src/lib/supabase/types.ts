@@ -247,7 +247,7 @@ export interface JobWithReport extends Job {
   report?: Report | null;
 }
 
-export interface UserWithStats extends User {
+export interface UserWithStats extends Omit<User, 'analyses_this_month'> {
   total_analyses?: number;
   analyses_this_month?: number;
 }
@@ -259,4 +259,6 @@ export interface ReportSummary {
   created_at: string;
   screenshot_url: string | null;
 }
+
+
 

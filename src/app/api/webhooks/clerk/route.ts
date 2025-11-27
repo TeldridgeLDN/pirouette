@@ -13,6 +13,7 @@ import { headers } from 'next/headers';
 import { WebhookEvent } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
+import type { InsertUser, UpdateUser } from '@/lib/supabase/types';
 
 export async function POST(req: Request) {
   // Get the Svix headers for verification
@@ -83,13 +84,14 @@ export async function POST(req: Request) {
         }
 
         // Create user in Supabase
-        const { error } = await supabaseAdmin.from('users').insert({
+        const userData: InsertUser = {
           clerk_id: id,
           email: primaryEmail.email_address,
           name: first_name && last_name ? `${first_name} ${last_name}` : first_name || null,
           plan: 'free',
           analyses_this_month: 0,
-        });
+        };
+        const { error } = await supabaseAdmin.from('users').insert(userData as never);
 
         if (error) {
           console.error('Error creating user in Supabase:', error);
@@ -116,12 +118,13 @@ export async function POST(req: Request) {
         }
 
         // Update user in Supabase
+        const updateData: UpdateUser = {
+          email: primaryEmail.email_address,
+          name: first_name && last_name ? `${first_name} ${last_name}` : first_name || null,
+        };
         const { error } = await supabaseAdmin
           .from('users')
-          .update({
-            email: primaryEmail.email_address,
-            name: first_name && last_name ? `${first_name} ${last_name}` : first_name || null,
-          })
+          .update(updateData as never)
           .eq('clerk_id', id);
 
         if (error) {
@@ -171,4 +174,6 @@ export async function POST(req: Request) {
     );
   }
 }
+
+
 
