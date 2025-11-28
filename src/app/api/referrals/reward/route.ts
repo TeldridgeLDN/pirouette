@@ -157,8 +157,8 @@ export async function POST(request: NextRequest) {
     }
     
     // Update referral status
-    await supabase
-      .from('referrals')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from('referrals') as any)
       .update({
         status: 'rewarded',
         reward_applied: rewardApplied,
@@ -168,8 +168,8 @@ export async function POST(request: NextRequest) {
       .eq('id', referral.id);
     
     // Increment referrer's reward count
-    await supabase
-      .from('users')
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (supabase.from('users') as any)
       .update({
         referral_rewards_earned: (referrer.referral_rewards_earned || 0) + 1,
       })
