@@ -5,6 +5,15 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Competitor Comparison Feature for Pro Users** (Task 45)
+  - CompetitorComparison component with Pro gating
+  - Locked preview with blurred mock data for free users
+  - Add competitors prompt for Pro users
+  - Side-by-side comparison table with all dimensions
+  - Crown/warning indicators for best/below-average scores
+  - Competitive insights: gaps and advantages analysis
+  - Integrated into report page
+
 - **PDF Export Feature for Pro Users** (Task 44)
   - `/api/reports/[id]/pdf` endpoint with Pro gating
   - Professional PDF template with Pirouette branding

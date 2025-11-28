@@ -545,7 +545,7 @@
           "12",
           "13"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -1104,7 +1104,7 @@
         "description": "Implement the competitor comparison feature allowing Pro users to analyse their site alongside up to 3 competitor URLs, providing side-by-side comparison of scores and highlighting competitive advantages and gaps.",
         "details": "PRD Section 6 - Nice-to-Have Feature #8: Competitor Comparison\n\"Analyze your site + 3 competitors. Side-by-side comparison table. 'Your CTA is 40% less prominent than Competitor A'\"\n\nImplementation:\n1. Update analysis form for competitor mode:\n   - Primary URL input (your site)\n   - 3 additional competitor URL inputs (optional)\n   - Toggle: \"Compare with competitors\" (Pro only)\n   - Free users see locked inputs with upgrade CTA\n\n2. Backend changes:\n   - Accept array of URLs in /api/analyze\n   - Create parent job with child jobs for each URL\n   - Run analyses in parallel (up to 4 concurrent)\n   - Aggregate results into comparison report\n\n3. Comparison report page (/reports/[id]/compare):\n   ```\n   ┌─────────────────────────────────────────────────────────────┐\n   │ COMPETITOR COMPARISON                                       │\n   ├─────────────────────────────────────────────────────────────┤\n   │              You    Comp A   Comp B   Comp C                │\n   │ Overall:     72      85       68       91                   │\n   │ CTA:         55      78       62       88     ← You're 23pt behind\n   │ Typography:  82      80       75       85                   │\n   │ Whitespace:  70      88       70       92     ← Opportunity │\n   ├─────────────────────────────────────────────────────────────┤\n   │ YOUR COMPETITIVE GAPS                                       │\n   │ • CTA prominence 30% below average competitor               │\n   │ • Whitespace 18% more cramped than top competitor          │\n   ├─────────────────────────────────────────────────────────────┤\n   │ YOUR ADVANTAGES                                             │\n   │ • Typography 5% better than average competitor              │\n   └─────────────────────────────────────────────────────────────┘\n   ```\n\n4. Comparison metrics:\n   - Dimension-by-dimension comparison\n   - Calculate gaps vs. best competitor\n   - Identify your strongest/weakest areas\n   - Rank position for each dimension\n\n5. Actionable insights:\n   - \"Close this gap\" recommendations\n   - \"Maintain this advantage\" notes\n   - Priority ranking based on competitor delta\n\n6. Database schema:\n   - Add parent_job_id to jobs table\n   - Link comparison reports together\n   - Store comparison metadata\n\n7. Feature gating:\n   - Only available for Pro users\n   - Free users see preview with upgrade CTA\n   - API returns 403 if not Pro",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           12,
           40,
@@ -1215,7 +1215,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T16:08:15.871Z"
+      "updated": "2025-11-28T16:11:18.288Z"
     }
   }
 }

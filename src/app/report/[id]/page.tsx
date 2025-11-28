@@ -20,6 +20,7 @@ import EmailCaptureModal from '@/components/EmailCaptureModal';
 import TrafficContext from '@/components/TrafficContext';
 import ValidationTimeline from '@/components/ValidationTimeline';
 import HistoricalTracking from '@/components/HistoricalTracking';
+import CompetitorComparison from '@/components/CompetitorComparison';
 import { useUserPlan } from '@/hooks/useUserPlan';
 import { shouldSortByEase, getTrafficClassification } from '@/lib/analysis/utils/traffic-classifier';
 
@@ -1102,6 +1103,28 @@ export default function ReportPage({ params }: PageProps) {
             <HistoricalTracking
               url={report.url}
               currentReportId={reportId}
+              isPro={isPro}
+            />
+          </section>
+        )}
+        
+        {/* Competitor Comparison (Pro Feature) */}
+        {!report.isAnonymous && (
+          <section className="mb-8">
+            <CompetitorComparison
+              userReport={{
+                id: report.id,
+                url: report.url,
+                overall_score: report.overall_score,
+                colors_score: report.colors_score ?? null,
+                whitespace_score: report.whitespace_score ?? null,
+                complexity_score: report.complexity_score ?? null,
+                typography_score: report.typography_score ?? null,
+                layout_score: report.layout_score ?? null,
+                cta_score: report.cta_score ?? null,
+                hierarchy_score: report.hierarchy_score ?? null,
+              }}
+              competitors={[]}
               isPro={isPro}
             />
           </section>
