@@ -344,9 +344,10 @@ export async function generateReportPDF(
   // ========================================
   
   // Add footer on each page
-  const totalPages = doc.getNumberOfPages();
+  // Type assertion needed for jspdf-autotable compatibility
+  const totalPages = (doc as unknown as { getNumberOfPages: () => number }).getNumberOfPages();
   for (let i = 1; i <= totalPages; i++) {
-    doc.setPage(i);
+    (doc as unknown as { setPage: (n: number) => void }).setPage(i);
     
     // Footer line
     doc.setDrawColor(226, 232, 240); // Slate-200

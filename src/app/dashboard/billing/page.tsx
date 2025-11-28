@@ -107,11 +107,12 @@ async function getSubscriptionInfo(clerkUserId: string): Promise<SubscriptionInf
   const priceItem = subscription.items.data[0];
   const price = priceItem?.price;
 
+  // In Stripe SDK v20+ with API 2025-11-17.clover, current_period_end is on SubscriptionItem
   return {
     plan: user.plan || 'free',
     status: subscription.status as SubscriptionInfo['status'],
-    currentPeriodEnd: subscription.current_period_end
-      ? new Date(subscription.current_period_end * 1000).toISOString()
+    currentPeriodEnd: priceItem?.current_period_end
+      ? new Date(priceItem.current_period_end * 1000).toISOString()
       : null,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
     trialEnd: subscription.trial_end

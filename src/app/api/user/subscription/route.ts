@@ -154,11 +154,12 @@ export async function GET(request: NextRequest) {
     const price = priceItem?.price;
     
     // 8. Build full response
+    // In Stripe SDK v20+ with API 2025-11-17.clover, current_period_end is on SubscriptionItem
     const subscriptionData: SubscriptionData = {
       plan: user.plan || 'free',
       status: subscription.status as SubscriptionData['status'],
-      currentPeriodEnd: subscription.current_period_end
-        ? new Date(subscription.current_period_end * 1000).toISOString()
+      currentPeriodEnd: priceItem?.current_period_end
+        ? new Date(priceItem.current_period_end * 1000).toISOString()
         : null,
       cancelAtPeriodEnd: subscription.cancel_at_period_end,
       trialEnd: subscription.trial_end

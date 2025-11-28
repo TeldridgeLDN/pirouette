@@ -4,6 +4,11 @@ All notable changes to Pirouette will be documented in this file.
 
 ## [Unreleased]
 
+### Fixed
+- **Stripe SDK v20 Compatibility** - Fixed `current_period_end` access for Stripe API version `2025-11-17.clover` where the property moved from `Subscription` to `SubscriptionItem`
+- **Referral Click Tracking** - Stubbed referral click tracking pending Supabase type generation
+- **PDF Footer Generation** - Fixed jsPDF type compatibility for `getNumberOfPages` and `setPage` methods
+
 ### Added
 - **Email Templates with Resend** (Task 23)
   - Resend client configuration (`src/lib/email/resend.ts`)

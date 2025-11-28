@@ -11,6 +11,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { getStripe, getActiveSubscription } from '@/lib/stripe';
+import type Stripe from 'stripe';
 
 // ============================================================================
 // Types
@@ -91,11 +92,13 @@ export async function POST(request: NextRequest) {
         cancellation_feedback: body.feedback || '',
         cancelled_at: new Date().toISOString(),
       },
-    });
+    }) as Stripe.Subscription;
     
     // 7. Log cancellation for analytics
-    const periodEnd = updatedSubscription.current_period_end 
-      ? new Date(updatedSubscription.current_period_end * 1000).toISOString()
+    // In Stripe SDK v20+ with API 2025-11-17.clover, current_period_end is on SubscriptionItem
+    const firstItem = updatedSubscription.items?.data?.[0];
+    const periodEnd = firstItem?.current_period_end 
+      ? new Date(firstItem.current_period_end * 1000).toISOString()
       : new Date().toISOString();
       
     console.log(`Subscription cancellation scheduled: ${subscription.id}`, {
