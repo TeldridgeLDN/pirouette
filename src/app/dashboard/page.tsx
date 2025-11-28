@@ -291,11 +291,19 @@ export default async function DashboardPage() {
                       </Link>
                     </>
                   ) : (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-xs font-medium">
-                      {plan === 'pro_29' && 'Pro'}
-                      {plan === 'pro_49' && 'Pro Plus'}
-                      {plan === 'agency' && 'Agency'}
-                    </span>
+                    <>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-indigo-50 text-indigo-700 rounded-full text-xs font-medium">
+                        {plan === 'pro_29' && 'Pro'}
+                        {plan === 'pro_49' && 'Pro Plus'}
+                        {plan === 'agency' && 'Agency'}
+                      </span>
+                      <Link
+                        href="/dashboard/billing"
+                        className="text-xs font-medium text-indigo-600 hover:text-indigo-700"
+                      >
+                        Manage →
+                      </Link>
+                    </>
                   )}
                 </dd>
               </div>

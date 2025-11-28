@@ -5,6 +5,20 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Subscription Management & Billing Portal** (Task 41)
+  - `/dashboard/billing` page for subscription management
+  - Subscription info card with plan, status badge, and billing details
+  - Payment method display (card brand and last 4 digits)
+  - Next billing date and billing interval display
+  - "Manage Billing" button linking to Stripe Customer Portal
+  - Trial banner with days remaining countdown
+  - Cancellation warning banner with reactivate option
+  - Payment failed warning with update payment CTA
+  - Pro features checklist (locked for free users)
+  - `/api/user/subscription` endpoint fetching Stripe subscription details
+  - Support contact section
+  - Billing link in dashboard Account Information section
+
 - **Dashboard URL Submission & Quota Display** (Task 35)
   - Complete dashboard redesign with URL submission form at top
   - `QuotaDisplay` component showing remaining weekly analyses

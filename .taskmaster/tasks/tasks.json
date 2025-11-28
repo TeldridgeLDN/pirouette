@@ -1047,7 +1047,7 @@
         "description": "Create subscription management UI allowing Pro users to view their plan, manage billing, change plans, and cancel their subscription through Stripe Customer Portal integration.",
         "details": "Existing paid subscribers need to manage their subscription.\n\nImplementation:\n1. Create /dashboard/billing page or section:\n   - Current plan display with badge\n   - Billing cycle info (next payment date, amount)\n   - Payment method on file (last 4 digits)\n   - Usage this period (analyses count)\n   - Quick actions\n\n2. Subscription info card:\n   ```\n   ┌────────────────────────────────────────────┐\n   │ YOUR SUBSCRIPTION                          │\n   │                                            │\n   │ Plan: Pro (£29/month)          [Change]   │\n   │ Status: Active                            │\n   │ Next billing: Dec 28, 2025                │\n   │ Payment method: •••• 4242       [Update]  │\n   │                                            │\n   │ This period: 12 analyses performed        │\n   │                                            │\n   │ [Manage Billing] [Cancel Subscription]    │\n   └────────────────────────────────────────────┘\n   ```\n\n3. Stripe Customer Portal integration:\n   - Create /api/billing/portal endpoint\n   - Redirect to Stripe-hosted portal for:\n     * Update payment method\n     * View invoices\n     * Download receipts\n     * Cancel subscription\n   \n   ```typescript\n   const portalSession = await stripe.billingPortal.sessions.create({\n     customer: user.stripe_customer_id,\n     return_url: `${baseUrl}/dashboard/billing`,\n   });\n   ```\n\n4. Plan change flow:\n   - \"Change Plan\" button opens modal\n   - Show current vs. available plans\n   - Proration preview: \"You'll be charged £20 today for the upgrade\"\n   - Confirm and process via Stripe\n\n5. Cancellation flow:\n   - \"Cancel Subscription\" opens confirmation modal\n   - Show what they'll lose:\n     * \"You'll lose access to unlimited analyses\"\n     * \"Your historical data will be preserved\"\n   - Offer alternatives:\n     * Pause subscription (if supported)\n     * Downgrade to lower tier\n     * Contact support\n   - Retention offer: \"Stay for 50% off next month?\"\n   - Final confirmation → Cancel via Stripe\n\n6. Trial-specific UI:\n   - \"Trial ends in X days\" banner\n   - \"Add payment method to continue after trial\"\n   - Trial conversion reminder emails (Day 5, Day 7)\n\n7. Webhook handlers for plan changes:\n   - customer.subscription.updated → Update plan in database\n   - customer.subscription.deleted → Set plan to 'free'\n   - invoice.payment_failed → Show payment failed banner",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           13,
           14,
@@ -1215,7 +1215,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T13:59:47.306Z"
+      "updated": "2025-11-28T15:50:35.496Z"
     }
   }
 }
