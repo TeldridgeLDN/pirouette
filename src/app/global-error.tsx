@@ -71,6 +71,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 Try Again
               </button>
               
+              {/* eslint-disable-next-line @next/next/no-html-link-for-pages -- Global error renders outside router context */}
               <a 
                 href="/"
                 className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-slate-700 text-slate-200 rounded-lg font-medium hover:bg-slate-600 transition-colors"

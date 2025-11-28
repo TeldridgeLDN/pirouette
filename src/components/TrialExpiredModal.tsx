@@ -80,7 +80,7 @@ export default function TrialExpiredModal({ isOpen, onClose, onUpgrade }: TrialE
             </div>
             <h2 className="text-2xl font-bold text-slate-900">Your Trial Has Ended</h2>
             <p className="text-slate-600 mt-2">
-              Don't worry — your data is safe. Upgrade to continue using Pro features.
+              Don&apos;t worry — your data is safe. Upgrade to continue using Pro features.
             </p>
           </div>
 

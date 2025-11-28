@@ -198,7 +198,7 @@ export default function BillingClient({ subscriptionInfo }: BillingClientProps) 
             <div className="flex-1">
               <p className="font-medium text-red-900">Payment failed</p>
               <p className="text-sm text-red-700">
-                We couldn't process your latest payment. Please update your payment method to continue using Pro features.
+                We couldn&apos;t process your latest payment. Please update your payment method to continue using Pro features.
               </p>
             </div>
             <button

@@ -85,7 +85,7 @@ function PricingHero({
         {/* Subheadline */}
         <p className="text-lg sm:text-xl text-slate-600 mb-8 max-w-2xl mx-auto">
           Start free, upgrade when you need more. Design audits cost £500-5,000 — 
-          we're 96% cheaper with better data.
+          we&apos;re 96% cheaper with better data.
         </p>
         
         {/* Billing Toggle */}
@@ -630,7 +630,7 @@ function FinalCTA({ isLoggedIn }: { isLoggedIn: boolean }) {
           Ready to Improve Your Conversions?
         </h2>
         <p className="text-lg text-slate-300 mb-8 max-w-2xl mx-auto">
-          Join founders who've improved their landing pages with data-driven recommendations.
+          Join founders who&apos;ve improved their landing pages with data-driven recommendations.
         </p>
         
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
