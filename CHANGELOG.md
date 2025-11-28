@@ -5,6 +5,15 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Railway Cron Jobs for Recurring Tasks** (Task 18)
+  - Cron job framework with `cron` library
+  - `refresh-patterns` job (daily at 3am UTC) - validates pattern library
+  - `retry-failed` job (every 30 min) - retries failed analysis jobs
+  - `cleanup-stale` job (every hour) - handles stuck jobs
+  - Manual trigger endpoint: `POST /cron/run/:jobName`
+  - Graceful shutdown stops all cron jobs
+  - Configurable via `ENABLE_CRON` environment variable
+
 - **Failed Payments and Dunning Flow** (Task 47)
   - `PaymentFailedBanner` component with urgency levels
   - Stripe webhook updates for `invoice.payment_failed` and `invoice.payment_succeeded`

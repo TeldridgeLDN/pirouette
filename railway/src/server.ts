@@ -21,6 +21,7 @@ import {
   closeConnection,
   type AnalysisJobData,
 } from './queue/config';
+import { initCronJobs, stopCronJobs, runJobManually } from './cron';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -213,18 +214,62 @@ app.post('/queue/retry/:jobId', async (req, res) => {
 });
 
 // ============================================================================
+// Cron Job Endpoints (Admin)
+// ============================================================================
+
+app.post('/cron/run/:jobName', async (req, res) => {
+  const { jobName } = req.params;
+  
+  if (!['refresh', 'retry', 'cleanup'].includes(jobName)) {
+    return res.status(400).json({
+      error: `Invalid job name: ${jobName}. Valid names: refresh, retry, cleanup`,
+    });
+  }
+  
+  try {
+    console.log(`[Server] Manually triggering cron job: ${jobName}`);
+    const result = await runJobManually(jobName as 'refresh' | 'retry' | 'cleanup');
+    
+    res.status(200).json({
+      success: true,
+      job: jobName,
+      result,
+    });
+  } catch (error) {
+    console.error(`[Server] Cron job ${jobName} failed:`, error);
+    res.status(500).json({
+      error: `Cron job failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+    });
+  }
+});
+
+// ============================================================================
 // Server Lifecycle
 // ============================================================================
+
+const ENABLE_CRON = process.env.ENABLE_CRON !== 'false'; // Default to enabled
 
 const server = app.listen(PORT, () => {
   console.log(`[Server] Railway worker listening on port ${PORT}`);
   console.log(`[Server] Mode: ${queue ? 'queue' : 'direct'}`);
   console.log(`[Server] Health check: http://localhost:${PORT}/health`);
+  
+  // Initialize cron jobs
+  if (ENABLE_CRON) {
+    initCronJobs();
+  } else {
+    console.log('[Server] Cron jobs disabled via ENABLE_CRON=false');
+  }
 });
 
 // Graceful shutdown
 async function gracefulShutdown(signal: string): Promise<void> {
   console.log(`\n[Server] Received ${signal}, shutting down...`);
+  
+  // Stop cron jobs first
+  if (ENABLE_CRON) {
+    stopCronJobs();
+  }
   
   server.close(async () => {
     console.log('[Server] HTTP server closed');
