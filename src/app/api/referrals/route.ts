@@ -9,6 +9,25 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
 
+// Types for Supabase query results (not in generated types yet)
+interface UserRow {
+  id: string;
+  referral_code: string | null;
+  referral_rewards_earned: number | null;
+  referral_rewards_used: number | null;
+  clerk_id: string;
+  referred_by: string | null;
+}
+
+interface ReferralRow {
+  id: string;
+  status: string;
+  referee_email: string | null;
+  created_at: string;
+  signed_up_at: string | null;
+  upgraded_at: string | null;
+}
+
 // ============================================================================
 // GET - Get user's referral data
 // ============================================================================
@@ -24,22 +43,26 @@ export async function GET() {
     const supabase = supabaseAdmin;
     
     // Get user's referral code and stats
-    const { data: user, error: userError } = await supabase
+    const { data: userData, error: userError } = await supabase
       .from('users')
       .select('id, referral_code, referral_rewards_earned, referral_rewards_used')
       .eq('clerk_id', userId)
       .single();
+    
+    const user = userData as UserRow | null;
     
     if (userError || !user) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
     
     // Get referral stats
-    const { data: referrals, error: referralsError } = await supabase
+    const { data: referralsData, error: referralsError } = await supabase
       .from('referrals')
       .select('id, status, referee_email, created_at, signed_up_at, upgraded_at')
       .eq('referrer_id', user.id)
       .order('created_at', { ascending: false });
+    
+    const referrals = (referralsData as ReferralRow[] | null) || [];
     
     if (referralsError) {
       console.error('Error fetching referrals:', referralsError);
@@ -47,9 +70,9 @@ export async function GET() {
     
     // Calculate stats
     const stats = {
-      totalSignups: referrals?.filter(r => ['signed_up', 'upgraded', 'rewarded'].includes(r.status)).length || 0,
-      totalUpgrades: referrals?.filter(r => ['upgraded', 'rewarded'].includes(r.status)).length || 0,
-      pendingRewards: referrals?.filter(r => r.status === 'upgraded').length || 0,
+      totalSignups: referrals.filter(r => ['signed_up', 'upgraded', 'rewarded'].includes(r.status)).length,
+      totalUpgrades: referrals.filter(r => ['upgraded', 'rewarded'].includes(r.status)).length,
+      pendingRewards: referrals.filter(r => r.status === 'upgraded').length,
       earnedRewards: user.referral_rewards_earned || 0,
       usedRewards: user.referral_rewards_used || 0,
       availableRewards: (user.referral_rewards_earned || 0) - (user.referral_rewards_used || 0),
@@ -63,7 +86,7 @@ export async function GET() {
       referralCode: user.referral_code,
       referralUrl,
       stats,
-      referrals: referrals || [],
+      referrals,
     });
     
   } catch (error) {
@@ -79,24 +102,26 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { action, referralCode, email } = body;
+    const { action, referralCode } = body;
     
     const supabase = supabaseAdmin;
     
     if (action === 'track_click') {
       // Track a referral link click (anonymous)
-      const { data: referrer } = await supabase
+      const { data: referrerData } = await supabase
         .from('users')
         .select('id')
         .eq('referral_code', referralCode)
         .single();
+      
+      const referrer = referrerData as { id: string } | null;
       
       if (referrer) {
         await supabase.from('referral_clicks').insert({
           referral_code: referralCode,
           referrer_id: referrer.id,
           user_agent: request.headers.get('user-agent') || null,
-        });
+        } as Record<string, unknown>);
       }
       
       return NextResponse.json({ success: true });
@@ -111,22 +136,26 @@ export async function POST(request: NextRequest) {
       }
       
       // Get the referrer
-      const { data: referrer, error: referrerError } = await supabase
+      const { data: referrerData, error: referrerError } = await supabase
         .from('users')
         .select('id, referral_code')
         .eq('referral_code', referralCode)
         .single();
+      
+      const referrer = referrerData as { id: string; referral_code: string } | null;
       
       if (referrerError || !referrer) {
         return NextResponse.json({ error: 'Invalid referral code' }, { status: 400 });
       }
       
       // Get the new user (referee)
-      const { data: referee, error: refereeError } = await supabase
+      const { data: refereeData, error: refereeError } = await supabase
         .from('users')
         .select('id, referred_by')
         .eq('clerk_id', userId)
         .single();
+      
+      const referee = refereeData as { id: string; referred_by: string | null } | null;
       
       if (refereeError || !referee) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -145,7 +174,7 @@ export async function POST(request: NextRequest) {
       // Update referee with referrer
       await supabase
         .from('users')
-        .update({ referred_by: referrer.id })
+        .update({ referred_by: referrer.id } as Record<string, unknown>)
         .eq('id', referee.id);
       
       // Create referral record
@@ -155,7 +184,7 @@ export async function POST(request: NextRequest) {
         referral_code: referralCode,
         status: 'signed_up',
         signed_up_at: new Date().toISOString(),
-      });
+      } as Record<string, unknown>);
       
       return NextResponse.json({ 
         success: true,
@@ -170,4 +199,3 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
-
