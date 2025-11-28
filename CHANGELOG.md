@@ -5,6 +5,14 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Product Hunt Launch Preparation** (Task 25)
+  - Special landing page `/welcome/producthunt` with 20% off offer
+  - `ProductHuntBanner` component for site-wide PH visitor detection
+  - UTM and localStorage tracking for PH referrals
+  - Comprehensive launch documentation (`docs/product-hunt-launch.md`)
+  - Includes: PH listing copy, first comment, social media posts, FAQ
+  - Launch day checklist and success metrics
+
 - **Railway Cron Jobs for Recurring Tasks** (Task 18)
   - Cron job framework with `cron` library
   - `refresh-patterns` job (daily at 3am UTC) - validates pattern library
