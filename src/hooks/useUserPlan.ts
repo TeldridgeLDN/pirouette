@@ -24,6 +24,9 @@ export interface SubscriptionStatus {
   analysesThisMonth: number;
   hasStripeCustomer: boolean;
   hasPaymentMethod: boolean;
+  // Payment failure tracking
+  paymentStatus: 'active' | 'pending' | 'failed';
+  gracePeriodDaysRemaining: number | null;
 }
 
 export interface UserPlanHook {
@@ -44,6 +47,11 @@ export interface UserPlanHook {
   cancelAtPeriodEnd: boolean;
   hasStripeCustomer: boolean;
   hasPaymentMethod: boolean;
+  
+  // Payment failure info
+  paymentStatus: 'active' | 'pending' | 'failed';
+  gracePeriodDaysRemaining: number | null;
+  hasPaymentIssue: boolean;
   
   // Usage
   analysesThisMonth: number;
@@ -97,6 +105,8 @@ export function useUserPlan(): UserPlanHook {
             analysesThisMonth: apiData.analysesThisMonth || 0,
             hasStripeCustomer: !!apiData.stripeCustomerId,
             hasPaymentMethod: !!apiData.paymentMethod,
+            paymentStatus: apiData.paymentStatus || 'active',
+            gracePeriodDaysRemaining: apiData.gracePeriodDaysRemaining ?? null,
           });
         } else {
           throw new Error(result.error || 'Failed to fetch subscription');
@@ -112,6 +122,8 @@ export function useUserPlan(): UserPlanHook {
           analysesThisMonth: 0,
           hasStripeCustomer: false,
           hasPaymentMethod: false,
+          paymentStatus: 'active',
+          gracePeriodDaysRemaining: null,
         });
       }
     } catch (err) {
@@ -126,6 +138,8 @@ export function useUserPlan(): UserPlanHook {
         analysesThisMonth: 0,
         hasStripeCustomer: false,
         hasPaymentMethod: false,
+        paymentStatus: 'active',
+        gracePeriodDaysRemaining: null,
       });
     } finally {
       setIsLoading(false);
@@ -146,6 +160,8 @@ export function useUserPlan(): UserPlanHook {
   const trialDaysRemaining = getDaysRemaining(data?.trialEnd || null);
   const trialEnd = data?.trialEnd ? new Date(data.trialEnd) : null;
   const currentPeriodEnd = data?.currentPeriodEnd ? new Date(data.currentPeriodEnd) : null;
+  const paymentStatus = data?.paymentStatus || 'active';
+  const hasPaymentIssue = paymentStatus !== 'active';
 
   return {
     // Plan info
@@ -165,6 +181,11 @@ export function useUserPlan(): UserPlanHook {
     cancelAtPeriodEnd: data?.cancelAtPeriodEnd || false,
     hasStripeCustomer: data?.hasStripeCustomer || false,
     hasPaymentMethod: data?.hasPaymentMethod || false,
+    
+    // Payment failure info
+    paymentStatus,
+    gracePeriodDaysRemaining: data?.gracePeriodDaysRemaining ?? null,
+    hasPaymentIssue,
     
     // Usage
     analysesThisMonth: data?.analysesThisMonth || 0,

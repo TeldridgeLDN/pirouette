@@ -32,6 +32,10 @@ interface SubscriptionData {
   billingInterval: 'month' | 'year' | null;
   analysesThisMonth: number;
   stripeCustomerId: string | null;
+  // Payment failure tracking
+  paymentStatus: 'active' | 'pending' | 'failed';
+  paymentFailedAt: string | null;
+  gracePeriodDaysRemaining: number | null;
 }
 
 // ============================================================================
@@ -59,11 +63,13 @@ export async function GET(request: NextRequest) {
       stripe_customer_id: string | null;
       stripe_subscription_id: string | null;
       analyses_this_month: number;
+      payment_status: 'active' | 'pending' | 'failed' | null;
+      payment_failed_at: string | null;
     }
     
     const { data: user, error } = await supabase
       .from('users')
-      .select('id, plan, stripe_customer_id, stripe_subscription_id, analyses_this_month')
+      .select('id, plan, stripe_customer_id, stripe_subscription_id, analyses_this_month, payment_status, payment_failed_at')
       .eq('clerk_id', clerkUserId)
       .single() as { data: UserRow | null; error: Error | null };
     
@@ -72,6 +78,17 @@ export async function GET(request: NextRequest) {
         { success: false, error: 'User not found' },
         { status: 404 }
       );
+    }
+    
+    // Calculate grace period days remaining (7 day grace period)
+    const GRACE_PERIOD_DAYS = 7;
+    let gracePeriodDaysRemaining: number | null = null;
+    
+    if (user.payment_status === 'pending' && user.payment_failed_at) {
+      const failedDate = new Date(user.payment_failed_at);
+      const gracePeriodEnd = new Date(failedDate.getTime() + GRACE_PERIOD_DAYS * 24 * 60 * 60 * 1000);
+      const now = new Date();
+      gracePeriodDaysRemaining = Math.max(0, Math.ceil((gracePeriodEnd.getTime() - now.getTime()) / (24 * 60 * 60 * 1000)));
     }
     
     // 3. Build base response for free users
@@ -87,6 +104,9 @@ export async function GET(request: NextRequest) {
       billingInterval: null,
       analysesThisMonth: user.analyses_this_month || 0,
       stripeCustomerId: user.stripe_customer_id,
+      paymentStatus: user.payment_status || 'active',
+      paymentFailedAt: user.payment_failed_at,
+      gracePeriodDaysRemaining,
     };
     
     // 4. If no Stripe customer, return free tier info
@@ -150,6 +170,9 @@ export async function GET(request: NextRequest) {
       billingInterval: price?.recurring?.interval as 'month' | 'year' | null,
       analysesThisMonth: user.analyses_this_month || 0,
       stripeCustomerId: user.stripe_customer_id,
+      paymentStatus: user.payment_status || 'active',
+      paymentFailedAt: user.payment_failed_at,
+      gracePeriodDaysRemaining,
     };
     
     return NextResponse.json({

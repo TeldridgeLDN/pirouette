@@ -1133,7 +1133,7 @@
         "description": "Implement payment failure handling including grace periods, dunning emails, payment update prompts, and automatic downgrade after failed recovery attempts.",
         "details": "When a subscription payment fails, we need to gracefully handle recovery.\n\nImplementation:\n1. Payment failure detection (webhook):\n   - invoice.payment_failed → Trigger dunning flow\n   - Store failure count and last attempt date\n   - Update user status to 'payment_pending'\n\n2. Grace period:\n   - 7 days to recover payment\n   - Pro access maintained during grace\n   - Show warning banner in dashboard:\n     \"⚠️ Payment failed. Please update your payment method to continue Pro access.\"\n\n3. Dashboard warning banner:\n   ```tsx\n   <PaymentFailedBanner\n     daysRemaining={5}\n     onUpdatePayment={() => openBillingPortal()}\n   />\n   ```\n\n4. Dunning email sequence:\n   - Day 0: \"Payment failed - update your card\"\n   - Day 3: \"Action required - Pro access ending soon\"\n   - Day 6: \"Final warning - Pro access ends tomorrow\"\n   - Day 7: \"Your Pro access has been suspended\"\n\n5. Email template content:\n   ```\n   Subject: Action required: Update your payment method\n   \n   Hi [Name],\n   \n   We couldn't process your payment of £29 for Pirouette Pro.\n   \n   Your Pro access will continue for 7 more days while you \n   update your payment method.\n   \n   [Update Payment Method →]\n   \n   If you have any questions, reply to this email.\n   ```\n\n6. Automatic downgrade:\n   - After 7 days, set plan to 'payment_failed'\n   - Remove Pro feature access\n   - Keep data intact\n   - Show recovery CTA prominently\n\n7. Recovery flow:\n   - User updates payment method via Stripe Portal\n   - invoice.payment_succeeded → Restore Pro access\n   - Send \"Welcome back\" confirmation email\n   - Reset failure count\n\n8. Stripe retry settings:\n   - Configure Smart Retries in Stripe Dashboard\n   - 3 retry attempts over 7 days\n   - Final attempt on day 7\n\n9. Database tracking:\n   - payment_status: 'active' | 'pending' | 'failed'\n   - payment_failed_at: timestamp\n   - payment_retry_count: number\n   - last_payment_attempt: timestamp",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           13,
           23,
@@ -1215,7 +1215,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T16:18:58.516Z"
+      "updated": "2025-11-28T16:23:09.200Z"
     }
   }
 }

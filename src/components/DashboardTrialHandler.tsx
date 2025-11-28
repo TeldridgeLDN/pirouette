@@ -14,6 +14,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import TrialWelcomeModal from './TrialWelcomeModal';
 import TrialExpiredModal from './TrialExpiredModal';
 import TrialEndingPrompt from './TrialEndingPrompt';
+import PaymentFailedBanner from './PaymentFailedBanner';
 import { useUserPlan } from '@/hooks/useUserPlan';
 
 interface DashboardTrialHandlerProps {
@@ -23,7 +24,17 @@ interface DashboardTrialHandlerProps {
 export default function DashboardTrialHandler({ children }: DashboardTrialHandlerProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { isPro, isTrialing, trialDaysRemaining, trialEnd, status, isLoading, hasPaymentMethod } = useUserPlan();
+  const { 
+    isPro, 
+    isTrialing, 
+    trialDaysRemaining, 
+    trialEnd, 
+    status, 
+    isLoading, 
+    hasPaymentMethod,
+    hasPaymentIssue,
+    gracePeriodDaysRemaining,
+  } = useUserPlan();
   
   const [showWelcome, setShowWelcome] = useState(false);
   const [showExpired, setShowExpired] = useState(false);
@@ -81,13 +92,37 @@ export default function DashboardTrialHandler({ children }: DashboardTrialHandle
     setShowExpired(false);
   };
 
-  // Don't render trial-ending prompt while loading
+  // Don't render prompts while loading
   const shouldShowEndingPrompt = !isLoading && isTrialing && trialDaysRemaining <= 2;
+  const shouldShowPaymentBanner = !isLoading && hasPaymentIssue && gracePeriodDaysRemaining !== null;
+
+  // Handle opening billing portal for payment update
+  const handleUpdatePayment = async () => {
+    try {
+      const response = await fetch('/api/billing-portal', { method: 'POST' });
+      const data = await response.json();
+      if (data.success && data.url) {
+        window.location.href = data.url;
+      }
+    } catch (err) {
+      console.error('Error opening billing portal:', err);
+    }
+  };
 
   return (
     <>
+      {/* Payment failed banner - highest priority */}
+      {shouldShowPaymentBanner && (
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-6">
+          <PaymentFailedBanner
+            daysRemaining={gracePeriodDaysRemaining || 0}
+            onUpdatePayment={handleUpdatePayment}
+          />
+        </div>
+      )}
+
       {/* Trial ending prompt - rendered above children when trial is ending */}
-      {shouldShowEndingPrompt && (
+      {shouldShowEndingPrompt && !shouldShowPaymentBanner && (
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-6">
           <TrialEndingPrompt
             daysRemaining={trialDaysRemaining}

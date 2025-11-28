@@ -5,6 +5,15 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Failed Payments and Dunning Flow** (Task 47)
+  - `PaymentFailedBanner` component with urgency levels
+  - Stripe webhook updates for `invoice.payment_failed` and `invoice.payment_succeeded`
+  - Database migration `005_payment_status.sql` for tracking payment failures
+  - Grace period tracking (7 days / 3 retries before suspension)
+  - Automatic Pro access suspension after failed grace period
+  - Payment recovery restores full access immediately
+  - Dashboard integration shows banner when payment issues exist
+
 - **Subscription Cancellation Flow** (Task 46)
   - `/api/subscription/cancel` endpoint for scheduling cancellations
   - CancellationModal with reason survey and retention offers

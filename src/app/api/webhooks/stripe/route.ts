@@ -225,14 +225,10 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 
 /**
  * Handle successful payment
+ * Clears any payment failure state and restores access
  */
 async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   console.log('Payment succeeded:', invoice.id);
-  
-  // Could be used for:
-  // - Sending receipt emails
-  // - Updating payment history
-  // - Resetting any "past due" flags
   
   const customerId = typeof invoice.customer === 'string' 
     ? invoice.customer 
@@ -242,48 +238,116 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   
   const supabase = supabaseAdmin;
   
-  // Ensure user is on correct plan after successful payment
   // Note: In newer Stripe API versions, subscription might be an object or string
   const invoiceData = invoice as unknown as { subscription?: string | { id?: string } };
   const subscriptionId = typeof invoiceData.subscription === 'string'
     ? invoiceData.subscription
     : invoiceData.subscription?.id;
-    
+  
+  // Update user: clear payment failure state and ensure subscription is linked
+  const updateData: Record<string, unknown> = {
+    payment_status: 'active',
+    payment_failed_at: null,
+    payment_retry_count: 0,
+    last_payment_attempt: new Date().toISOString(),
+  };
+  
   if (subscriptionId) {
-    const { error } = await supabase
-      .from('users')
-      .update({
-        stripe_subscription_id: subscriptionId,
-      } as never)
-      .eq('stripe_customer_id', customerId);
-    
-    if (error) {
-      console.error('Error updating user after payment:', error);
-    }
+    updateData.stripe_subscription_id = subscriptionId;
+  }
+  
+  const { error } = await supabase
+    .from('users')
+    .update(updateData as never)
+    .eq('stripe_customer_id', customerId);
+  
+  if (error) {
+    console.error('Error updating user after payment:', error);
+  } else {
+    console.log(`Payment recovered for customer ${customerId}`);
   }
 }
 
 /**
  * Handle failed payment
+ * Updates payment status and tracks retry attempts
+ * After grace period (7 days / ~3 retries), suspends Pro access
  */
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   console.log('Payment failed:', invoice.id);
   
-  // Could be used for:
-  // - Sending dunning emails
-  // - Updating user status to "past_due"
-  // - Restricting access after X failed attempts
+  const customerId = typeof invoice.customer === 'string'
+    ? invoice.customer
+    : (invoice.customer as { id?: string })?.id;
   
-  const customerId = invoice.customer as string;
+  if (!customerId) {
+    console.error('No customer ID in failed invoice');
+    return;
+  }
   
-  if (!customerId) return;
+  const supabase = supabaseAdmin;
   
-  // For now, just log the failure
-  // In production, you might want to:
-  // 1. Send an email to the user
-  // 2. Show a banner in the app
-  // 3. Downgrade after multiple failures
+  // Get current user state
+  interface UserPaymentState {
+    id: string;
+    email: string;
+    payment_status: string | null;
+    payment_retry_count: number | null;
+    payment_failed_at: string | null;
+  }
   
-  console.warn(`Payment failed for customer ${customerId}`);
+  const { data: user, error: findError } = await supabase
+    .from('users')
+    .select('id, email, payment_status, payment_retry_count, payment_failed_at')
+    .eq('stripe_customer_id', customerId)
+    .single() as { data: UserPaymentState | null; error: Error | null };
+  
+  if (findError || !user) {
+    console.error('Could not find user for failed payment:', customerId);
+    return;
+  }
+  
+  const currentRetryCount = (user.payment_retry_count || 0) + 1;
+  const now = new Date().toISOString();
+  
+  // Determine new payment status
+  // - First failure: 'pending' (grace period starts)
+  // - After 3 failures (~7 days with Stripe Smart Retries): 'failed' (suspend access)
+  const GRACE_PERIOD_RETRIES = 3;
+  const newStatus = currentRetryCount >= GRACE_PERIOD_RETRIES ? 'failed' : 'pending';
+  
+  // Update user payment state
+  const updateData: Record<string, unknown> = {
+    payment_status: newStatus,
+    payment_retry_count: currentRetryCount,
+    last_payment_attempt: now,
+  };
+  
+  // Only set payment_failed_at on first failure
+  if (!user.payment_failed_at) {
+    updateData.payment_failed_at = now;
+  }
+  
+  // If access is being suspended, downgrade plan
+  if (newStatus === 'failed') {
+    updateData.plan = 'free';
+    console.warn(`Suspending Pro access for user ${user.id} after ${currentRetryCount} failed payments`);
+  }
+  
+  const { error: updateError } = await supabase
+    .from('users')
+    .update(updateData as never)
+    .eq('id', user.id);
+  
+  if (updateError) {
+    console.error('Error updating user payment status:', updateError);
+  } else {
+    console.log(`Payment failure recorded for ${user.email}: attempt ${currentRetryCount}, status ${newStatus}`);
+  }
+  
+  // TODO: Send dunning email based on retry count
+  // - Attempt 1: "Payment failed - update your card"
+  // - Attempt 2: "Action required - Pro access ending soon"
+  // - Attempt 3: "Your Pro access has been suspended"
 }
 
