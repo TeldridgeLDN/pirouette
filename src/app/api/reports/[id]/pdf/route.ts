@@ -163,8 +163,8 @@ export async function GET(
     const dateStr = new Date(report.created_at).toISOString().split('T')[0];
     const filename = `pirouette-report-${urlHostname}-${dateStr}.pdf`;
     
-    // 9. Return PDF response
-    return new NextResponse(pdfBuffer, {
+    // 9. Return PDF response (convert Buffer to Uint8Array for NextResponse)
+    return new NextResponse(new Uint8Array(pdfBuffer), {
       status: 200,
       headers: {
         'Content-Type': 'application/pdf',
