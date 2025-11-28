@@ -157,8 +157,8 @@ export async function POST(request: NextRequest) {
     }
     
     // Update referral status
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from('referrals') as any)
+    // @ts-expect-error - Supabase types not generated for referrals table
+    await supabase.from('referrals')
       .update({
         status: 'rewarded',
         reward_applied: rewardApplied,
@@ -168,8 +168,8 @@ export async function POST(request: NextRequest) {
       .eq('id', referral.id);
     
     // Increment referrer's reward count
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (supabase.from('users') as any)
+    // @ts-expect-error - Supabase types not generated for users table
+    await supabase.from('users')
       .update({
         referral_rewards_earned: (referrer.referral_rewards_earned || 0) + 1,
       })
