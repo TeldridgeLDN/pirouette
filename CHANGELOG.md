@@ -5,6 +5,16 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **PDF Export Feature for Pro Users** (Task 44)
+  - `/api/reports/[id]/pdf` endpoint with Pro gating
+  - Professional PDF template with Pirouette branding
+  - Overall score with color-coded rating
+  - Dimension breakdown table with scores
+  - Top 5 recommendations with priority/effort labels
+  - Automatic filename based on URL and date
+  - Export button in report header (locked for free users)
+  - Loading state during PDF generation
+
 - **Historical Tracking for Pro Users** (Task 43)
   - `/api/reports/history` endpoint with URL normalization
   - HistoricalTracking component with bar chart trend visualization

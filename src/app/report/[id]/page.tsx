@@ -563,6 +563,7 @@ export default function ReportPage({ params }: PageProps) {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [claimStatus, setClaimStatus] = useState<'idle' | 'claiming' | 'claimed' | 'error'>('idle');
   const [roiFilter, setRoiFilter] = useState<ROIFilterType>('all');
+  const [isExportingPDF, setIsExportingPDF] = useState(false);
   
   // Resolve params
   useEffect(() => {
@@ -609,6 +610,48 @@ export default function ReportPage({ params }: PageProps) {
       claimReport();
     }
   }, [searchParams, reportId, claimReport]);
+  
+  // Download PDF report (Pro feature)
+  const downloadPDF = useCallback(async () => {
+    if (!reportId || isExportingPDF) return;
+    
+    setIsExportingPDF(true);
+    
+    try {
+      const response = await fetch(`/api/reports/${reportId}/pdf`);
+      
+      if (response.status === 403) {
+        // User is not Pro - show upgrade prompt
+        alert('PDF export is a Pro feature. Upgrade to download reports.');
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error('Failed to generate PDF');
+      }
+      
+      // Get the blob and trigger download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      
+      // Get filename from Content-Disposition header or use default
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filenameMatch = contentDisposition?.match(/filename="(.+)"/);
+      link.download = filenameMatch ? filenameMatch[1] : 'pirouette-report.pdf';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Error downloading PDF:', err);
+      alert('Failed to download PDF. Please try again.');
+    } finally {
+      setIsExportingPDF(false);
+    }
+  }, [reportId, isExportingPDF]);
   
   // Fetch report
   useEffect(() => {
@@ -740,6 +783,44 @@ export default function ReportPage({ params }: PageProps) {
                   className="text-sm font-medium text-emerald-600 hover:text-emerald-700"
                 >
                   ✓ Saved to Dashboard
+                </Link>
+              )}
+              {/* PDF Export (Pro feature) */}
+              {!report.isAnonymous && isPro && (
+                <button
+                  onClick={downloadPDF}
+                  disabled={isExportingPDF}
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors disabled:opacity-50"
+                >
+                  {isExportingPDF ? (
+                    <>
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                      </svg>
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Export PDF
+                    </>
+                  )}
+                </button>
+              )}
+              {/* Locked PDF for free users */}
+              {!report.isAnonymous && !isPro && (
+                <Link
+                  href="/pricing"
+                  className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-600 transition-colors"
+                  title="PDF export requires Pro plan"
+                >
+                  <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                  Export PDF
                 </Link>
               )}
               <Link 
