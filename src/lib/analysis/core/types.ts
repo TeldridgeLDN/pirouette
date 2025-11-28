@@ -298,6 +298,17 @@ export interface SuccessMetrics {
   improvementRange: string; // Expected improvement (e.g., "15-25%")
   visitorThreshold: number; // Minimum weekly visitors for reliable measurement
   measurementPeriod: string; // How long to measure (e.g., "2 weeks")
+  measurementTips?: string; // Specific guidance on how to track the change
+  target?: string; // Specific metric target (e.g., "Increase CTR from 2% to 2.5-3%")
+  confidence?: 'low' | 'medium' | 'high'; // Confidence in the estimate
+  milestones?: ValidationMilestone[]; // Timeline milestones for tracking
+}
+
+export interface ValidationMilestone {
+  name: string; // e.g., "Implement Change", "Collect Data", "Compare Results"
+  description: string;
+  duration: string; // e.g., "Day 1", "Week 1-2", "Week 3"
+  status?: 'pending' | 'current' | 'completed';
 }
 
 // ============================================================================

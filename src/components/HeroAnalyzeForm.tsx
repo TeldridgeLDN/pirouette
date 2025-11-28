@@ -87,6 +87,8 @@ export default function HeroAnalyzeForm({ className = '' }: HeroAnalyzeFormProps
   
   // Form state
   const [url, setUrl] = useState('');
+  const [weeklyTraffic, setWeeklyTraffic] = useState('');
+  const [showTrafficField, setShowTrafficField] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [rateLimitInfo, setRateLimitInfo] = useState<{ message: string; resetAt?: string } | null>(null);
@@ -108,12 +110,18 @@ export default function HeroAnalyzeForm({ className = '' }: HeroAnalyzeFormProps
     setIsLoading(true);
     
     try {
+      // Parse traffic if provided
+      const traffic = weeklyTraffic ? parseInt(weeklyTraffic, 10) : undefined;
+      
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url: validation.normalized }),
+        body: JSON.stringify({ 
+          url: validation.normalized,
+          weeklyTraffic: traffic && !isNaN(traffic) && traffic > 0 ? traffic : undefined,
+        }),
       });
       
       const data: ApiResponse = await response.json();
@@ -269,6 +277,44 @@ export default function HeroAnalyzeForm({ className = '' }: HeroAnalyzeFormProps
           </div>
         )}
       </form>
+      
+      {/* Optional Traffic Input Toggle */}
+      <div className="mt-4">
+        {!showTrafficField ? (
+          <button
+            type="button"
+            onClick={() => setShowTrafficField(true)}
+            className="text-sm text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1 mx-auto"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+            Add traffic data for personalised recommendations
+          </button>
+        ) : (
+          <div className="max-w-md mx-auto">
+            <label className="block text-sm font-medium text-slate-700 mb-1">
+              Weekly visitors (optional)
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                value={weeklyTraffic}
+                onChange={(e) => setWeeklyTraffic(e.target.value)}
+                placeholder="e.g., 1000"
+                min="0"
+                className="w-full px-4 py-2 rounded-lg border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
+                /week
+              </div>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              📊 Helps us give you realistic validation timelines and testing strategies
+            </p>
+          </div>
+        )}
+      </div>
       
       {/* Helper Text */}
       <p className="mt-4 text-sm text-slate-500 text-center">

@@ -1,33 +1,118 @@
 /**
  * Railway Express Server
- * Handles analysis job requests and health checks
+ * 
+ * HTTP server for:
+ * - Receiving analysis job requests
+ * - Health checks
+ * - Queue status monitoring
+ * 
+ * Jobs are added to the BullMQ queue for processing by the worker.
+ * In development mode, can also process jobs directly without Redis.
  */
 
+import 'dotenv/config';
 import express from 'express';
 import { analyzeWebsite, validateUrl } from './analyzer';
+import {
+  createAnalysisQueue,
+  addAnalysisJob,
+  getQueueStats,
+  closeQueue,
+  closeConnection,
+  type AnalysisJobData,
+} from './queue/config';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+const USE_QUEUE = process.env.USE_QUEUE !== 'false'; // Default to using queue
 
 app.use(express.json());
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.status(200).json({
+// Initialize queue if enabled
+let queue: ReturnType<typeof createAnalysisQueue> | null = null;
+
+if (USE_QUEUE) {
+  try {
+    queue = createAnalysisQueue();
+    console.log('[Server] Queue mode enabled');
+  } catch (error) {
+    console.warn('[Server] Failed to initialize queue, falling back to direct mode:', error);
+  }
+}
+
+// ============================================================================
+// Health Check
+// ============================================================================
+
+app.get('/health', async (req, res) => {
+  const status: {
+    status: string;
+    service: string;
+    timestamp: string;
+    mode: string;
+    queue?: {
+      waiting: number;
+      active: number;
+      completed: number;
+      failed: number;
+      delayed: number;
+    };
+  } = {
     status: 'healthy',
     service: 'pirouette-analysis-worker',
     timestamp: new Date().toISOString(),
-  });
+    mode: queue ? 'queue' : 'direct',
+  };
+  
+  // Add queue stats if available
+  if (queue) {
+    try {
+      status.queue = await getQueueStats(queue);
+    } catch (error) {
+      console.error('[Server] Failed to get queue stats:', error);
+    }
+  }
+  
+  res.status(200).json(status);
 });
 
-// Analysis endpoint (will be called by BullMQ worker in production)
+// ============================================================================
+// Queue Status Endpoint
+// ============================================================================
+
+app.get('/queue/stats', async (req, res) => {
+  if (!queue) {
+    return res.status(503).json({
+      error: 'Queue not available',
+      mode: 'direct',
+    });
+  }
+  
+  try {
+    const stats = await getQueueStats(queue);
+    res.status(200).json({
+      success: true,
+      stats,
+    });
+  } catch (error) {
+    console.error('[Server] Failed to get queue stats:', error);
+    res.status(500).json({
+      error: 'Failed to get queue stats',
+    });
+  }
+});
+
+// ============================================================================
+// Analysis Endpoint
+// ============================================================================
+
 app.post('/analyze', async (req, res) => {
   try {
-    const { jobId, url, userId } = req.body;
+    const { jobId, url, userId, weeklyTraffic } = req.body;
 
-    if (!jobId || !url || !userId) {
+    if (!jobId || !url) {
       return res.status(400).json({
-        error: 'Missing required fields: jobId, url, userId',
+        error: 'Missing required fields: jobId, url',
       });
     }
 
@@ -39,11 +124,32 @@ app.post('/analyze', async (req, res) => {
       });
     }
 
-    // Run analysis
+    // If queue is available, add job to queue
+    if (queue) {
+      const jobData: AnalysisJobData = {
+        jobId,
+        url,
+        userId: userId || 'anonymous',
+        weeklyTraffic,
+        createdAt: new Date().toISOString(),
+      };
+      
+      await addAnalysisJob(queue, jobData);
+      
+      return res.status(202).json({
+        success: true,
+        message: 'Job queued for processing',
+        jobId,
+        mode: 'queued',
+      });
+    }
+
+    // Direct processing mode (development without Redis)
+    console.log('[Server] Processing job directly (no queue)');
+    
     const report = await analyzeWebsite(
-      { jobId, url, userId },
+      { jobId, url, userId: userId || 'anonymous' },
       async (progress) => {
-        // In production, this would update Supabase
         console.log('[Server] Progress:', progress);
       }
     );
@@ -51,6 +157,7 @@ app.post('/analyze', async (req, res) => {
     res.status(200).json({
       success: true,
       report,
+      mode: 'direct',
     });
 
   } catch (error) {
@@ -61,13 +168,84 @@ app.post('/analyze', async (req, res) => {
   }
 });
 
-// Start server
-app.listen(PORT, () => {
+// ============================================================================
+// Manual Job Retry (Admin)
+// ============================================================================
+
+app.post('/queue/retry/:jobId', async (req, res) => {
+  if (!queue) {
+    return res.status(503).json({
+      error: 'Queue not available',
+    });
+  }
+  
+  const { jobId } = req.params;
+  
+  try {
+    const job = await queue.getJob(jobId);
+    
+    if (!job) {
+      return res.status(404).json({
+        error: 'Job not found',
+      });
+    }
+    
+    // Move to waiting state if failed
+    const state = await job.getState();
+    if (state === 'failed') {
+      await job.retry();
+      return res.status(200).json({
+        success: true,
+        message: 'Job queued for retry',
+      });
+    }
+    
+    res.status(400).json({
+      error: `Cannot retry job in state: ${state}`,
+    });
+    
+  } catch (error) {
+    console.error('[Server] Retry error:', error);
+    res.status(500).json({
+      error: 'Failed to retry job',
+    });
+  }
+});
+
+// ============================================================================
+// Server Lifecycle
+// ============================================================================
+
+const server = app.listen(PORT, () => {
   console.log(`[Server] Railway worker listening on port ${PORT}`);
+  console.log(`[Server] Mode: ${queue ? 'queue' : 'direct'}`);
   console.log(`[Server] Health check: http://localhost:${PORT}/health`);
 });
 
+// Graceful shutdown
+async function gracefulShutdown(signal: string): Promise<void> {
+  console.log(`\n[Server] Received ${signal}, shutting down...`);
+  
+  server.close(async () => {
+    console.log('[Server] HTTP server closed');
+    
+    if (queue) {
+      await closeQueue(queue);
+      await closeConnection();
+    }
+    
+    console.log('[Server] Shutdown complete');
+    process.exit(0);
+  });
+  
+  // Force exit after 30 seconds
+  setTimeout(() => {
+    console.error('[Server] Forced shutdown after timeout');
+    process.exit(1);
+  }, 30000);
+}
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+
 export default app;
-
-
-

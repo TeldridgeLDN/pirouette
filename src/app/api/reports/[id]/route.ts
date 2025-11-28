@@ -21,12 +21,17 @@ import {
   getQuickWinRecommendations,
   getRecommendationsByDimension,
 } from '@/lib/analysis/recommendation-engine/storage';
+import { 
+  validateReportQuality,
+  type QualityValidationResult,
+} from '@/lib/analysis/utils/quality-validator';
+import type { AnalysisReport, Recommendation } from '@/lib/analysis/core/types';
 
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
 
-// Extended report type with ip_address
+// Extended report type with ip_address and traffic data
 interface ReportWithIp {
   id: string;
   user_id: string | null;
@@ -47,6 +52,11 @@ interface ReportWithIp {
   analysis_time?: number;
   version?: string;
   created_at: string;
+  weekly_traffic?: number | null;
+}
+
+interface JobWithTraffic {
+  weekly_traffic?: number | null;
 }
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
@@ -75,6 +85,20 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         { success: false, error: 'Report not found' },
         { status: 404 }
       );
+    }
+    
+    // Fetch weekly_traffic from the associated job if not in report
+    let weeklyTraffic = report.weekly_traffic;
+    if (!weeklyTraffic && report.job_id) {
+      const { data: job } = await supabase
+        .from('jobs')
+        .select('weekly_traffic')
+        .eq('id', report.job_id)
+        .single() as { data: JobWithTraffic | null; error: Error | null };
+      
+      if (job?.weekly_traffic) {
+        weeklyTraffic = job.weekly_traffic;
+      }
     }
     
     // Determine if this is an anonymous report
@@ -141,6 +165,37 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       }
     }
     
+    // Run quality validation
+    const includeQuality = searchParams.get('includeQuality') !== 'false';
+    let qualityValidation: QualityValidationResult | undefined;
+    
+    if (includeQuality) {
+      // Build AnalysisReport structure for validation
+      const analysisReport: AnalysisReport = {
+        id: report.id,
+        url: report.url,
+        timestamp: report.created_at,
+        screenshot: report.screenshot_url,
+        dimensions: report.dimensions as AnalysisReport['dimensions'],
+        overallScore: report.overall_score,
+        dimensionScores: {
+          colors: report.colors_score ?? 0,
+          whitespace: report.whitespace_score ?? 0,
+          complexity: report.complexity_score ?? 0,
+          imageText: 0, // Not stored separately
+          typography: report.typography_score ?? 0,
+          layout: report.layout_score ?? 0,
+          ctaProminence: report.cta_score ?? 0,
+          hierarchy: report.hierarchy_score ?? undefined,
+        },
+        recommendations: (includeRecommendations ? recommendations : report.recommendations) as Recommendation[],
+        analysisTime: report.analysis_time ?? 0,
+        version: report.version ?? '1.0.0',
+      };
+      
+      qualityValidation = validateReportQuality(analysisReport);
+    }
+    
     return NextResponse.json({
       success: true,
       data: {
@@ -148,7 +203,9 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
           ...report,
           recommendations: includeRecommendations ? recommendations : undefined,
           isAnonymous: isAnonymousReport,
+          weeklyTraffic: weeklyTraffic ?? undefined,
         },
+        quality: qualityValidation,
       },
     });
   } catch (error) {

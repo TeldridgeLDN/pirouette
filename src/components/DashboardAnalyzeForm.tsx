@@ -87,6 +87,8 @@ export default function DashboardAnalyzeForm({
   const router = useRouter();
   
   const [url, setUrl] = useState('');
+  const [weeklyTraffic, setWeeklyTraffic] = useState('');
+  const [showTrafficField, setShowTrafficField] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -109,12 +111,18 @@ export default function DashboardAnalyzeForm({
     setIsLoading(true);
     
     try {
+      // Parse traffic if provided
+      const traffic = weeklyTraffic ? parseInt(weeklyTraffic, 10) : undefined;
+      
       const response = await fetch('/api/analyze', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url: validation.normalized }),
+        body: JSON.stringify({ 
+          url: validation.normalized,
+          weeklyTraffic: traffic && !isNaN(traffic) && traffic > 0 ? traffic : undefined,
+        }),
       });
       
       const data: ApiResponse = await response.json();
@@ -219,6 +227,56 @@ export default function DashboardAnalyzeForm({
                 'Analyse'
               )}
             </button>
+          </div>
+          
+          {/* Optional traffic input */}
+          <div className="mt-3">
+            {!showTrafficField ? (
+              <button
+                type="button"
+                onClick={() => setShowTrafficField(true)}
+                className="text-sm text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                </svg>
+                Add traffic data for personalised recommendations
+              </button>
+            ) : (
+              <div className="flex items-center gap-3">
+                <div className="flex-1">
+                  <label className="block text-xs font-medium text-slate-600 mb-1">
+                    Weekly visitors (optional)
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="number"
+                      value={weeklyTraffic}
+                      onChange={(e) => setWeeklyTraffic(e.target.value)}
+                      placeholder="e.g., 1000"
+                      min="0"
+                      className="w-full px-3 py-2 rounded-lg border border-slate-200 text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                    />
+                    <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
+                      /week
+                    </div>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowTrafficField(false);
+                    setWeeklyTraffic('');
+                  }}
+                  className="mt-5 text-slate-400 hover:text-slate-600"
+                  title="Remove traffic field"
+                >
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
           
           {/* Errors */}

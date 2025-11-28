@@ -17,10 +17,48 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import EmailCaptureModal from '@/components/EmailCaptureModal';
+import TrafficContext from '@/components/TrafficContext';
+import ValidationTimeline from '@/components/ValidationTimeline';
+import { shouldSortByEase, getTrafficClassification } from '@/lib/analysis/utils/traffic-classifier';
 
 // ============================================================================
 // Types
 // ============================================================================
+
+interface RevenueImpact {
+  potentialRevenue: number;
+  confidenceLevel: 'low' | 'medium' | 'high';
+  timeToValidate: string;
+  calculationMethod: string;
+}
+
+interface ValidationMilestone {
+  name: string;
+  description: string;
+  duration: string;
+  status?: 'pending' | 'current' | 'completed';
+}
+
+interface SuccessMetrics {
+  improvementRange: string;
+  visitorThreshold: number;
+  measurementPeriod: string;
+  measurementTips?: string;
+  target?: string;
+  confidence?: 'low' | 'medium' | 'high';
+  milestones?: ValidationMilestone[];
+}
+
+interface ROIScore {
+  score: number;
+  normalizedScore: number;
+  category: 'quick-win' | 'strategic' | 'long-term';
+  breakdown: {
+    impactScore: number;
+    effortMinutes: number;
+    timeToResultsWeeks: number;
+  };
+}
 
 interface Recommendation {
   id: string;
@@ -31,15 +69,11 @@ interface Recommendation {
   impact: string;
   effort: 'low' | 'medium' | 'high';
   example?: string;
-  changeType?: string;
-  revenueImpact?: {
-    potentialRevenue: number;
-    confidenceLevel: 'low' | 'medium' | 'high';
-  };
-  roiScore?: {
-    normalizedScore: number;
-    category: 'quick-win' | 'strategic' | 'long-term';
-  };
+  changeType?: 'ui' | 'content' | 'structural' | 'performance' | 'accessibility' | 'other';
+  revenueImpact?: RevenueImpact;
+  successMetrics?: SuccessMetrics;
+  roiScore?: ROIScore;
+  timeToResultsWeeks?: number;
 }
 
 interface Report {
@@ -58,6 +92,7 @@ interface Report {
   recommendations: Recommendation[];
   created_at: string;
   isAnonymous?: boolean;
+  weeklyTraffic?: number;
 }
 
 interface PageProps {
@@ -218,16 +253,47 @@ function DimensionCard({
   );
 }
 
+// Confidence level styling
+function getConfidenceBadge(level: 'low' | 'medium' | 'high'): { bg: string; text: string; icon: string; label: string } {
+  switch (level) {
+    case 'high':
+      return { bg: 'bg-emerald-100', text: 'text-emerald-700', icon: '●●●', label: 'High' };
+    case 'medium':
+      return { bg: 'bg-amber-100', text: 'text-amber-700', icon: '●●○', label: 'Medium' };
+    case 'low':
+      return { bg: 'bg-slate-100', text: 'text-slate-600', icon: '●○○', label: 'Low' };
+  }
+}
+
+// ROI category styling
+function getROICategoryBadge(category: 'quick-win' | 'strategic' | 'long-term'): { bg: string; text: string; icon: string; label: string } {
+  switch (category) {
+    case 'quick-win':
+      return { bg: 'bg-emerald-100', text: 'text-emerald-700', icon: '⚡', label: 'Quick Win!' };
+    case 'strategic':
+      return { bg: 'bg-blue-100', text: 'text-blue-700', icon: '📈', label: 'Strategic' };
+    case 'long-term':
+      return { bg: 'bg-slate-100', text: 'text-slate-600', icon: '🎯', label: 'Long-term' };
+  }
+}
+
 function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const priority = getPriorityBadge(recommendation.priority);
   const effort = getEffortBadge(recommendation.effort);
+  
+  // Get ROI badge if available
+  const roiBadge = recommendation.roiScore 
+    ? getROICategoryBadge(recommendation.roiScore.category) 
+    : null;
   
   return (
     <div className="bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full text-left p-5 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+        aria-expanded={isExpanded}
+        aria-controls={`rec-details-${recommendation.id}`}
       >
         <div className="flex items-start gap-4">
           {/* Priority indicator */}
@@ -245,9 +311,14 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
               <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
                 {recommendation.dimension}
               </span>
-              {recommendation.roiScore && recommendation.roiScore.category === 'quick-win' && (
-                <span className="px-2 py-0.5 rounded text-xs font-medium bg-emerald-100 text-emerald-700">
-                  ⚡ Quick Win
+              {roiBadge && (
+                <span className={`px-2 py-0.5 rounded text-xs font-medium ${roiBadge.bg} ${roiBadge.text}`}>
+                  {roiBadge.icon} {roiBadge.label}
+                </span>
+              )}
+              {recommendation.roiScore && (
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700">
+                  ROI: {recommendation.roiScore.normalizedScore.toFixed(1)}/10
                 </span>
               )}
             </div>
@@ -257,18 +328,37 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
               {recommendation.title}
             </h3>
             
-            {/* Impact preview */}
+            {/* Impact preview with revenue hint */}
             <p className="text-sm text-slate-600 line-clamp-2">
               {recommendation.impact}
             </p>
+            
+            {/* Revenue impact preview (collapsed view) */}
+            {recommendation.revenueImpact && (
+              <div className="mt-2 flex items-center gap-2 text-emerald-700 text-sm">
+                <span className="font-medium">
+                  💰 +£{recommendation.revenueImpact.potentialRevenue.toLocaleString()}/mo potential
+                </span>
+              </div>
+            )}
+            
+            {/* Percentage-based impact when no traffic data */}
+            {!recommendation.revenueImpact && recommendation.successMetrics && (
+              <div className="mt-2 flex items-center gap-2 text-indigo-700 text-sm">
+                <span className="font-medium">
+                  📊 {recommendation.successMetrics.improvementRange} improvement expected
+                </span>
+              </div>
+            )}
           </div>
           
           {/* Expand icon */}
           <svg 
-            className={`w-5 h-5 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            className={`w-5 h-5 text-slate-400 transition-transform flex-shrink-0 ${isExpanded ? 'rotate-180' : ''}`}
             fill="none" 
             viewBox="0 0 24 24" 
             stroke="currentColor"
+            aria-hidden="true"
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>
@@ -277,7 +367,10 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
       
       {/* Expanded content */}
       {isExpanded && (
-        <div className="px-5 pb-5 pt-0 border-t border-slate-100 mt-0">
+        <div 
+          id={`rec-details-${recommendation.id}`}
+          className="px-5 pb-5 pt-0 border-t border-slate-100 mt-0"
+        >
           <div className="pt-4 space-y-4">
             {/* Description */}
             <div>
@@ -287,20 +380,106 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
             
             {/* Impact */}
             <div>
-              <h4 className="text-sm font-medium text-slate-700 mb-1">Impact</h4>
+              <h4 className="text-sm font-medium text-slate-700 mb-1">Expected Impact</h4>
               <p className="text-sm text-slate-600">{recommendation.impact}</p>
             </div>
             
-            {/* Revenue impact (if available) */}
+            {/* Revenue Impact Section (when traffic data is available) */}
             {recommendation.revenueImpact && (
-              <div className="p-3 bg-emerald-50 rounded-lg">
-                <h4 className="text-sm font-medium text-emerald-800 mb-1">💰 Potential Revenue Impact</h4>
-                <p className="text-sm text-emerald-700">
-                  Up to £{recommendation.revenueImpact.potentialRevenue.toLocaleString()}/month
-                  <span className="text-emerald-600 text-xs ml-2">
-                    ({recommendation.revenueImpact.confidenceLevel} confidence)
+              <div className="p-4 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-lg border border-emerald-100">
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold text-emerald-900 flex items-center gap-2">
+                    💰 Revenue Impact Estimate
+                  </h4>
+                  <div className="flex items-center gap-1">
+                    {(() => {
+                      const conf = getConfidenceBadge(recommendation.revenueImpact.confidenceLevel);
+                      return (
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${conf.bg} ${conf.text}`} title={`${conf.label} confidence estimate`}>
+                          {conf.icon} {conf.label} Confidence
+                        </span>
+                      );
+                    })()}
+                  </div>
+                </div>
+                
+                {/* Main revenue figure */}
+                <div className="mb-3">
+                  <span className="text-2xl font-bold text-emerald-700">
+                    +£{recommendation.revenueImpact.potentialRevenue.toLocaleString()}
                   </span>
-                </p>
+                  <span className="text-emerald-600 ml-1">/month potential MRR</span>
+                </div>
+                
+                {/* Calculation breakdown */}
+                <div className="bg-white/60 rounded-md p-3 mb-3">
+                  <h5 className="text-xs font-medium text-emerald-800 uppercase tracking-wide mb-1">
+                    How this is calculated
+                  </h5>
+                  <p className="text-sm text-emerald-700 font-mono">
+                    {recommendation.revenueImpact.calculationMethod}
+                  </p>
+                </div>
+                
+                {/* Validation timeline */}
+                <div className="flex items-center gap-4 text-sm text-emerald-700">
+                  <div className="flex items-center gap-1">
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span>Time to validate: <strong>{recommendation.revenueImpact.timeToValidate}</strong></span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Success Metrics Section (shown when available, even without traffic) */}
+            {recommendation.successMetrics && (
+              <div className="p-4 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-100">
+                <h4 className="text-sm font-semibold text-indigo-900 mb-3 flex items-center gap-2">
+                  📊 Success Metrics
+                </h4>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  {/* Expected improvement */}
+                  <div className="bg-white/60 rounded-md p-3">
+                    <div className="text-xs font-medium text-indigo-600 uppercase tracking-wide mb-1">
+                      Expected Improvement
+                    </div>
+                    <div className="text-lg font-bold text-indigo-900">
+                      {recommendation.successMetrics.improvementRange}
+                    </div>
+                    <div className="text-xs text-indigo-600">
+                      conversion improvement
+                    </div>
+                  </div>
+                  
+                  {/* Visitor threshold */}
+                  <div className="bg-white/60 rounded-md p-3">
+                    <div className="text-xs font-medium text-indigo-600 uppercase tracking-wide mb-1">
+                      Minimum Traffic
+                    </div>
+                    <div className="text-lg font-bold text-indigo-900">
+                      {recommendation.successMetrics.visitorThreshold.toLocaleString()}+
+                    </div>
+                    <div className="text-xs text-indigo-600">
+                      weekly visitors needed
+                    </div>
+                  </div>
+                  
+                  {/* Measurement period */}
+                  <div className="bg-white/60 rounded-md p-3">
+                    <div className="text-xs font-medium text-indigo-600 uppercase tracking-wide mb-1">
+                      Measurement Period
+                    </div>
+                    <div className="text-lg font-bold text-indigo-900">
+                      {recommendation.successMetrics.measurementPeriod}
+                    </div>
+                    <div className="text-xs text-indigo-600">
+                      to see reliable results
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
             
@@ -310,6 +489,53 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
                 <h4 className="text-sm font-medium text-slate-700 mb-1">Example</h4>
                 <p className="text-sm text-slate-600 italic">{recommendation.example}</p>
               </div>
+            )}
+            
+            {/* ROI Breakdown (if available) */}
+            {recommendation.roiScore && (
+              <div className="p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <h4 className="text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  📐 ROI Analysis
+                </h4>
+                <div className="flex flex-wrap gap-4 text-sm text-slate-600">
+                  <div>
+                    <span className="text-slate-500">Impact:</span>{' '}
+                    <span className="font-medium">{recommendation.roiScore.breakdown.impactScore}/10</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Effort:</span>{' '}
+                    <span className="font-medium">{recommendation.roiScore.breakdown.effortMinutes} min</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">Time to results:</span>{' '}
+                    <span className="font-medium">{recommendation.roiScore.breakdown.timeToResultsWeeks} week{recommendation.roiScore.breakdown.timeToResultsWeeks !== 1 ? 's' : ''}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500">ROI Score:</span>{' '}
+                    <span className="font-semibold text-indigo-700">{recommendation.roiScore.normalizedScore.toFixed(1)}/10</span>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {/* Validation Timeline (if milestones available) */}
+            {recommendation.successMetrics?.milestones && recommendation.successMetrics.milestones.length > 0 && (
+              <ValidationTimeline
+                milestones={recommendation.successMetrics.milestones}
+                measurementPeriod={recommendation.successMetrics.measurementPeriod}
+                measurementTips={recommendation.successMetrics.measurementTips}
+                target={recommendation.successMetrics.target}
+                confidence={recommendation.successMetrics.confidence}
+                compact={true}
+              />
+            )}
+            
+            {/* Disclaimer for revenue estimates */}
+            {recommendation.revenueImpact && (
+              <p className="text-xs text-slate-500 italic border-t border-slate-100 pt-3">
+                ⚠️ Revenue estimates are based on industry benchmarks and actual results may vary. 
+                These projections assume consistent traffic patterns and typical conversion behaviour.
+              </p>
             )}
           </div>
         </div>
@@ -322,6 +548,9 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
 // Main Page Component
 // ============================================================================
 
+// ROI filter types
+type ROIFilterType = 'all' | 'quick-win' | 'strategic' | 'long-term';
+
 export default function ReportPage({ params }: PageProps) {
   const searchParams = useSearchParams();
   const [reportId, setReportId] = useState<string | null>(null);
@@ -330,6 +559,7 @@ export default function ReportPage({ params }: PageProps) {
   const [error, setError] = useState<string | null>(null);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [claimStatus, setClaimStatus] = useState<'idle' | 'claiming' | 'claimed' | 'error'>('idle');
+  const [roiFilter, setRoiFilter] = useState<ROIFilterType>('all');
   
   // Resolve params
   useEffect(() => {
@@ -440,11 +670,41 @@ export default function ReportPage({ params }: PageProps) {
     );
   }
   
-  // Sort recommendations by priority
+  // Determine sorting strategy based on traffic
+  const sortByEase = report.weeklyTraffic ? shouldSortByEase(report.weeklyTraffic) : false;
+  
+  // Sort recommendations - by ease (effort) for very low traffic, otherwise by ROI
   const sortedRecommendations = [...(report.recommendations || [])].sort((a, b) => {
+    // For very low traffic, sort by effort (easiest first)
+    if (sortByEase) {
+      const effortOrder = { low: 0, medium: 1, high: 2 };
+      const effortDiff = (effortOrder[a.effort] || 2) - (effortOrder[b.effort] || 2);
+      if (effortDiff !== 0) return effortDiff;
+      // Then by ROI score within same effort
+      if (a.roiScore && b.roiScore) {
+        return b.roiScore.normalizedScore - a.roiScore.normalizedScore;
+      }
+    } else {
+      // Sort by ROI score if both have it
+      if (a.roiScore && b.roiScore) {
+        return b.roiScore.normalizedScore - a.roiScore.normalizedScore;
+      }
+    }
+    // Fallback to priority
     const priorityOrder = { high: 0, medium: 1, low: 2 };
     return (priorityOrder[a.priority] || 2) - (priorityOrder[b.priority] || 2);
   });
+  
+  // Filter recommendations by ROI category
+  const filteredRecommendations = roiFilter === 'all' 
+    ? sortedRecommendations 
+    : sortedRecommendations.filter(r => r.roiScore?.category === roiFilter);
+  
+  // Count recommendations by ROI category
+  const quickWinCount = sortedRecommendations.filter(r => r.roiScore?.category === 'quick-win').length;
+  const strategicCount = sortedRecommendations.filter(r => r.roiScore?.category === 'strategic').length;
+  const longTermCount = sortedRecommendations.filter(r => r.roiScore?.category === 'long-term').length;
+  const noRoiCount = sortedRecommendations.filter(r => !r.roiScore).length;
   
   const highPriorityCount = sortedRecommendations.filter(r => r.priority === 'high').length;
   const quickWinsCount = sortedRecommendations.filter(r => r.effort === 'low' && r.priority !== 'low').length;
@@ -589,6 +849,21 @@ export default function ReportPage({ params }: PageProps) {
           </div>
         </section>
         
+        {/* Traffic Context Section */}
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-slate-900 mb-4">Your Traffic Context</h2>
+          <TrafficContext weeklyVisitors={report.weeklyTraffic} />
+          {sortByEase && report.weeklyTraffic && (
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-800">
+                <strong>📊 Sorting adapted for your traffic:</strong> Recommendations are sorted by implementation 
+                ease (quickest to implement first) rather than ROI because A/B testing isn&apos;t statistically 
+                reliable at very low traffic levels. Focus on implementing multiple quick wins together.
+              </p>
+            </div>
+          )}
+        </section>
+        
         {/* Screenshot Preview */}
         {report.screenshot_url && (
           <section className="mb-8">
@@ -617,17 +892,110 @@ export default function ReportPage({ params }: PageProps) {
         
         {/* Recommendations */}
         <section>
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h2 className="text-xl font-bold text-slate-900">
-              Recommendations ({sortedRecommendations.length})
+              Recommendations ({filteredRecommendations.length}{roiFilter !== 'all' ? ` of ${sortedRecommendations.length}` : ''})
             </h2>
+            
+            {/* ROI Category Filter Buttons */}
+            {sortedRecommendations.some(r => r.roiScore) && (
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by ROI category">
+                <button
+                  onClick={() => setRoiFilter('all')}
+                  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+                    roiFilter === 'all'
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                  aria-pressed={roiFilter === 'all'}
+                >
+                  All ({sortedRecommendations.length})
+                </button>
+                {quickWinCount > 0 && (
+                  <button
+                    onClick={() => setRoiFilter('quick-win')}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                      roiFilter === 'quick-win'
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                    }`}
+                    aria-pressed={roiFilter === 'quick-win'}
+                  >
+                    <span>⚡</span> Quick Wins ({quickWinCount})
+                  </button>
+                )}
+                {strategicCount > 0 && (
+                  <button
+                    onClick={() => setRoiFilter('strategic')}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                      roiFilter === 'strategic'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-blue-50 text-blue-700 hover:bg-blue-100'
+                    }`}
+                    aria-pressed={roiFilter === 'strategic'}
+                  >
+                    <span>📈</span> Strategic ({strategicCount})
+                  </button>
+                )}
+                {longTermCount > 0 && (
+                  <button
+                    onClick={() => setRoiFilter('long-term')}
+                    className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-1 ${
+                      roiFilter === 'long-term'
+                        ? 'bg-slate-600 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                    aria-pressed={roiFilter === 'long-term'}
+                  >
+                    <span>🎯</span> Long-term ({longTermCount})
+                  </button>
+                )}
+              </div>
+            )}
           </div>
           
-          {sortedRecommendations.length > 0 ? (
+          {/* Filter description */}
+          {roiFilter !== 'all' && (
+            <div className={`mb-4 p-3 rounded-lg text-sm ${
+              roiFilter === 'quick-win' ? 'bg-emerald-50 text-emerald-800' :
+              roiFilter === 'strategic' ? 'bg-blue-50 text-blue-800' :
+              'bg-slate-100 text-slate-700'
+            }`}>
+              {roiFilter === 'quick-win' && (
+                <span>⚡ <strong>Quick Wins:</strong> High impact with low effort - implement these first for maximum results</span>
+              )}
+              {roiFilter === 'strategic' && (
+                <span>📈 <strong>Strategic:</strong> Moderate ROI - valuable improvements that require more time or effort</span>
+              )}
+              {roiFilter === 'long-term' && (
+                <span>🎯 <strong>Long-term:</strong> Lower ROI - consider these after completing quick wins</span>
+              )}
+            </div>
+          )}
+          
+          {filteredRecommendations.length > 0 ? (
             <div className="space-y-4">
-              {sortedRecommendations.map(rec => (
+              {filteredRecommendations.map(rec => (
                 <RecommendationCard key={rec.id} recommendation={rec} />
               ))}
+            </div>
+          ) : roiFilter !== 'all' ? (
+            <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+              <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                <span className="text-2xl">
+                  {roiFilter === 'quick-win' ? '⚡' : roiFilter === 'strategic' ? '📈' : '🎯'}
+                </span>
+              </div>
+              <h3 className="font-semibold text-slate-900 mb-2">No {roiFilter === 'quick-win' ? 'Quick Wins' : roiFilter === 'strategic' ? 'Strategic Improvements' : 'Long-term Projects'}</h3>
+              <p className="text-slate-600 mb-4">
+                No recommendations in this category.
+              </p>
+              <button 
+                onClick={() => setRoiFilter('all')}
+                className="text-indigo-600 font-medium hover:text-indigo-700"
+              >
+                View all recommendations →
+              </button>
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">

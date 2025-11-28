@@ -738,29 +738,30 @@ function Footer() {
             </p>
           </div>
           
-          {/* Links */}
+          {/* Product Links */}
           <div>
             <h4 className="font-semibold text-white mb-4">Product</h4>
             <ul className="space-y-2 text-sm">
               <li><a href="#features" className="hover:text-white transition-colors">Features</a></li>
-              <li><a href="#pricing" className="hover:text-white transition-colors">Pricing</a></li>
+              <li><Link href="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               <li><a href="#how-it-works" className="hover:text-white transition-colors">How It Works</a></li>
             </ul>
           </div>
           
+          {/* Legal Links */}
           <div>
-            <h4 className="font-semibold text-white mb-4">Company</h4>
+            <h4 className="font-semibold text-white mb-4">Legal</h4>
             <ul className="space-y-2 text-sm">
-              <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Terms of Service</a></li>
+              <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+              <li><Link href="/ethics" className="hover:text-white transition-colors">Crawler Ethics</Link></li>
             </ul>
           </div>
         </div>
         
         {/* Bottom */}
         <div className="pt-8 border-t border-slate-800 text-sm text-center">
-          <p>© {new Date().getFullYear()} Pirouette. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} Pirouette. All rights reserved. UK Company.</p>
         </div>
       </div>
     </footer>

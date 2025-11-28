@@ -6,7 +6,7 @@
  * based on traffic data and industry benchmarks.
  */
 
-import type { RevenueImpact, SuccessMetrics } from '../core/types';
+import type { RevenueImpact, SuccessMetrics, ValidationMilestone } from '../core/types';
 
 // ============================================================================
 // Types
@@ -288,6 +288,135 @@ export function generateRevenueImpact(
 }
 
 /**
+ * Generate measurement tips based on dimension and metric type
+ */
+export function generateMeasurementTips(
+  dimension: string,
+  target?: string
+): string {
+  const dimensionKey = mapDimensionToKey(dimension);
+  
+  const tips: Record<keyof typeof IMPROVEMENT_BENCHMARKS, string> = {
+    cta: 'Track click-through rate on your primary CTA. Set up Google Analytics events or heatmap software like Hotjar to measure engagement before and after changes.',
+    contrast: 'Monitor bounce rate and time on page. Use accessibility testing tools to verify WCAG compliance. Survey users about readability if possible.',
+    whitespace: 'Track scroll depth and page engagement time. Use heatmaps to see if users engage with more content after spacing improvements.',
+    typography: 'Measure average session duration and pages per session. A/B test with Google Optimize or similar tools to compare readability metrics.',
+    layout: 'Monitor conversion funnel completion rates. Use screen recordings to observe user navigation patterns before and after layout changes.',
+    complexity: 'Track task completion rates and form abandonment. Measure time-to-first-action and overall page load performance.',
+    hierarchy: 'Measure CTA click rates and secondary action engagement. Use eye-tracking studies or attention heatmaps if available.',
+  };
+  
+  return tips[dimensionKey] || 'Track key conversion metrics before and after implementing this change. Set up A/B testing if traffic permits.';
+}
+
+/**
+ * Generate target metric string for a recommendation
+ */
+export function generateTargetMetric(
+  dimension: string,
+  estimate: ImprovementEstimate
+): string {
+  const dimensionKey = mapDimensionToKey(dimension);
+  
+  const targetTemplates: Record<keyof typeof IMPROVEMENT_BENCHMARKS, (min: number, max: number) => string> = {
+    cta: (min, max) => `Increase CTA click-through rate by ${min}-${max}%`,
+    contrast: (min, max) => `Improve readability score, reduce bounce rate by ${min}-${max}%`,
+    whitespace: (min, max) => `Increase scroll depth and time on page by ${min}-${max}%`,
+    typography: (min, max) => `Improve content engagement by ${min}-${max}%`,
+    layout: (min, max) => `Boost conversion rate by ${min}-${max}%`,
+    complexity: (min, max) => `Reduce cognitive load, improve task completion by ${min}-${max}%`,
+    hierarchy: (min, max) => `Increase primary action completion by ${min}-${max}%`,
+  };
+  
+  const templateFn = targetTemplates[dimensionKey] || ((min, max) => `Improve key metrics by ${min}-${max}%`);
+  return templateFn(estimate.minImprovement, estimate.maxImprovement);
+}
+
+/**
+ * Generate validation milestones based on measurement period
+ */
+export function generateValidationMilestones(
+  measurementPeriod: string,
+  weeklyTraffic?: number
+): ValidationMilestone[] {
+  // Parse measurement period to get weeks
+  const weeks = parseWeeksFromPeriod(measurementPeriod);
+  
+  // Base milestones that apply to all cases
+  const milestones: ValidationMilestone[] = [
+    {
+      name: 'Implement Change',
+      description: 'Make the design change and deploy to production',
+      duration: 'Day 1',
+      status: 'pending',
+    },
+    {
+      name: 'Baseline Snapshot',
+      description: 'Record current metrics (conversion rate, CTR, bounce rate)',
+      duration: 'Day 1',
+      status: 'pending',
+    },
+  ];
+  
+  // Add data collection milestone
+  if (weeks <= 2) {
+    milestones.push({
+      name: 'Collect Data',
+      description: weeklyTraffic && weeklyTraffic >= 1000 
+        ? 'A/B test running - monitor for statistical significance' 
+        : 'Monitor traffic and initial metrics',
+      duration: `Week 1${weeks > 1 ? `-${weeks}` : ''}`,
+      status: 'pending',
+    });
+  } else {
+    milestones.push({
+      name: 'Early Check',
+      description: 'Check for any major issues or unexpected results',
+      duration: 'Week 1',
+      status: 'pending',
+    });
+    milestones.push({
+      name: 'Data Collection',
+      description: 'Continue gathering conversion data',
+      duration: `Week 2-${weeks}`,
+      status: 'pending',
+    });
+  }
+  
+  // Add comparison milestone
+  milestones.push({
+    name: 'Compare Results',
+    description: 'Analyse before/after metrics and determine improvement',
+    duration: `Week ${weeks}${weeks > 1 ? '+' : ''}`,
+    status: 'pending',
+  });
+  
+  // Add decision milestone
+  milestones.push({
+    name: 'Decision Point',
+    description: 'Keep change if positive, rollback or iterate if not',
+    duration: `Week ${weeks + 1}`,
+    status: 'pending',
+  });
+  
+  return milestones;
+}
+
+/**
+ * Parse weeks from measurement period string
+ */
+function parseWeeksFromPeriod(period: string): number {
+  // Handle formats like "1-2 weeks", "2 weeks", "6-8 weeks"
+  const match = period.match(/(\d+)(?:-(\d+))?\s*week/i);
+  if (match) {
+    const min = parseInt(match[1], 10);
+    const max = match[2] ? parseInt(match[2], 10) : min;
+    return Math.ceil((min + max) / 2); // Use average
+  }
+  return 4; // Default to 4 weeks
+}
+
+/**
  * Generate success metrics for a recommendation
  */
 export function generateSuccessMetrics(
@@ -296,6 +425,7 @@ export function generateSuccessMetrics(
   const {
     dimension,
     weeklyTraffic,
+    patternSampleSize = 25,
     patternQualityScore = 75,
   } = input;
 
@@ -305,7 +435,7 @@ export function generateSuccessMetrics(
 
   // Determine confidence
   const confidence = weeklyTraffic
-    ? determineConfidenceLevel(25, patternQualityScore, weeklyTraffic)
+    ? determineConfidenceLevel(patternSampleSize, patternQualityScore, weeklyTraffic)
     : 'low';
 
   // Get visitor threshold
@@ -316,10 +446,23 @@ export function generateSuccessMetrics(
     ? calculateTimeToValidate(weeklyTraffic, 'medium')
     : '4-6 weeks';
 
+  // Generate measurement tips
+  const measurementTips = generateMeasurementTips(dimension);
+  
+  // Generate target metric
+  const target = generateTargetMetric(dimension, estimate);
+  
+  // Generate validation milestones
+  const milestones = generateValidationMilestones(measurementPeriod, weeklyTraffic);
+
   return {
     improvementRange: `${estimate.minImprovement}-${estimate.maxImprovement}%`,
     visitorThreshold,
     measurementPeriod,
+    measurementTips,
+    target,
+    confidence,
+    milestones,
   };
 }
 

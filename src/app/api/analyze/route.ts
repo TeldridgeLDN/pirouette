@@ -207,6 +207,7 @@ export async function POST(request: NextRequest) {
       status: 'queued',
       progress: 0,
       current_step: 'Queued for analysis',
+      weekly_traffic: validatedTraffic, // Store traffic data for recommendations
     };
     
     if (supabaseUserId) {
