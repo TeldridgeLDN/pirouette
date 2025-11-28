@@ -6,10 +6,12 @@
  * Dynamic navigation that shows:
  * - Sign In / Get Started for unauthenticated users
  * - User menu / Dashboard for authenticated users
+ * - Pro/Trial badge for paid users
  */
 
 import Link from 'next/link';
-import { useAuth, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { useUserPlan } from '@/hooks/useUserPlan';
 
 interface NavigationProps {
   className?: string;
@@ -32,7 +34,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
           <div className="hidden md:flex items-center gap-8">
             <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 transition-colors">How it Works</a>
             <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Features</a>
-            <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Pricing</a>
+            <Link href="/pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Pricing</Link>
           </div>
           
           {/* Auth Buttons */}
@@ -59,6 +61,7 @@ export default function Navigation({ className = '' }: NavigationProps) {
             
             {/* Show when user IS signed in */}
             <SignedIn>
+              <ProBadge />
               <Link 
                 href="/dashboard" 
                 className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
@@ -82,3 +85,44 @@ export default function Navigation({ className = '' }: NavigationProps) {
   );
 }
 
+/**
+ * Pro Badge Component
+ * Shows plan status in navigation
+ */
+function ProBadge() {
+  const { isPro, isTrialing, trialDaysRemaining, isLoading } = useUserPlan();
+
+  // Don't show anything while loading or for free users
+  if (isLoading || !isPro) {
+    return null;
+  }
+
+  // Trial badge
+  if (isTrialing) {
+    return (
+      <Link 
+        href="/dashboard/billing"
+        className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-xs font-medium hover:bg-amber-100 transition-colors"
+      >
+        <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>TRIAL</span>
+        <span className="text-amber-500">• {trialDaysRemaining}d</span>
+      </Link>
+    );
+  }
+
+  // Pro badge
+  return (
+    <Link
+      href="/dashboard/billing"
+      className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-full text-xs font-medium hover:from-indigo-600 hover:to-purple-600 transition-colors shadow-sm"
+    >
+      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+        <path d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" />
+      </svg>
+      PRO
+    </Link>
+  );
+}

@@ -32,6 +32,13 @@ interface UserData {
   id: string;
   plan: Plan;
   analyses_this_month: number;
+  stripe_customer_id: string | null;
+}
+
+interface SubscriptionData {
+  isTrialing: boolean;
+  trialDaysRemaining: number;
+  trialEnd: Date | null;
 }
 
 // ============================================================================
@@ -41,7 +48,7 @@ interface UserData {
 async function getUserData(clerkId: string): Promise<UserData | null> {
   const { data, error } = await supabaseAdmin
     .from('users')
-    .select('id, plan, analyses_this_month')
+    .select('id, plan, analyses_this_month, stripe_customer_id')
     .eq('clerk_id', clerkId)
     .single();
 
@@ -51,6 +58,45 @@ async function getUserData(clerkId: string): Promise<UserData | null> {
   }
 
   return data as UserData;
+}
+
+async function getSubscriptionData(customerId: string | null): Promise<SubscriptionData> {
+  const defaultData: SubscriptionData = {
+    isTrialing: false,
+    trialDaysRemaining: 0,
+    trialEnd: null,
+  };
+
+  if (!customerId) {
+    return defaultData;
+  }
+
+  try {
+    // Import Stripe utilities
+    const { getActiveSubscription } = await import('@/lib/stripe');
+    const subscription = await getActiveSubscription(customerId);
+
+    if (!subscription) {
+      return defaultData;
+    }
+
+    const isTrialing = subscription.status === 'trialing';
+    const trialEnd = subscription.trial_end 
+      ? new Date(subscription.trial_end * 1000) 
+      : null;
+    const trialDaysRemaining = trialEnd 
+      ? Math.max(0, Math.ceil((trialEnd.getTime() - Date.now()) / (1000 * 60 * 60 * 24)))
+      : 0;
+
+    return {
+      isTrialing,
+      trialDaysRemaining,
+      trialEnd,
+    };
+  } catch (error) {
+    console.error('Error fetching subscription:', error);
+    return defaultData;
+  }
 }
 
 async function getWeeklyAnalysisCount(userId: string): Promise<number> {
@@ -143,9 +189,10 @@ export default async function DashboardPage() {
   const plan = userData?.plan || 'free';
   const userId = userData?.id;
   
-  // Fetch analysis count and reports if user exists
+  // Fetch analysis count, reports, and subscription info
   const weeklyAnalysisCount = userId ? await getWeeklyAnalysisCount(userId) : 0;
   const recentReports = userId ? await getRecentReports(userId) : [];
+  const subscriptionData = await getSubscriptionData(userData?.stripe_customer_id || null);
   const resetDate = getNextResetDate();
 
   return (
@@ -169,6 +216,9 @@ export default async function DashboardPage() {
           analysesUsed={weeklyAnalysisCount}
           weeklyLimit={plan === 'free' ? 1 : -1}
           resetDate={resetDate}
+          isTrialing={subscriptionData.isTrialing}
+          trialDaysRemaining={subscriptionData.trialDaysRemaining}
+          trialEnd={subscriptionData.trialEnd}
         />
 
         {/* Analysis Form */}

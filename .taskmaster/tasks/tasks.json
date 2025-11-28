@@ -1062,7 +1062,7 @@
         "description": "Add visual indicators throughout the application to clearly show Pro subscription status, differentiate Pro users from free users, and highlight Pro-exclusive features.",
         "details": "Pro users should feel special and clearly see the value they're paying for.\n\nImplementation:\n1. Navigation bar Pro badge:\n   ```tsx\n   // In Navigation component\n   {user?.plan !== 'free' && (\n     <span className=\"bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-medium\">\n       PRO\n     </span>\n   )}\n   ```\n\n2. Dashboard header:\n   - Free: \"Free Plan • 1 analysis/week\"\n   - Pro: \"Pro Plan • Unlimited analyses ✨\"\n   - Show upgrade button for free, billing link for Pro\n\n3. Analysis form enhancements for Pro:\n   - Remove quota display (show \"Unlimited\" badge)\n   - Enable competitor URL inputs (if implemented)\n   - Show \"Pro Analysis\" label\n\n4. Report page Pro features:\n   - \"Export PDF\" button enabled with Pro badge\n   - \"Historical Comparison\" section visible\n   - \"Competitor Analysis\" section if applicable\n   - \"Pro Report\" watermark/badge on page\n\n5. Feature cards with Pro indicators:\n   ```tsx\n   <FeatureCard\n     title=\"Historical Tracking\"\n     isPro={true}\n     isLocked={!hasFeature('historical_tracking')}\n   />\n   ```\n\n6. Email communications:\n   - Different email templates for Pro users\n   - \"Pro\" badge in email header\n   - Pro-exclusive tips and features highlighted\n\n7. Account settings:\n   - Plan badge next to subscription section\n   - \"You're on Pro!\" confirmation\n   - Benefits reminder list\n\n8. Usage dashboard (for Pro users):\n   - Monthly analysis count graph\n   - Most analysed domains\n   - Feature usage stats\n   - \"You've saved £X compared to agency pricing\"\n\n9. Subtle but noticeable differences:\n   - Slightly different colour accents for Pro\n   - Priority support indicator\n   - Early access badge for new features\n   - \"Pro Member Since\" date in account",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           40,
           41
@@ -1215,7 +1215,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T15:50:35.496Z"
+      "updated": "2025-11-28T15:55:01.966Z"
     }
   }
 }

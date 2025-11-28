@@ -5,6 +5,16 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Pro Status Indicators Throughout UI** (Task 42)
+  - Pro badge in Navigation bar (gradient purple, links to billing)
+  - Trial badge with countdown ("TRIAL • 5d") for trialing users
+  - Trial banner in QuotaDisplay with "Add Payment" CTA
+  - `useUserPlan` hook for client-side subscription status
+  - Fetches trial status, days remaining, and period end dates
+  - Pro badge links to `/dashboard/billing` for management
+  - Trial-specific messaging in QuotaDisplay
+  - Status-aware UI: free, trialing, active, past_due states
+
 - **Subscription Management & Billing Portal** (Task 41)
   - `/dashboard/billing` page for subscription management
   - Subscription info card with plan, status badge, and billing details
