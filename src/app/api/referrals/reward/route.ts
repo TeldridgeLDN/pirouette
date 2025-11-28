@@ -156,24 +156,28 @@ export async function POST(request: NextRequest) {
       }
     }
     
-    // Update referral status
-    const referralUpdate = {
+    // Update referral status 
+    // TODO: Add proper Supabase database types or RPC functions
+    // For now, using raw SQL via Supabase's method
+    const client = supabase as unknown as {
+      from: (table: string) => {
+        update: (data: Record<string, unknown>) => {
+          eq: (column: string, value: string) => Promise<unknown>;
+        };
+      };
+    };
+    
+    await client.from('referrals').update({
       status: 'rewarded',
       reward_applied: rewardApplied,
       upgraded_at: new Date().toISOString(),
       rewarded_at: new Date().toISOString(),
-    };
-    await supabase.from('referrals')
-      .update(referralUpdate as Record<string, unknown>)
-      .eq('id', referral.id);
+    }).eq('id', referral.id);
     
     // Increment referrer's reward count
-    const userUpdate = {
+    await client.from('users').update({
       referral_rewards_earned: (referrer.referral_rewards_earned || 0) + 1,
-    };
-    await supabase.from('users')
-      .update(userUpdate as Record<string, unknown>)
-      .eq('id', referrer.id);
+    }).eq('id', referrer.id);
     
     // TODO: Send email notification to referrer
     // await sendReferralRewardEmail(referrer.email, refereeName);
