@@ -4,7 +4,7 @@
  * GET /api/jobs/[jobId]
  * 
  * Returns the current status of an analysis job.
- * Users can only access their own jobs.
+ * Supports both authenticated users (user_id match) and anonymous users (IP match).
  * 
  * Response:
  * - id: string - Job ID
@@ -16,33 +16,38 @@
  * - completedAt: string (optional) - Job completion timestamp
  * - error: string (optional) - Error message if failed
  * - reportId: string (optional) - Report ID if completed
+ * - isAnonymous: boolean - Whether this is an anonymous job
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
-import { getUserIdFromClerkId } from '@/lib/rate-limit';
-import type { Job, Report } from '@/lib/supabase/types';
+import { getUserIdFromClerkId, getClientIp } from '@/lib/rate-limit';
 
 interface RouteParams {
   params: Promise<{ jobId: string }>;
 }
 
+// Extended Job type to include ip_address
+interface JobWithIp {
+  id: string;
+  user_id: string | null;
+  ip_address: string | null;
+  url: string;
+  status: string;
+  progress: number | null;
+  current_step: string | null;
+  error: string | null;
+  created_at: string;
+  started_at: string | null;
+  completed_at: string | null;
+}
+
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
-    // 1. Authenticate user
-    const { userId: clerkUserId } = await auth();
-    
-    if (!clerkUserId) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
-    
     const { jobId } = await params;
     
-    // 2. Validate job ID format (UUID)
+    // 1. Validate job ID format (UUID)
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
     if (!uuidRegex.test(jobId)) {
       return NextResponse.json(
@@ -51,24 +56,14 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
     
-    // 3. Get Supabase user ID
-    const supabaseUserId = await getUserIdFromClerkId(clerkUserId);
-    
-    if (!supabaseUserId) {
-      return NextResponse.json(
-        { success: false, error: 'User not found' },
-        { status: 400 }
-      );
-    }
-    
-    // 4. Fetch job from Supabase
+    // 2. Fetch job from Supabase (without user check first)
     const supabase = supabaseAdmin;
     
     const { data: job, error } = await supabase
       .from('jobs')
       .select('*')
       .eq('id', jobId)
-      .single() as { data: Job | null; error: Error | null };
+      .single() as { data: JobWithIp | null; error: Error | null };
     
     if (error || !job) {
       return NextResponse.json(
@@ -77,29 +72,62 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
     
-    // 5. Verify ownership
-    if (job.user_id !== supabaseUserId) {
-      return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
-        { status: 403 }
-      );
+    // 3. Determine if this is an anonymous job or authenticated job
+    const isAnonymousJob = !job.user_id && job.ip_address;
+    
+    // 4. Verify access
+    if (isAnonymousJob) {
+      // Anonymous job: verify IP address matches
+      const clientIp = getClientIp(request.headers);
+      
+      // Allow access if IP matches or if the job is very recent (within 1 hour)
+      // This handles cases where IP might change during analysis
+      const jobAge = Date.now() - new Date(job.created_at).getTime();
+      const isRecentJob = jobAge < 60 * 60 * 1000; // 1 hour
+      
+      if (job.ip_address !== clientIp && !isRecentJob) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized' },
+          { status: 403 }
+        );
+      }
+    } else {
+      // Authenticated job: verify user ownership
+      const { userId: clerkUserId } = await auth();
+      
+      if (!clerkUserId) {
+        // Not authenticated but job requires auth
+        return NextResponse.json(
+          { success: false, error: 'Please sign in to view this analysis' },
+          { status: 401 }
+        );
+      }
+      
+      const supabaseUserId = await getUserIdFromClerkId(clerkUserId);
+      
+      if (!supabaseUserId || job.user_id !== supabaseUserId) {
+        return NextResponse.json(
+          { success: false, error: 'Unauthorized' },
+          { status: 403 }
+        );
+      }
     }
     
-    // 6. If completed, check for report
+    // 5. If completed, check for report
     let reportId: string | null = null;
     if (job.status === 'completed') {
       const { data: report } = await supabase
         .from('reports')
         .select('id')
         .eq('job_id', jobId)
-        .single() as { data: Pick<Report, 'id'> | null; error: Error | null };
+        .single() as { data: { id: string } | null; error: Error | null };
       
       if (report) {
         reportId = report.id;
       }
     }
     
-    // 7. Return job status with cache headers
+    // 6. Return job status with cache headers
     const response = NextResponse.json({
       success: true,
       data: {
@@ -113,6 +141,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
         completedAt: job.completed_at,
         error: job.error,
         reportId,
+        isAnonymous: isAnonymousJob,
       },
     });
     

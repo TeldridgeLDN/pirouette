@@ -517,7 +517,7 @@
           "5",
           "9"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -530,7 +530,7 @@
         "dependencies": [
           "4"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -560,7 +560,7 @@
           "10",
           "13"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -899,6 +899,293 @@
         ],
         "priority": "high",
         "subtasks": []
+      },
+      {
+        "id": 31,
+        "title": "Add Hero URL Input Form for Anonymous Analysis",
+        "description": "Add a URL input form directly in the landing page hero section to allow users to analyse their landing page WITHOUT signing up first. This follows the PRD's \"value-first\" approach - users should experience value before being asked to create an account.",
+        "details": "The PRD explicitly states: \"No signup required for first analysis (reduce friction)\" and \"Email capture AFTER value is delivered\".\n\nImplementation:\n1. Add URL input form component to the hero section (src/app/page.tsx)\n   - URL input field with validation (must be valid https:// URL)\n   - Optional weekly traffic field (for revenue impact calculations)\n   - \"Analyse Free\" submit button\n   \n2. Form should NOT require authentication\n   - Submit to /api/analyze endpoint\n   - Work for anonymous users with IP-based rate limiting\n   \n3. On submit:\n   - Validate URL format\n   - Check IP rate limit (1/day for anonymous)\n   - Create job in Supabase (user_id can be null for anonymous)\n   - Redirect to progress/loading page with jobId\n\n4. Integrate with existing AnalyzeForm component or create new HeroAnalyzeForm component\n\n5. Form styling should match the existing hero design:\n   - Gradient background\n   - Clear, prominent CTA button\n   - Trust indicators below form\n\nKey UX principles from PRD Flow 1:\n- User lands on homepage → Enters URL in hero form → Clicks \"Analyze Free\" → Sees loading → Report appears\n- No signup required for first analysis",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          5,
+          10
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 32,
+        "title": "Implement IP-Based Rate Limiting for Anonymous Analysis",
+        "description": "Create rate limiting system that allows anonymous (unauthenticated) users to perform 1 free analysis per day per IP address, while logged-in free users get 1/week and Pro users get unlimited.",
+        "details": "According to PRD Section 6 (Feature Requirements - Rate Limiting):\n- Free (no account): 1 analysis per IP per day\n- Free account: 1 analysis per week (4/month)\n- Pro account: Unlimited analyses\n\nImplementation:\n1. Create IP tracking table in Supabase:\n   ```sql\n   CREATE TABLE anonymous_analyses (\n     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),\n     ip_address TEXT NOT NULL,\n     url TEXT NOT NULL,\n     job_id UUID REFERENCES jobs(id),\n     created_at TIMESTAMPTZ DEFAULT NOW()\n   );\n   CREATE INDEX idx_anonymous_analyses_ip ON anonymous_analyses(ip_address);\n   CREATE INDEX idx_anonymous_analyses_created ON anonymous_analyses(created_at);\n   ```\n\n2. Update /api/analyze endpoint:\n   - Check authentication status\n   - If authenticated: use existing user-based rate limiting\n   - If anonymous: check IP-based rate limiting\n   - Extract IP from request headers (x-forwarded-for for Vercel)\n\n3. Create rate limiting utility (src/lib/rate-limit.ts or extend existing):\n   ```typescript\n   async function checkAnonymousRateLimit(ip: string): Promise<{\n     allowed: boolean;\n     remaining: number;\n     resetAt: Date;\n   }>\n   ```\n\n4. Handle rate limit exceeded:\n   - Return 429 status with friendly message\n   - Include time until reset\n   - Prompt to sign up for more analyses\n\n5. Consider Redis caching for performance (optional for MVP)",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          3,
+          10
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 33,
+        "title": "Create Anonymous-Accessible Report Page",
+        "description": "Make the report page (/reports/[id]) accessible to anonymous users who just ran an analysis, with a \"Save This Report\" CTA to capture their email and create an account.",
+        "details": "According to PRD Section 7 (User Experience Flows - Flow 1):\n- Report should be viewable without authentication\n- After showing value, prompt: \"Save This Report (Free Account)\"\n- Email capture modal appears AFTER value is delivered\n\nImplementation:\n1. Update /reports/[id] page to work without authentication:\n   - Remove authentication requirement from this route\n   - Fetch report by ID from Supabase\n   - If report has no user_id (anonymous), still allow viewing\n   - Report saved for 7 days for anonymous users\n\n2. Add \"Save This Report\" CTA component:\n   - Appears prominently at top and bottom of report\n   - Only shows for anonymous/unauthenticated users\n   - Explains benefits: \"Save permanently, get 4 analyses/month, track improvements\"\n\n3. Create Email Capture Modal (EmailCaptureModal.tsx):\n   - Triggered when user clicks \"Save This Report\"\n   - Simple form: email + password (or social OAuth options)\n   - After signup:\n     a. Associate existing report with new user account\n     b. Redirect to dashboard with report saved\n   \n4. Update database RLS policies:\n   - Allow anonymous read access to reports for 7 days\n   - Use job_id or report_id in URL (not user_id based)\n\n5. Add expiry logic:\n   - Anonymous reports expire after 7 days\n   - Show countdown: \"This report expires in X days. Save it now!\"\n   - Cleanup job for expired anonymous reports",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          12,
+          31
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 34,
+        "title": "Build Email Capture Modal for Anonymous Users",
+        "description": "Create a modal component that captures email/password (or offers social OAuth) after an anonymous user views their report, converting them to a registered user while preserving their analysis.",
+        "details": "According to PRD Section 7 (User Experience Flows):\n- Email capture AFTER value is delivered\n- Modal shown after report is displayed\n- \"Enter email to save report + get design tips\"\n\nImplementation:\n1. Create EmailCaptureModal.tsx component:\n   ```tsx\n   interface EmailCaptureModalProps {\n     reportId: string;\n     jobId: string;\n     onClose: () => void;\n     onSuccess: (userId: string) => void;\n   }\n   ```\n\n2. Modal content:\n   - Headline: \"Save This Report\"\n   - Value props:\n     * \"Your report saved permanently\"\n     * \"Get 4 free analyses per month\"\n     * \"Track your improvement over time\"\n   - Email/password form OR social OAuth buttons (Google, GitHub)\n   - \"Create Free Account\" CTA\n\n3. Integration with Clerk:\n   - Use Clerk's sign-up flow within modal\n   - Or redirect to /sign-up with returnUrl to report\n   - Pass jobId/reportId as state to associate after signup\n\n4. After successful signup:\n   - Call API to associate report with new user\n   - Update jobs and reports tables with user_id\n   - Redirect to dashboard or back to report\n\n5. API endpoint for report association:\n   - POST /api/associate-report\n   - Body: { jobId, reportId }\n   - Auth required (uses new user's session)\n   - Update user_id on jobs and reports tables\n\n6. Trigger points:\n   - \"Save This Report\" button click\n   - Attempt to use Pro features (if any gated)\n   - Optional: auto-show after 30 seconds viewing report",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          4,
+          33
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 35,
+        "title": "Add URL Submission Form and Quota Display to Dashboard",
+        "description": "Enhance the user dashboard with a prominent URL submission form at the top and a clear display of remaining analysis quota based on the user's plan.",
+        "details": "Currently the dashboard shows \"No analyses yet. Submit a landing page URL to get started!\" but provides no way to actually submit a URL.\n\nImplementation:\n1. Add URL submission form to dashboard:\n   - Prominent placement at top of page\n   - Reuse or adapt AnalyzeForm component\n   - URL input + optional traffic field + \"Analyse\" button\n   - Form submits to /api/analyze with authentication\n\n2. Add quota display component (QuotaDisplay.tsx):\n   - Shows remaining analyses: \"3 of 4 analyses remaining this week\"\n   - Visual progress bar\n   - Different display for Pro users: \"Unlimited analyses\"\n   - Upgrade CTA for free users near limit\n\n3. Fetch quota data:\n   - Query analyses_this_month from users table\n   - Calculate remaining based on plan limits\n   - For free tier: 1/week (reset on Sunday midnight UTC)\n   - For Pro tier: show \"Unlimited\"\n\n4. Update dashboard layout (src/app/dashboard/page.tsx):\n   ```\n   +------------------------------------------+\n   | Welcome back, [Name]!                    |\n   | Your design analysis dashboard           |\n   +------------------------------------------+\n   | [Quota: 3/4 remaining] [Upgrade to Pro]  |\n   +------------------------------------------+\n   | ANALYSE A NEW PAGE                       |\n   | [URL Input] [Traffic] [Analyse →]        |\n   +------------------------------------------+\n   | RECENT ANALYSES                          |\n   | [List of past reports with scores]       |\n   +------------------------------------------+\n   ```\n\n5. Handle rate limit in form:\n   - If limit reached, disable submit button\n   - Show upgrade modal/CTA\n   - Display when quota resets\n\n6. Connect to existing analysis flow:\n   - On submit, create job via /api/analyze\n   - Show progress indicator (Task 11)\n   - Redirect to report when complete",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          14,
+          10,
+          15
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 36,
+        "title": "Implement Analysis Progress Page with Real-Time Updates",
+        "description": "Create a dedicated progress page that shows real-time analysis status with step-by-step updates, estimated time remaining, and a progress bar. Works for both anonymous and authenticated users.",
+        "details": "According to PRD Section 7 (Flow 1 - First-Time User):\n- User sees loading screen: \"Analyzing your site...\"\n- Progress bar: 0% → 100% (3-5 minutes)\n- Steps shown:\n  * Loading your site ✓\n  * Capturing screenshot ✓\n  * Extracting design metrics (45%)\n  * Comparing to patterns...\n  * Generating recommendations...\n\nImplementation:\n1. Create /analyze/[jobId] page:\n   - Works without authentication (for anonymous users)\n   - Fetches job status from /api/jobs/[jobId]\n   - Polls every 3 seconds for updates\n\n2. Progress page UI (AnalysisProgress.tsx):\n   - Large circular or linear progress indicator (0-100%)\n   - Current step description with checkmarks for completed steps\n   - Estimated time remaining\n   - Screenshot preview when captured\n   - Animated loading states\n\n3. Step progression:\n   ```typescript\n   const ANALYSIS_STEPS = [\n     { id: 'loading', label: 'Loading your site', threshold: 10 },\n     { id: 'screenshot', label: 'Capturing screenshot', threshold: 20 },\n     { id: 'metrics', label: 'Extracting design metrics', threshold: 50 },\n     { id: 'patterns', label: 'Comparing to patterns', threshold: 75 },\n     { id: 'recommendations', label: 'Generating recommendations', threshold: 90 },\n     { id: 'complete', label: 'Analysis complete!', threshold: 100 },\n   ];\n   ```\n\n4. Polling logic:\n   - Use SWR or React Query for polling\n   - Poll /api/jobs/[jobId] every 3 seconds\n   - Stop polling when status is 'complete' or 'error'\n   - Redirect to /reports/[reportId] on completion\n\n5. Error handling:\n   - Show friendly error message if analysis fails\n   - Offer retry option\n   - Link to contact support for persistent issues\n\n6. Mobile-responsive design:\n   - Works on all screen sizes\n   - Touch-friendly controls",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          10,
+          11
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 37,
+        "title": "Build Upgrade Modal for Rate-Limited Users",
+        "description": "Create an upgrade modal that appears when free users hit their analysis limit, presenting Pro plan benefits and a clear path to upgrade via Stripe Checkout.",
+        "details": "According to PRD Section 7 (Flow 2: Free → Paid Conversion):\nWhen a free user tries to analyse a second site in the same week, they should see an upgrade modal.\n\nImplementation:\n1. Create UpgradeModal.tsx component:\n   ```tsx\n   interface UpgradeModalProps {\n     isOpen: boolean;\n     onClose: () => void;\n     trigger: 'rate_limit' | 'pro_feature' | 'manual';\n     currentUsage?: { used: number; limit: number; resetDate: Date };\n   }\n   ```\n\n2. Modal content (from PRD):\n   - Headline: \"You've used your free analysis this week\"\n   - Value props with checkmarks:\n     * ✅ Unlimited analyses\n     * ✅ Historical tracking\n     * ✅ Competitor comparison\n     * ✅ Export as PDF\n   - Pricing options: £29/mo and £49/mo buttons\n   - \"Try for Free\" option (7-day trial)\n   - \"When does my quota reset?\" helper text\n\n3. Pricing tier cards within modal:\n   - Pro £29/mo: Basic unlimited features\n   - Pro £49/mo: + White-label + API access\n   - Highlight recommended plan\n\n4. CTA buttons:\n   - \"Start 7-Day Free Trial\" (primary)\n   - \"Subscribe Now\" (for users who don't want trial)\n   - Link to full pricing page for more details\n\n5. Trigger points:\n   - Rate limit exceeded (from Task 15)\n   - Attempting Pro-only feature (historical, competitor, export)\n   - Manual trigger from pricing/upgrade buttons\n\n6. Integration with Stripe:\n   - Button click → Stripe Checkout session\n   - Pass user email and return URL\n   - Handle checkout success/cancel redirects\n\n7. Track conversion events:\n   - Modal shown\n   - Plan selected\n   - Checkout started\n   - Subscription completed",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          13,
+          15
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 38,
+        "title": "Create Dedicated Pricing Page with Plan Comparison",
+        "description": "Build a standalone /pricing page with detailed plan comparison, feature breakdown, FAQ section, and clear CTAs to start subscription via Stripe Checkout.",
+        "details": "The landing page has a pricing section, but we need a dedicated page for:\n- SEO (target \"landing page analysis tool pricing\")\n- Direct links from upgrade prompts\n- Detailed feature comparison\n\nImplementation:\n1. Create /pricing page (src/app/pricing/page.tsx):\n   - Full-width hero with headline\n   - Three-tier pricing cards (Free, Pro £29, Pro £49/Agency £99)\n   - Detailed feature comparison table\n   - FAQ section\n   - Trust indicators and testimonials\n\n2. Pricing cards layout:\n   ```\n   ┌─────────────┐ ┌─────────────┐ ┌─────────────┐\n   │    FREE     │ │  PRO £29    │ │ AGENCY £99  │\n   │   £0/mo     │ │   /month    │ │   /month    │\n   │             │ │  POPULAR    │ │             │\n   │ 1 analysis  │ │ Unlimited   │ │ Everything  │\n   │   /week     │ │ analyses    │ │ + Team      │\n   │             │ │             │ │ + White     │\n   │ [Current]   │ │ [Start      │ │ [Contact    │\n   │             │ │  Trial]     │ │  Sales]     │\n   └─────────────┘ └─────────────┘ └─────────────┘\n   ```\n\n3. Feature comparison table:\n   | Feature | Free | Pro | Agency |\n   |---------|------|-----|--------|\n   | Analyses per week | 1 | Unlimited | Unlimited |\n   | 7 dimension scores | ✓ | ✓ | ✓ |\n   | Revenue impact | ✓ | ✓ | ✓ |\n   | Historical tracking | - | ✓ | ✓ |\n   | Competitor comparison | - | ✓ | ✓ |\n   | Export PDF | - | ✓ | ✓ |\n   | White-label reports | - | - | ✓ |\n   | API access | - | - | ✓ |\n   | Team seats | - | - | 5 |\n\n4. FAQ section:\n   - \"What happens after my trial ends?\"\n   - \"Can I cancel anytime?\"\n   - \"How does billing work?\"\n   - \"What payment methods do you accept?\"\n   - \"Do you offer refunds?\"\n\n5. Dynamic elements:\n   - Show \"Current Plan\" badge for logged-in users\n   - Hide upgrade button if already on that plan\n   - Show \"Manage Subscription\" for existing subscribers\n\n6. CTA buttons link to:\n   - Free: /sign-up\n   - Pro: Stripe Checkout session\n   - Agency: /contact or Calendly link",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          5,
+          13
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 39,
+        "title": "Implement Stripe Checkout Flow with Trial Support",
+        "description": "Create the complete Stripe Checkout integration including trial period support, success/cancel handling, and proper user plan updates after successful subscription.",
+        "details": "Extends Task 13 with detailed checkout flow implementation.\n\nImplementation:\n1. Create /api/checkout/session endpoint:\n   ```typescript\n   // POST /api/checkout/session\n   interface CreateCheckoutRequest {\n     priceId: string; // Stripe price ID (£29 or £49)\n     successUrl: string;\n     cancelUrl: string;\n     trialDays?: number; // 7 for trial, undefined for immediate billing\n   }\n   ```\n\n2. Stripe product/price setup:\n   - Product: \"Pirouette Pro\"\n   - Prices:\n     * price_pro_29_monthly: £29/month\n     * price_pro_49_monthly: £49/month\n     * price_pro_29_yearly: £290/year (2 months free)\n   - Trial period: 7 days (optional)\n\n3. Checkout session creation:\n   ```typescript\n   const session = await stripe.checkout.sessions.create({\n     mode: 'subscription',\n     customer_email: user.email, // Pre-fill from Clerk\n     line_items: [{ price: priceId, quantity: 1 }],\n     subscription_data: {\n       trial_period_days: trialDays,\n       metadata: { userId: user.id }\n     },\n     success_url: `${baseUrl}/dashboard?checkout=success&session_id={CHECKOUT_SESSION_ID}`,\n     cancel_url: `${baseUrl}/pricing?checkout=cancelled`,\n     allow_promotion_codes: true,\n   });\n   ```\n\n4. Success page handling (/dashboard with checkout=success):\n   - Show success banner: \"Welcome to Pirouette Pro! 🎉\"\n   - Confirm trial end date if applicable\n   - Highlight newly unlocked features\n   - Prompt to run first Pro analysis\n\n5. Cancel page handling (/pricing with checkout=cancelled):\n   - Show subtle \"Changed your mind?\" message\n   - Keep pricing page visible\n   - Optional: Offer discount code for hesitant users\n\n6. Webhook handling (extends Task 13):\n   - checkout.session.completed → Update user plan to 'pro'\n   - customer.subscription.updated → Handle plan changes\n   - customer.subscription.deleted → Downgrade to 'free'\n   - invoice.payment_failed → Send warning email\n\n7. User table updates:\n   - plan: 'free' | 'pro_29' | 'pro_49' | 'agency'\n   - stripe_customer_id: string\n   - stripe_subscription_id: string\n   - trial_ends_at: timestamp (if on trial)\n   - subscription_ends_at: timestamp (current period end)",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          13,
+          4
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 40,
+        "title": "Implement Pro Feature Gates and Access Control",
+        "description": "Create a feature gating system that controls access to Pro-only features (historical tracking, competitor comparison, PDF export) based on user subscription plan.",
+        "details": "Pro users should have access to additional features. Free users attempting these features should see upgrade prompts.\n\nImplementation:\n1. Create feature flags utility (src/lib/features.ts):\n   ```typescript\n   type Feature = \n     | 'unlimited_analyses'\n     | 'historical_tracking'\n     | 'competitor_comparison'\n     | 'export_pdf'\n     | 'white_label'\n     | 'api_access';\n   \n   const PLAN_FEATURES: Record<Plan, Feature[]> = {\n     free: [],\n     pro_29: ['unlimited_analyses', 'historical_tracking', 'competitor_comparison', 'export_pdf'],\n     pro_49: ['unlimited_analyses', 'historical_tracking', 'competitor_comparison', 'export_pdf', 'white_label', 'api_access'],\n     agency: ['unlimited_analyses', 'historical_tracking', 'competitor_comparison', 'export_pdf', 'white_label', 'api_access'],\n   };\n   \n   function hasFeature(plan: Plan, feature: Feature): boolean;\n   function getAvailableFeatures(plan: Plan): Feature[];\n   ```\n\n2. Create useFeatureAccess hook:\n   ```typescript\n   function useFeatureAccess() {\n     const user = useUser();\n     const plan = user?.plan || 'free';\n     \n     return {\n       canAccess: (feature: Feature) => hasFeature(plan, feature),\n       plan,\n       isPro: plan !== 'free',\n       showUpgrade: (feature: Feature) => !hasFeature(plan, feature),\n     };\n   }\n   ```\n\n3. Create FeatureGate component:\n   ```tsx\n   <FeatureGate feature=\"historical_tracking\" fallback={<UpgradePrompt />}>\n     <HistoricalTrackingSection />\n   </FeatureGate>\n   ```\n\n4. Apply gates to Pro features:\n   - Historical Tracking (Task TBD):\n     * Show locked state for free users\n     * \"Unlock with Pro\" overlay\n     \n   - Competitor Comparison (Task TBD):\n     * Additional URL inputs disabled for free\n     * \"Compare up to 3 competitors with Pro\"\n     \n   - Export PDF:\n     * Button disabled with lock icon\n     * Tooltip: \"Export to PDF available with Pro\"\n\n5. API-level enforcement:\n   - Check plan in API routes for Pro features\n   - Return 403 with upgrade message if not authorized\n   - Log upgrade prompt impressions for analytics\n\n6. Visual indicators:\n   - Pro badge next to gated features\n   - \"PRO\" label in navigation for Pro users\n   - Feature preview with blur/lock for free users",
+        "testStrategy": "",
+        "status": "done",
+        "dependencies": [
+          13,
+          39
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 41,
+        "title": "Build Subscription Management and Billing Portal",
+        "description": "Create subscription management UI allowing Pro users to view their plan, manage billing, change plans, and cancel their subscription through Stripe Customer Portal integration.",
+        "details": "Existing paid subscribers need to manage their subscription.\n\nImplementation:\n1. Create /dashboard/billing page or section:\n   - Current plan display with badge\n   - Billing cycle info (next payment date, amount)\n   - Payment method on file (last 4 digits)\n   - Usage this period (analyses count)\n   - Quick actions\n\n2. Subscription info card:\n   ```\n   ┌────────────────────────────────────────────┐\n   │ YOUR SUBSCRIPTION                          │\n   │                                            │\n   │ Plan: Pro (£29/month)          [Change]   │\n   │ Status: Active                            │\n   │ Next billing: Dec 28, 2025                │\n   │ Payment method: •••• 4242       [Update]  │\n   │                                            │\n   │ This period: 12 analyses performed        │\n   │                                            │\n   │ [Manage Billing] [Cancel Subscription]    │\n   └────────────────────────────────────────────┘\n   ```\n\n3. Stripe Customer Portal integration:\n   - Create /api/billing/portal endpoint\n   - Redirect to Stripe-hosted portal for:\n     * Update payment method\n     * View invoices\n     * Download receipts\n     * Cancel subscription\n   \n   ```typescript\n   const portalSession = await stripe.billingPortal.sessions.create({\n     customer: user.stripe_customer_id,\n     return_url: `${baseUrl}/dashboard/billing`,\n   });\n   ```\n\n4. Plan change flow:\n   - \"Change Plan\" button opens modal\n   - Show current vs. available plans\n   - Proration preview: \"You'll be charged £20 today for the upgrade\"\n   - Confirm and process via Stripe\n\n5. Cancellation flow:\n   - \"Cancel Subscription\" opens confirmation modal\n   - Show what they'll lose:\n     * \"You'll lose access to unlimited analyses\"\n     * \"Your historical data will be preserved\"\n   - Offer alternatives:\n     * Pause subscription (if supported)\n     * Downgrade to lower tier\n     * Contact support\n   - Retention offer: \"Stay for 50% off next month?\"\n   - Final confirmation → Cancel via Stripe\n\n6. Trial-specific UI:\n   - \"Trial ends in X days\" banner\n   - \"Add payment method to continue after trial\"\n   - Trial conversion reminder emails (Day 5, Day 7)\n\n7. Webhook handlers for plan changes:\n   - customer.subscription.updated → Update plan in database\n   - customer.subscription.deleted → Set plan to 'free'\n   - invoice.payment_failed → Show payment failed banner",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          13,
+          14,
+          39
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 42,
+        "title": "Add Pro Status Indicators Throughout UI",
+        "description": "Add visual indicators throughout the application to clearly show Pro subscription status, differentiate Pro users from free users, and highlight Pro-exclusive features.",
+        "details": "Pro users should feel special and clearly see the value they're paying for.\n\nImplementation:\n1. Navigation bar Pro badge:\n   ```tsx\n   // In Navigation component\n   {user?.plan !== 'free' && (\n     <span className=\"bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-medium\">\n       PRO\n     </span>\n   )}\n   ```\n\n2. Dashboard header:\n   - Free: \"Free Plan • 1 analysis/week\"\n   - Pro: \"Pro Plan • Unlimited analyses ✨\"\n   - Show upgrade button for free, billing link for Pro\n\n3. Analysis form enhancements for Pro:\n   - Remove quota display (show \"Unlimited\" badge)\n   - Enable competitor URL inputs (if implemented)\n   - Show \"Pro Analysis\" label\n\n4. Report page Pro features:\n   - \"Export PDF\" button enabled with Pro badge\n   - \"Historical Comparison\" section visible\n   - \"Competitor Analysis\" section if applicable\n   - \"Pro Report\" watermark/badge on page\n\n5. Feature cards with Pro indicators:\n   ```tsx\n   <FeatureCard\n     title=\"Historical Tracking\"\n     isPro={true}\n     isLocked={!hasFeature('historical_tracking')}\n   />\n   ```\n\n6. Email communications:\n   - Different email templates for Pro users\n   - \"Pro\" badge in email header\n   - Pro-exclusive tips and features highlighted\n\n7. Account settings:\n   - Plan badge next to subscription section\n   - \"You're on Pro!\" confirmation\n   - Benefits reminder list\n\n8. Usage dashboard (for Pro users):\n   - Monthly analysis count graph\n   - Most analysed domains\n   - Feature usage stats\n   - \"You've saved £X compared to agency pricing\"\n\n9. Subtle but noticeable differences:\n   - Slightly different colour accents for Pro\n   - Priority support indicator\n   - Early access badge for new features\n   - \"Pro Member Since\" date in account",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          40,
+          41
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 43,
+        "title": "Implement Historical Tracking for Pro Users",
+        "description": "Build the historical tracking feature that allows Pro users to compare their current analysis with previous analyses of the same URL, showing improvement trends over time.",
+        "details": "PRD Section 6 - Nice-to-Have Feature #7: Historical Tracking\n\"Compare reports over time. Show improvement trends. 'You improved CTA score by 15 points this month!'\"\n\nImplementation:\n1. Database query for historical data:\n   ```typescript\n   async function getHistoricalReports(userId: string, url: string): Promise<Report[]> {\n     return supabase\n       .from('reports')\n       .select('*')\n       .eq('user_id', userId)\n       .eq('url', normalizeUrl(url))\n       .order('created_at', { ascending: false })\n       .limit(10);\n   }\n   ```\n\n2. Historical comparison component (HistoricalTracking.tsx):\n   - Timeline view showing past analyses\n   - Score trend chart (line graph)\n   - Dimension-by-dimension comparison\n   - Improvement/regression indicators\n\n3. Score trend visualization:\n   ```\n   Overall Score Trend\n   100 ┤\n    90 ┤                    ●\n    80 ┤         ●──────●───┘\n    70 ┤    ●────┘\n    60 ┤───●\n       └──────────────────────────\n        Oct   Nov   Dec   Jan   Feb\n   ```\n\n4. Improvement highlights:\n   - \"🎉 Your CTA score improved by 15 points!\"\n   - \"⚠️ Typography score dropped 5 points\"\n   - Net improvement summary\n\n5. Comparison table:\n   | Dimension | Previous | Current | Change |\n   |-----------|----------|---------|--------|\n   | CTA | 55 | 70 | +15 ↑ |\n   | Typography | 82 | 77 | -5 ↓ |\n   | Overall | 68 | 74 | +6 ↑ |\n\n6. Feature gate integration:\n   - Only show for Pro users\n   - Free users see locked preview with upgrade CTA\n   - Teaser: \"See how you've improved over time with Pro\"\n\n7. API endpoint:\n   - GET /api/reports/history?url=example.com\n   - Returns array of historical reports\n   - Requires Pro plan (403 if not Pro)\n\n8. Report page integration:\n   - Add \"History\" tab or section\n   - Show \"First analysis\" if no history\n   - Compare button for side-by-side view",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          12,
+          40
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 44,
+        "title": "Build PDF Export Feature for Pro Users",
+        "description": "Implement PDF export functionality allowing Pro users to download their analysis reports as professional, branded PDF documents for sharing with stakeholders.",
+        "details": "PRD Section 6 - Nice-to-Have Feature #9: Export Report\n\"Download as PDF. Share link (public URL). Embed widget (iframe).\"\n\nImplementation:\n1. Create PDF generation service:\n   - Use @react-pdf/renderer or Puppeteer for PDF generation\n   - Server-side generation via API route\n   - Branded template with Pirouette logo\n\n2. PDF template design:\n   ```\n   ┌────────────────────────────────────────────┐\n   │ [Pirouette Logo]           Design Analysis │\n   │                                            │\n   │ URL: https://example.com                   │\n   │ Analysed: November 28, 2025                │\n   ├────────────────────────────────────────────┤\n   │           OVERALL SCORE: 72/100            │\n   │              [Score Gauge]                 │\n   ├────────────────────────────────────────────┤\n   │ DIMENSION BREAKDOWN                        │\n   │ • Typography: 85/100                       │\n   │ • Colour & Contrast: 78/100                │\n   │ • CTA Design: 55/100                       │\n   │ [...]                                      │\n   ├────────────────────────────────────────────┤\n   │ TOP RECOMMENDATIONS                        │\n   │ 1. Increase CTA button size by 40%        │\n   │    Impact: High | Effort: 15 minutes      │\n   │ [...]                                      │\n   ├────────────────────────────────────────────┤\n   │ Screenshot of analysed page               │\n   │ [Image]                                   │\n   ├────────────────────────────────────────────┤\n   │ Generated by Pirouette • pirouette.app    │\n   └────────────────────────────────────────────┘\n   ```\n\n3. API endpoint:\n   - GET /api/reports/[id]/pdf\n   - Returns PDF file (application/pdf)\n   - Requires Pro plan (403 if not Pro)\n   - Cache generated PDFs for performance\n\n4. Export button in report UI:\n   ```tsx\n   <FeatureGate feature=\"export_pdf\">\n     <Button onClick={downloadPDF} icon={<DownloadIcon />}>\n       Export as PDF\n     </Button>\n   </FeatureGate>\n   ```\n\n5. PDF generation options:\n   - Include/exclude screenshot\n   - Include/exclude full recommendations\n   - Add custom notes field\n   - White-label option (Agency tier): Remove Pirouette branding\n\n6. Share link feature (bonus):\n   - Generate public shareable URL\n   - /reports/share/[shareId]\n   - Password protection option\n   - Expiry date option\n\n7. Performance considerations:\n   - Generate PDF asynchronously\n   - Show \"Generating PDF...\" loading state\n   - Store generated PDFs in Supabase Storage\n   - Re-use cached PDFs if report unchanged",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          12,
+          40
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 45,
+        "title": "Build Competitor Comparison Feature for Pro Users",
+        "description": "Implement the competitor comparison feature allowing Pro users to analyse their site alongside up to 3 competitor URLs, providing side-by-side comparison of scores and highlighting competitive advantages and gaps.",
+        "details": "PRD Section 6 - Nice-to-Have Feature #8: Competitor Comparison\n\"Analyze your site + 3 competitors. Side-by-side comparison table. 'Your CTA is 40% less prominent than Competitor A'\"\n\nImplementation:\n1. Update analysis form for competitor mode:\n   - Primary URL input (your site)\n   - 3 additional competitor URL inputs (optional)\n   - Toggle: \"Compare with competitors\" (Pro only)\n   - Free users see locked inputs with upgrade CTA\n\n2. Backend changes:\n   - Accept array of URLs in /api/analyze\n   - Create parent job with child jobs for each URL\n   - Run analyses in parallel (up to 4 concurrent)\n   - Aggregate results into comparison report\n\n3. Comparison report page (/reports/[id]/compare):\n   ```\n   ┌─────────────────────────────────────────────────────────────┐\n   │ COMPETITOR COMPARISON                                       │\n   ├─────────────────────────────────────────────────────────────┤\n   │              You    Comp A   Comp B   Comp C                │\n   │ Overall:     72      85       68       91                   │\n   │ CTA:         55      78       62       88     ← You're 23pt behind\n   │ Typography:  82      80       75       85                   │\n   │ Whitespace:  70      88       70       92     ← Opportunity │\n   ├─────────────────────────────────────────────────────────────┤\n   │ YOUR COMPETITIVE GAPS                                       │\n   │ • CTA prominence 30% below average competitor               │\n   │ • Whitespace 18% more cramped than top competitor          │\n   ├─────────────────────────────────────────────────────────────┤\n   │ YOUR ADVANTAGES                                             │\n   │ • Typography 5% better than average competitor              │\n   └─────────────────────────────────────────────────────────────┘\n   ```\n\n4. Comparison metrics:\n   - Dimension-by-dimension comparison\n   - Calculate gaps vs. best competitor\n   - Identify your strongest/weakest areas\n   - Rank position for each dimension\n\n5. Actionable insights:\n   - \"Close this gap\" recommendations\n   - \"Maintain this advantage\" notes\n   - Priority ranking based on competitor delta\n\n6. Database schema:\n   - Add parent_job_id to jobs table\n   - Link comparison reports together\n   - Store comparison metadata\n\n7. Feature gating:\n   - Only available for Pro users\n   - Free users see preview with upgrade CTA\n   - API returns 403 if not Pro",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          12,
+          40,
+          10
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 46,
+        "title": "Handle Subscription Cancellation and Churned User Journey",
+        "description": "Implement complete cancellation flow including retention offers, graceful downgrade experience, data retention policies, and win-back mechanisms for churned users.",
+        "details": "When a Pro user decides to cancel, we need to handle this gracefully and attempt retention.\n\nImplementation:\n1. Cancellation flow (from Task 41):\n   - User clicks \"Cancel Subscription\"\n   - Show retention modal with reasons survey\n   - Offer alternatives:\n     * Pause for 1-3 months\n     * Downgrade to lower tier\n     * Retention offer: 50% off next month\n   - If still cancelling, confirm and process\n\n2. Retention modal content:\n   ```\n   ┌────────────────────────────────────────────────────────────┐\n   │ We're sorry to see you go 😢                               │\n   │                                                            │\n   │ Before you cancel, can you tell us why?                   │\n   │ ○ Too expensive                                           │\n   │ ○ Not using it enough                                     │\n   │ ○ Missing features I need                                 │\n   │ ○ Found an alternative                                    │\n   │ ○ Other: [_______________]                                │\n   │                                                            │\n   │ ────────────────────────────────────────                  │\n   │ 💡 How about 50% off your next month?                     │\n   │ [Accept Offer] [Continue to Cancel]                       │\n   └────────────────────────────────────────────────────────────┘\n   ```\n\n3. Post-cancellation experience:\n   - Subscription active until period end\n   - Show \"Subscription ends on [date]\" banner\n   - Continue Pro access until expiry\n   - Grace period: 7 days after expiry to resubscribe without data loss\n\n4. Downgrade to free:\n   - Keep all historical data\n   - Lose Pro features access\n   - Rate limit applies again (1/week)\n   - Show \"Welcome back to Free\" message\n   - Upgrade CTA visible\n\n5. Win-back email sequence:\n   - Day 1: \"We miss you\" + what they're missing\n   - Day 7: \"Your reports are still here\" + discount offer\n   - Day 30: \"Come back for 40% off\" final offer\n\n6. Re-subscription flow:\n   - Easy one-click reactivate from dashboard\n   - Previous plan pre-selected\n   - No need to re-enter payment method\n   - Immediate Pro access restored\n\n7. Data retention policy:\n   - Reports kept for 1 year after cancellation\n   - After 1 year, send deletion warning email\n   - User can export data before deletion\n   - GDPR compliant\n\n8. Webhook handling:\n   - customer.subscription.deleted → Set plan to 'free'\n   - customer.subscription.updated (status: canceled) → Show end date\n   - Track cancellation reasons in analytics",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          41,
+          23
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 47,
+        "title": "Handle Failed Payments and Dunning Flow",
+        "description": "Implement payment failure handling including grace periods, dunning emails, payment update prompts, and automatic downgrade after failed recovery attempts.",
+        "details": "When a subscription payment fails, we need to gracefully handle recovery.\n\nImplementation:\n1. Payment failure detection (webhook):\n   - invoice.payment_failed → Trigger dunning flow\n   - Store failure count and last attempt date\n   - Update user status to 'payment_pending'\n\n2. Grace period:\n   - 7 days to recover payment\n   - Pro access maintained during grace\n   - Show warning banner in dashboard:\n     \"⚠️ Payment failed. Please update your payment method to continue Pro access.\"\n\n3. Dashboard warning banner:\n   ```tsx\n   <PaymentFailedBanner\n     daysRemaining={5}\n     onUpdatePayment={() => openBillingPortal()}\n   />\n   ```\n\n4. Dunning email sequence:\n   - Day 0: \"Payment failed - update your card\"\n   - Day 3: \"Action required - Pro access ending soon\"\n   - Day 6: \"Final warning - Pro access ends tomorrow\"\n   - Day 7: \"Your Pro access has been suspended\"\n\n5. Email template content:\n   ```\n   Subject: Action required: Update your payment method\n   \n   Hi [Name],\n   \n   We couldn't process your payment of £29 for Pirouette Pro.\n   \n   Your Pro access will continue for 7 more days while you \n   update your payment method.\n   \n   [Update Payment Method →]\n   \n   If you have any questions, reply to this email.\n   ```\n\n6. Automatic downgrade:\n   - After 7 days, set plan to 'payment_failed'\n   - Remove Pro feature access\n   - Keep data intact\n   - Show recovery CTA prominently\n\n7. Recovery flow:\n   - User updates payment method via Stripe Portal\n   - invoice.payment_succeeded → Restore Pro access\n   - Send \"Welcome back\" confirmation email\n   - Reset failure count\n\n8. Stripe retry settings:\n   - Configure Smart Retries in Stripe Dashboard\n   - 3 retry attempts over 7 days\n   - Final attempt on day 7\n\n9. Database tracking:\n   - payment_status: 'active' | 'pending' | 'failed'\n   - payment_failed_at: timestamp\n   - payment_retry_count: number\n   - last_payment_attempt: timestamp",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          13,
+          23,
+          39
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 48,
+        "title": "Implement Trial User Experience and Conversion Flow",
+        "description": "Create the complete 7-day trial experience including onboarding, usage encouragement, trial-ending reminders, and smooth conversion to paid subscription.",
+        "details": "PRD mentions 7-day free trial for Pro features. This task creates the complete trial journey.\n\nImplementation:\n1. Trial start experience:\n   - After checkout with trial: \"Your 7-day Pro trial has started! 🎉\"\n   - Welcome modal showing all Pro features unlocked\n   - Guided tour of Pro features (optional)\n   - \"Make the most of your trial\" tips\n\n2. Trial dashboard display:\n   ```\n   ┌─────────────────────────────────────────────────────────────┐\n   │ 🎁 PRO TRIAL                                                │\n   │ 5 days remaining • Ends Dec 5, 2025                        │\n   │                                                            │\n   │ [Add Payment Method]  to continue after trial              │\n   └─────────────────────────────────────────────────────────────┘\n   ```\n\n3. Trial-specific UI elements:\n   - \"TRIAL\" badge instead of \"PRO\" in nav\n   - Countdown banner showing days remaining\n   - Gentle reminders to add payment method\n   - Feature usage tracking (\"You've used 5 Pro features!\")\n\n4. Trial email sequence:\n   - Day 1: Welcome + getting started guide\n   - Day 3: \"Have you tried [feature]?\" based on usage\n   - Day 5: \"Your trial ends in 2 days\"\n   - Day 7 (morning): \"Last day of trial - don't lose access!\"\n   - Day 7 (if no payment): \"Trial ended - here's what you're missing\"\n\n5. Trial ending scenarios:\n\n   a) Payment method on file:\n   - Auto-convert to paid subscription\n   - Send confirmation email\n   - Seamless transition (no interruption)\n\n   b) No payment method:\n   - Downgrade to free at trial end\n   - Show \"Trial ended\" modal\n   - Prominent upgrade CTA\n   - Keep trial data accessible\n\n6. Trial conversion prompts:\n   - Day 5+: More prominent \"Add payment\" CTAs\n   - Before trial ends: \"Keep your Pro features\" modal\n   - Show what they'll lose: feature list with lock icons\n\n7. Database tracking:\n   - trial_ends_at: timestamp\n   - trial_started_at: timestamp\n   - payment_method_added: boolean\n   - trial_features_used: array\n   - converted_from_trial: boolean\n\n8. Analytics events:\n   - trial_started\n   - trial_feature_used (per feature)\n   - payment_method_added_during_trial\n   - trial_converted\n   - trial_expired\n   - trial_reactivated (if they come back)",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          39,
+          23,
+          42
+        ],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 49,
+        "title": "Implement Account Deletion and GDPR Data Export",
+        "description": "Create account deletion flow and GDPR-compliant data export functionality, allowing users to download all their data and permanently delete their account.",
+        "details": "PRD Section 9 - Privacy Policy mentions GDPR user rights:\n- Right to access: Download all data\n- Right to deletion: Delete account + all data\n- Right to portability: Export reports\n\nImplementation:\n1. Account settings section:\n   ```\n   ┌────────────────────────────────────────────────────────────┐\n   │ DATA & PRIVACY                                             │\n   │                                                            │\n   │ Your Data                                                  │\n   │ Download a copy of all your Pirouette data including      │\n   │ reports, analyses, and account information.               │\n   │ [Download My Data]                                        │\n   │                                                            │\n   │ ────────────────────────────────────────────────────────  │\n   │ ⚠️ Danger Zone                                            │\n   │                                                            │\n   │ Delete Account                                            │\n   │ Permanently delete your account and all associated data.  │\n   │ This action cannot be undone.                             │\n   │ [Delete My Account]                                       │\n   └────────────────────────────────────────────────────────────┘\n   ```\n\n2. Data export functionality:\n   - GET /api/account/export\n   - Generate ZIP file containing:\n     * account.json (profile, settings, plan history)\n     * reports/ folder with all report JSONs\n     * screenshots/ folder with all captured images\n     * analyses.json (list of all analyses)\n   - Email download link when ready (async generation)\n\n3. Export format (GDPR compliant):\n   ```json\n   {\n     \"exportDate\": \"2025-11-28T10:00:00Z\",\n     \"account\": {\n       \"email\": \"user@example.com\",\n       \"createdAt\": \"2025-10-15T...\",\n       \"plan\": \"pro_29\",\n       \"analysisCount\": 42\n     },\n     \"reports\": [...],\n     \"analyses\": [...]\n   }\n   ```\n\n4. Account deletion flow:\n   - User clicks \"Delete My Account\"\n   - Show confirmation modal:\n     * List what will be deleted\n     * Require email confirmation to proceed\n     * Require typing \"DELETE\" to confirm\n   - If Pro subscriber, cancel subscription first\n   - Schedule deletion (30-day grace period for recovery)\n   \n5. Deletion confirmation modal:\n   ```\n   ┌────────────────────────────────────────────────────────────┐\n   │ ⚠️ Delete Your Account?                                   │\n   │                                                            │\n   │ This will permanently delete:                             │\n   │ • Your account and profile                                │\n   │ • All 42 analysis reports                                 │\n   │ • Your subscription (if applicable)                       │\n   │                                                            │\n   │ This action CANNOT be undone.                             │\n   │                                                            │\n   │ Type \"DELETE\" to confirm: [___________]                   │\n   │                                                            │\n   │ [Cancel]                    [Delete Account]              │\n   └────────────────────────────────────────────────────────────┘\n   ```\n\n6. Deletion process:\n   - Mark account as pending_deletion\n   - Send confirmation email with 30-day recovery link\n   - Schedule actual deletion for 30 days later\n   - Block login after deletion request\n\n7. Data deletion (after 30 days):\n   - Delete from users table\n   - Delete from jobs table (cascade)\n   - Delete from reports table (cascade)\n   - Delete screenshots from Supabase Storage\n   - Delete from Stripe (cancel subscription)\n   - Delete from Clerk\n\n8. Recovery within 30 days:\n   - Link in confirmation email\n   - Reactivates account\n   - Restores full access\n   - Cancels deletion schedule\n\n9. Logging and compliance:\n   - Log all deletion requests\n   - Store deletion confirmation for audit\n   - Retain minimal data for legal requirements (fraud prevention)",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          14,
+          20,
+          13
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 50,
+        "title": "Implement Referral Program",
+        "description": "Build referral program allowing users to invite friends, track referrals, and earn rewards (free months) when referred users subscribe to Pro.",
+        "details": "PRD Section 10 - Marketing Strategy mentions referral program (Month 2+):\n- Referrer gets: 1 month free Pro for each friend who upgrades\n- Referee gets: 20% off first 3 months\n\nImplementation:\n1. Generate unique referral codes/links:\n   - Format: pirouette.app?ref=USERNAME or pirouette.app/r/CODE\n   - Store in users table: referral_code\n   - Track in referrals table\n\n2. Referral dashboard section:\n   ```\n   ┌────────────────────────────────────────────────────────────┐\n   │ INVITE FRIENDS, GET FREE MONTHS 🎁                         │\n   │                                                            │\n   │ Your referral link:                                       │\n   │ [pirouette.app/r/TOMX4K]  [Copy]  [Share]                │\n   │                                                            │\n   │ Your Rewards:                                             │\n   │ 🎉 2 friends signed up                                    │\n   │ ✨ 1 friend upgraded to Pro                               │\n   │ 💰 1 free month earned!                                   │\n   │                                                            │\n   │ [View Referral History]                                   │\n   └────────────────────────────────────────────────────────────┘\n   ```\n\n3. Referral tracking database:\n   ```sql\n   CREATE TABLE referrals (\n     id UUID PRIMARY KEY,\n     referrer_id UUID REFERENCES users(id),\n     referee_id UUID REFERENCES users(id),\n     referral_code TEXT,\n     status TEXT, -- 'signed_up', 'upgraded', 'rewarded'\n     reward_applied BOOLEAN DEFAULT FALSE,\n     created_at TIMESTAMPTZ DEFAULT NOW(),\n     upgraded_at TIMESTAMPTZ\n   );\n   ```\n\n4. Referee experience:\n   - Landing page shows \"Referred by [Name]\"\n   - 20% discount auto-applied at checkout\n   - Welcome email mentions referral bonus\n\n5. Referrer rewards:\n   - When referee upgrades to Pro:\n     * Notify referrer via email\n     * Credit 1 free month to their account\n     * Apply as Stripe subscription credit\n\n6. Reward mechanics (Stripe):\n   - Create coupon: 100% off for 1 month\n   - Apply to referrer's next invoice\n   - Or: Extend subscription by 1 month\n\n7. Share functionality:\n   - Copy link button\n   - Share via Twitter (pre-filled tweet)\n   - Share via email (opens mail client)\n   - Track share clicks\n\n8. Fraud prevention:\n   - One referral per email address\n   - Referee must be new user\n   - Referee must use different payment method\n   - Cap rewards at 12 free months/year\n\n9. Referral email notifications:\n   - \"Your friend [Name] just signed up!\"\n   - \"Great news! [Name] upgraded - you earned a free month!\"\n   - Monthly summary of referral activity\n\n10. Analytics tracking:\n    - Referral link clicks\n    - Referral signups\n    - Referral conversions\n    - Revenue attributed to referrals",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [
+          13,
+          23,
+          39
+        ],
+        "priority": "low",
+        "subtasks": []
       }
     ],
     "metadata": {
@@ -911,7 +1198,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-27T17:26:07.893Z"
+      "updated": "2025-11-28T09:04:46.398Z"
     }
   }
 }

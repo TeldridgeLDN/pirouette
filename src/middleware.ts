@@ -5,9 +5,15 @@
  * Public routes are accessible without authentication.
  * 
  * Protected routes:
- * - /dashboard - User dashboard
- * - /reports/* - Analysis reports
- * - /api/* (except webhooks) - API routes
+ * - /dashboard - User dashboard (requires authentication)
+ * 
+ * Public routes (for anonymous analysis flow):
+ * - / - Landing page
+ * - /analyze/* - Analysis progress page
+ * - /report/* - Report page (anonymous access allowed)
+ * - /api/analyze - Submit analysis (supports anonymous)
+ * - /api/jobs/* - Job status (supports anonymous)
+ * - /api/webhooks/* - Webhook endpoints
  */
 
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
@@ -17,8 +23,14 @@ const isPublicRoute = createRouteMatcher([
   '/',
   '/sign-in(.*)',
   '/sign-up(.*)',
-  '/api/webhooks(.*)', // Webhooks should be public
-  '/api/test-supabase', // Test endpoint (remove in production)
+  '/analyze(.*)',           // Analysis progress page (anonymous)
+  '/report(.*)',            // Report page (anonymous access allowed)
+  '/api/analyze',           // Submit analysis (anonymous supported)
+  '/api/jobs(.*)',          // Job status (anonymous supported)
+  '/api/reports(.*)',       // Reports API (anonymous supported)
+  '/api/claim-report',      // Claim report (requires auth, but check happens in handler)
+  '/api/webhooks(.*)',      // Webhooks should be public (Clerk + Stripe)
+  '/api/test-supabase',     // Test endpoint (remove in production)
 ]);
 
 export default clerkMiddleware(async (auth, request) => {

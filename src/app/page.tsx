@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import HeroAnalyzeForm from '@/components/HeroAnalyzeForm';
+import Navigation from '@/components/Navigation';
 
 // ============================================================================
 // PIROUETTE LANDING PAGE
@@ -8,7 +10,7 @@ import Link from 'next/link';
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50">
-      {/* Navigation */}
+      {/* Navigation - Dynamic auth state */}
       <Navigation />
       
       {/* Hero Section */}
@@ -38,51 +40,7 @@ export default function Home() {
   );
 }
 
-// ============================================================================
-// NAVIGATION
-// ============================================================================
-
-function Navigation() {
-  return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">P</span>
-            </div>
-            <span className="font-heading font-bold text-xl text-slate-900">Pirouette</span>
-          </div>
-          
-          {/* Nav Links */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="text-slate-600 hover:text-slate-900 transition-colors">How it Works</a>
-            <a href="#features" className="text-slate-600 hover:text-slate-900 transition-colors">Features</a>
-            <a href="#pricing" className="text-slate-600 hover:text-slate-900 transition-colors">Pricing</a>
-          </div>
-          
-          {/* CTA Buttons */}
-          <div className="flex items-center gap-3">
-            <Link 
-              href="/sign-in" 
-              className="text-slate-600 hover:text-slate-900 font-medium transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link 
-              href="/sign-up" 
-              className="btn-primary px-5 py-2.5 rounded-lg text-white font-semibold text-sm"
-              style={{ background: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)', boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.39)' }}
-            >
-              Get Started Free
-            </Link>
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-}
+// Navigation moved to src/components/Navigation.tsx for dynamic auth state
 
 // ============================================================================
 // HERO SECTION
@@ -131,31 +89,29 @@ function HeroSection() {
             Get actionable recommendations to improve conversions—no design experience needed.
           </p>
           
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-slide-up" style={{ animationDelay: '200ms' }}>
-            <Link 
-              href="/sign-up" 
-              className="w-full sm:w-auto px-8 py-4 rounded-xl text-white font-semibold text-lg transition-all duration-200 hover:-translate-y-1"
-              style={{ 
-                background: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)', 
-                boxShadow: '0 4px 14px 0 rgba(249, 115, 22, 0.39)' 
-              }}
-            >
-              Analyse My Landing Page →
-            </Link>
+          {/* URL Input Form - No signup required! */}
+          <div className="animate-slide-up" style={{ animationDelay: '200ms' }}>
+            <HeroAnalyzeForm />
+          </div>
+          
+          {/* Secondary CTA */}
+          <div className="mt-6 animate-fade-in" style={{ animationDelay: '300ms' }}>
             <a 
               href="#how-it-works" 
-              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-white text-slate-700 font-semibold text-lg border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
+              className="inline-flex items-center gap-2 text-slate-600 hover:text-slate-900 font-medium transition-colors"
             >
-              See How It Works
+              <span>See How It Works</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
             </a>
           </div>
           
           {/* Trust Indicators */}
-          <div className="flex items-center justify-center gap-6 mt-10 text-sm text-slate-500 animate-fade-in" style={{ animationDelay: '400ms' }}>
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-8 text-sm text-slate-500 animate-fade-in" style={{ animationDelay: '400ms' }}>
             <div className="flex items-center gap-2">
               <CheckIcon className="w-4 h-4 text-emerald-500" />
-              <span>Free tier available</span>
+              <span>No signup required</span>
             </div>
             <div className="flex items-center gap-2">
               <CheckIcon className="w-4 h-4 text-emerald-500" />
@@ -163,7 +119,7 @@ function HeroSection() {
             </div>
             <div className="flex items-center gap-2">
               <CheckIcon className="w-4 h-4 text-emerald-500" />
-              <span>No design skills required</span>
+              <span>No credit card needed</span>
             </div>
           </div>
         </div>

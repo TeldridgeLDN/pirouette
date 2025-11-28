@@ -4,6 +4,12 @@
  * POST /api/analyze
  * 
  * Creates a new analysis job and triggers the Railway analysis service.
+ * Supports both authenticated and anonymous users with different rate limits.
+ * 
+ * Rate Limits (per PRD):
+ * - Anonymous (no account): 1 analysis per IP per day
+ * - Free account: 1 analysis per week
+ * - Pro users: Unlimited analyses
  * 
  * Request Body:
  * - url: string (required) - URL to analyse
@@ -12,12 +18,19 @@
  * Response:
  * - jobId: string - Unique job identifier for polling
  * - status: string - Initial job status ('queued')
+ * - isAnonymous: boolean - Whether this was an anonymous analysis
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
-import { checkRateLimit, getUserIdFromClerkId } from '@/lib/rate-limit';
+import { 
+  checkRateLimit, 
+  getUserIdFromClerkId,
+  getClientIp,
+  checkAnonymousRateLimit,
+  recordAnonymousAnalysis,
+} from '@/lib/rate-limit';
 import type { InsertJob } from '@/lib/supabase/types';
 
 // ============================================================================
@@ -105,21 +118,19 @@ async function triggerRailwayAnalysis(jobId: string, url: string, userId: string
 
 export async function POST(request: NextRequest) {
   try {
-    // 1. Authenticate user
+    // 1. Check authentication status (don't require it)
     const { userId: clerkUserId } = await auth();
+    const isAuthenticated = !!clerkUserId;
     
-    if (!clerkUserId) {
-      return NextResponse.json(
-        { success: false, error: 'Please sign in to analyse a website' },
-        { status: 401 }
-      );
-    }
+    // 2. Get client IP for anonymous rate limiting
+    const clientIp = getClientIp(request.headers);
+    const userAgent = request.headers.get('user-agent') || undefined;
     
-    // 2. Parse request body
+    // 3. Parse request body
     const body = await request.json().catch(() => ({}));
     const { url, weeklyTraffic } = body;
     
-    // 3. Validate URL
+    // 4. Validate URL
     const urlValidation = validateUrl(url);
     if (!urlValidation.valid) {
       return NextResponse.json(
@@ -128,7 +139,7 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // 4. Validate traffic (if provided)
+    // 5. Validate traffic (if provided)
     let validatedTraffic: number | null = null;
     if (weeklyTraffic !== undefined && weeklyTraffic !== null && weeklyTraffic !== '') {
       const parsed = parseInt(weeklyTraffic, 10);
@@ -141,40 +152,69 @@ export async function POST(request: NextRequest) {
       validatedTraffic = parsed;
     }
     
-    // 5. Check rate limit
-    const rateLimitResult = await checkRateLimit(clerkUserId);
+    // 6. Check rate limit (different for authenticated vs anonymous)
+    let supabaseUserId: string | null = null;
     
-    if (!rateLimitResult.allowed) {
-      return NextResponse.json(
-        { 
-          success: false, 
-          error: rateLimitResult.message || 'Rate limit exceeded',
-          resetAt: rateLimitResult.resetAt?.toISOString(),
-        },
-        { status: 429 }
-      );
-    }
-    
-    // 6. Get Supabase user ID
-    const supabaseUserId = await getUserIdFromClerkId(clerkUserId);
-    
-    if (!supabaseUserId) {
-      return NextResponse.json(
-        { success: false, error: 'User account not found. Please try signing out and back in.' },
-        { status: 400 }
-      );
+    if (isAuthenticated) {
+      // Authenticated user: check user-based rate limit
+      const rateLimitResult = await checkRateLimit(clerkUserId);
+      
+      if (!rateLimitResult.allowed) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: rateLimitResult.message || 'Rate limit exceeded',
+            resetAt: rateLimitResult.resetAt?.toISOString(),
+            isAuthenticated: true,
+          },
+          { status: 429 }
+        );
+      }
+      
+      // Get Supabase user ID
+      supabaseUserId = await getUserIdFromClerkId(clerkUserId);
+      
+      if (!supabaseUserId) {
+        return NextResponse.json(
+          { success: false, error: 'User account not found. Please try signing out and back in.' },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Anonymous user: check IP-based rate limit
+      const anonymousRateLimit = await checkAnonymousRateLimit(clientIp);
+      
+      if (!anonymousRateLimit.allowed) {
+        return NextResponse.json(
+          { 
+            success: false, 
+            error: anonymousRateLimit.message || 'Rate limit exceeded',
+            resetAt: anonymousRateLimit.resetAt?.toISOString(),
+            isAuthenticated: false,
+            suggestSignup: true,
+          },
+          { status: 429 }
+        );
+      }
     }
     
     // 7. Create job in Supabase
     const supabase = supabaseAdmin;
     
-    const jobData: InsertJob = {
-      user_id: supabaseUserId,
-      url: urlValidation.normalized!, // Guaranteed to exist after validation passes
+    // Build job data - user_id is nullable for anonymous users
+    const jobData: Record<string, unknown> = {
+      url: urlValidation.normalized!,
       status: 'queued',
       progress: 0,
       current_step: 'Queued for analysis',
     };
+    
+    if (supabaseUserId) {
+      jobData.user_id = supabaseUserId;
+    } else {
+      // Anonymous user: store IP for tracking
+      jobData.ip_address = clientIp;
+    }
     
     // Type assertion needed due to Supabase types version mismatch
     const { data: job, error: insertError } = await supabase
@@ -191,16 +231,25 @@ export async function POST(request: NextRequest) {
       );
     }
     
-    // 8. Trigger Railway analysis (fire and forget)
-    // In production, this would be handled by BullMQ job queue
-    triggerRailwayAnalysis(job.id, urlValidation.normalized!, supabaseUserId);
+    // 8. Record anonymous analysis for rate limiting (if anonymous)
+    if (!isAuthenticated) {
+      await recordAnonymousAnalysis(clientIp, urlValidation.normalized!, job.id, userAgent);
+    }
     
-    // 9. Return job ID for polling
+    // 9. Trigger Railway analysis (fire and forget)
+    // In production, this would be handled by BullMQ job queue
+    // Pass user ID or 'anonymous' for logging purposes
+    triggerRailwayAnalysis(job.id, urlValidation.normalized!, supabaseUserId || 'anonymous');
+    
+    // 10. Return job ID for polling
     return NextResponse.json({
       success: true,
       jobId: job.id,
       status: 'queued',
-      message: 'Analysis started. You can check the status using the job ID.',
+      isAnonymous: !isAuthenticated,
+      message: isAuthenticated 
+        ? 'Analysis started. You can check the status using the job ID.'
+        : 'Analysis started! Create a free account to save your results and get weekly analyses.',
       ...(validatedTraffic && { weeklyTraffic: validatedTraffic }),
     });
     
