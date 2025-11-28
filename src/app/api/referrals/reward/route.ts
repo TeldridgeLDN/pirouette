@@ -157,7 +157,6 @@ export async function POST(request: NextRequest) {
     }
     
     // Update referral status
-    // @ts-expect-error - Supabase types not generated for referrals table
     await supabase.from('referrals')
       .update({
         status: 'rewarded',
@@ -168,7 +167,6 @@ export async function POST(request: NextRequest) {
       .eq('id', referral.id);
     
     // Increment referrer's reward count
-    // @ts-expect-error - Supabase types not generated for users table
     await supabase.from('users')
       .update({
         referral_rewards_earned: (referrer.referral_rewards_earned || 0) + 1,
