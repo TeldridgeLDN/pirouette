@@ -5,6 +5,15 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Account Deletion and GDPR Data Export** (Task 49)
+  - `/api/account/export` endpoint for GDPR-compliant data export
+  - `/api/account/delete` endpoint with subscription cancellation
+  - Settings page (`/dashboard/settings`) with danger zone
+  - Delete account modal with "DELETE" confirmation
+  - Data export as JSON with all reports and analysis history
+  - Automatic Stripe subscription cancellation on delete
+  - Settings link added to dashboard Account Information
+
 - **Competitor Comparison Feature for Pro Users** (Task 45)
   - CompetitorComparison component with Pro gating
   - Locked preview with blurred mock data for free users

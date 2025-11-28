@@ -373,6 +373,17 @@ export default async function DashboardPage() {
                   {userData?.analyses_this_month || 0}
                 </dd>
               </div>
+              <div>
+                <dt className="text-sm font-medium text-slate-500">Settings</dt>
+                <dd className="mt-1 text-sm text-slate-900">
+                  <Link
+                    href="/dashboard/settings"
+                    className="text-indigo-600 hover:text-indigo-700 font-medium"
+                  >
+                    Data & Privacy →
+                  </Link>
+                </dd>
+              </div>
             </dl>
           </div>
         </details>
