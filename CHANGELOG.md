@@ -5,6 +5,16 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Industry Benchmarking System** (Task 51)
+  - `industry-classifier.ts` utility for detecting site industry
+  - Database migration `006_industry_benchmarks.sql` with aggregate stats
+  - `benchmark-service.ts` for fetching/updating benchmarks
+  - `IndustryComparison` component with percentile rankings
+  - `/api/benchmarks/[industry]` endpoint for public benchmark data
+  - Supports 9 industries: SaaS, E-commerce, Agency, Blog, Marketplace, Finance, Health, Education, Other
+  - Privacy-focused: only aggregates stored, minimum 10 samples before showing
+  - Incremental average calculation for efficient updates
+
 - **Product Hunt Launch Preparation** (Task 25)
   - Special landing page `/welcome/producthunt` with 20% off offer
   - `ProductHuntBanner` component for site-wide PH visitor detection
