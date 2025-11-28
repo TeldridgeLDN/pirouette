@@ -157,20 +157,22 @@ export async function POST(request: NextRequest) {
     }
     
     // Update referral status
+    const referralUpdate = {
+      status: 'rewarded',
+      reward_applied: rewardApplied,
+      upgraded_at: new Date().toISOString(),
+      rewarded_at: new Date().toISOString(),
+    };
     await supabase.from('referrals')
-      .update({
-        status: 'rewarded',
-        reward_applied: rewardApplied,
-        upgraded_at: new Date().toISOString(),
-        rewarded_at: new Date().toISOString(),
-      })
+      .update(referralUpdate as Record<string, unknown>)
       .eq('id', referral.id);
     
     // Increment referrer's reward count
+    const userUpdate = {
+      referral_rewards_earned: (referrer.referral_rewards_earned || 0) + 1,
+    };
     await supabase.from('users')
-      .update({
-        referral_rewards_earned: (referrer.referral_rewards_earned || 0) + 1,
-      })
+      .update(userUpdate as Record<string, unknown>)
       .eq('id', referrer.id);
     
     // TODO: Send email notification to referrer
