@@ -19,6 +19,8 @@ import Link from 'next/link';
 import EmailCaptureModal from '@/components/EmailCaptureModal';
 import TrafficContext from '@/components/TrafficContext';
 import ValidationTimeline from '@/components/ValidationTimeline';
+import HistoricalTracking from '@/components/HistoricalTracking';
+import { useUserPlan } from '@/hooks/useUserPlan';
 import { shouldSortByEase, getTrafficClassification } from '@/lib/analysis/utils/traffic-classifier';
 
 // ============================================================================
@@ -553,6 +555,7 @@ type ROIFilterType = 'all' | 'quick-win' | 'strategic' | 'long-term';
 
 export default function ReportPage({ params }: PageProps) {
   const searchParams = useSearchParams();
+  const { isPro } = useUserPlan();
   const [reportId, setReportId] = useState<string | null>(null);
   const [report, setReport] = useState<Report | null>(null);
   const [loading, setLoading] = useState(true);
@@ -1011,6 +1014,17 @@ export default function ReportPage({ params }: PageProps) {
             </div>
           )}
         </section>
+        
+        {/* Historical Tracking (Pro Feature) */}
+        {!report.isAnonymous && reportId && (
+          <section className="mb-8">
+            <HistoricalTracking
+              url={report.url}
+              currentReportId={reportId}
+              isPro={isPro}
+            />
+          </section>
+        )}
         
         {/* Footer CTA */}
         <section className="mt-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 text-center text-white">

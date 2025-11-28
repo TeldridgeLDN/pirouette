@@ -5,6 +5,15 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Historical Tracking for Pro Users** (Task 43)
+  - `/api/reports/history` endpoint with URL normalization
+  - HistoricalTracking component with bar chart trend visualization
+  - Improvement summary showing gains/losses since last analysis
+  - Comparison table with links to past reports
+  - Pro feature gating with locked preview for free users
+  - "First Analysis" state for new URLs
+  - Auto-calculates score changes across all dimensions
+
 - **Trial User Experience & Conversion Flow** (Task 48)
   - Trial Welcome Modal shows after checkout success (session_id param)
   - Shows all Pro features unlocked with icons and tips
