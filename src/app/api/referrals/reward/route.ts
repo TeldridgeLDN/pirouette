@@ -143,9 +143,9 @@ export async function POST(request: NextRequest) {
             },
           });
           
-          // Apply coupon to the subscription
+          // Apply coupon to the subscription via discounts
           await stripe.subscriptions.update(referrer.stripe_subscription_id, {
-            coupon: coupon.id,
+            discounts: [{ coupon: coupon.id }],
           });
           
           rewardApplied = true;
