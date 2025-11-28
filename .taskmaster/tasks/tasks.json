@@ -636,18 +636,83 @@
         "subtasks": []
       },
       {
-        "id": 21,
+        "id": "21",
         "title": "Implement A/B testing for pricing tiers",
-        "description": "Set up A/B testing to compare conversion rates between $29/mo and $49/mo pricing tiers.",
-        "details": "Implement A/B testing logic to show different pricing tiers to different users. Create variants for $29/mo (control) and $49/mo (treatment) with appropriate feature differences. Set up 50/50 traffic split between variants. Track conversion rates and revenue per user for each variant. Implement analytics to measure test results. Create a mechanism to declare a winner based on success criteria. Prepare for full deployment of the winning variant.",
-        "testStrategy": "Test that users are consistently assigned to the same variant. Verify that pricing and features are displayed correctly for each variant. Confirm that conversion tracking works for both variants. Test the analytics implementation for measuring results. Verify that the winner declaration mechanism works correctly.",
-        "priority": "low",
+        "description": "Set up A/B testing to compare conversion rates between $29/mo and $49/mo pricing tiers after Product Hunt launch.",
+        "status": "deferred",
         "dependencies": [
           "5",
           "13"
         ],
-        "status": "pending",
-        "subtasks": []
+        "priority": "low",
+        "details": "Implement A/B testing logic to show different pricing tiers to different users, but only after Product Hunt launch and baseline data collection. Launch with fixed $29/mo pricing and special PH discount (20% off first 3 months). After PH campaign, collect baseline conversion data for 2-4 weeks, then implement A/B test on organic traffic only (excluding PH users). Create variants for $29/mo (control) and $49/mo (treatment) with appropriate feature differences. Set up 50/50 traffic split between variants for organic traffic. Track conversion rates and revenue per user for each variant. Implement analytics to measure test results. Create a mechanism to declare a winner based on success criteria. Prepare for full deployment of the winning variant.",
+        "testStrategy": "Test that users are consistently assigned to the same variant. Verify that PH traffic is excluded from the A/B test. Ensure PH users receive the correct discount offer. Test that organic users are properly split between variants. Verify that pricing and features are displayed correctly for each variant. Confirm that conversion tracking works for both variants. Test the analytics implementation for measuring results. Verify that the winner declaration mechanism works correctly.",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Launch with fixed $29/mo pricing for Product Hunt",
+            "description": "Configure the pricing system to use a fixed $29/mo tier during the Product Hunt launch period with the special 20% discount for the first 3 months.",
+            "dependencies": [],
+            "details": "Update the pricing configuration to ensure all users see the $29/mo pricing during the Product Hunt launch. Implement the special 20% discount for the first 3 months for users who sign up through Product Hunt. Create a tracking mechanism to identify users who came from Product Hunt. Ensure the discount is automatically applied at checkout for PH users.",
+            "status": "pending",
+            "testStrategy": "Verify that all users see the $29/mo pricing during PH launch. Test that the 20% discount is correctly applied for PH users. Confirm that the discount only applies for the first 3 months."
+          },
+          {
+            "id": 2,
+            "title": "Collect baseline conversion data post-PH launch",
+            "description": "Implement tracking to collect baseline conversion data for 2-4 weeks after the Product Hunt launch before starting the A/B test.",
+            "dependencies": [
+              1
+            ],
+            "details": "Set up analytics to track conversion rates and revenue per user for the fixed $29/mo pricing tier after the Product Hunt launch. Create a dashboard to monitor these metrics daily. Define the criteria for when enough baseline data has been collected to proceed with the A/B test (typically 2-4 weeks of data).",
+            "status": "pending",
+            "testStrategy": "Verify that conversion tracking is working correctly. Test that the dashboard displays accurate data. Confirm that the data collection process doesn't interfere with the user experience."
+          },
+          {
+            "id": 3,
+            "title": "Implement traffic segmentation for A/B test",
+            "description": "Create a mechanism to identify and segment organic traffic from Product Hunt traffic for the A/B test.",
+            "dependencies": [
+              2
+            ],
+            "details": "Develop logic to identify users who came from Product Hunt versus organic channels. Implement a system to exclude PH users from the A/B test. Create a persistent user identification system to ensure users consistently see the same variant. Set up the 50/50 traffic split for organic users only.",
+            "status": "pending",
+            "testStrategy": "Test that PH users are correctly identified and excluded from the A/B test. Verify that organic users are properly split between variants. Confirm that users consistently see the same variant across sessions."
+          },
+          {
+            "id": 4,
+            "title": "Implement A/B test variants",
+            "description": "Create the control ($29/mo) and treatment ($49/mo) variants with appropriate feature differences for organic traffic.",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement the control variant showing the $29/mo pricing tier. Create the treatment variant showing the $49/mo pricing tier with enhanced features to justify the higher price. Ensure that the variants are displayed consistently across the application. Implement feature flags to control which features are available in each variant.",
+            "status": "pending",
+            "testStrategy": "Verify that both variants display correctly. Test that the feature differences between variants work as expected. Confirm that the variants are consistent across different pages and user flows."
+          },
+          {
+            "id": 5,
+            "title": "Implement analytics for A/B test results",
+            "description": "Set up analytics to measure conversion rates, revenue per user, and other key metrics for each variant.",
+            "dependencies": [
+              4
+            ],
+            "details": "Implement tracking for key metrics including conversion rate, revenue per user, user engagement, and retention for each variant. Create a dashboard to compare the performance of the variants. Set up statistical significance testing to determine when a winner can be declared.",
+            "status": "pending",
+            "testStrategy": "Test that analytics correctly track conversions for each variant. Verify that the dashboard displays accurate comparative data. Confirm that the statistical significance testing works correctly."
+          },
+          {
+            "id": 6,
+            "title": "Create mechanism to declare test winner",
+            "description": "Implement a system to declare a winner based on predefined success criteria and deploy the winning variant.",
+            "dependencies": [
+              5
+            ],
+            "details": "Define clear success criteria for the A/B test (e.g., 10% improvement in revenue per user with 95% confidence). Implement a mechanism to automatically or manually declare a winner when the criteria are met. Create a process to deploy the winning variant to all users, including a migration plan for existing users if needed.",
+            "status": "pending",
+            "testStrategy": "Verify that the winner declaration mechanism works correctly based on the success criteria. Test the deployment process for the winning variant. Confirm that the migration plan for existing users works as expected."
+          }
+        ]
       },
       {
         "id": 22,
@@ -1215,7 +1280,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T19:16:01.026Z"
+      "updated": "2025-11-28T19:18:21.493Z"
     }
   }
 }
