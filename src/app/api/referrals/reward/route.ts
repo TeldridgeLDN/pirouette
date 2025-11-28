@@ -15,6 +15,26 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
 // Maximum free months a user can earn per year
 const MAX_REWARDS_PER_YEAR = 12;
 
+// Type definitions for Supabase queries
+interface RefereeRow {
+  id: string;
+  referred_by: string | null;
+  stripe_customer_id: string | null;
+}
+
+interface ReferrerRow {
+  id: string;
+  stripe_customer_id: string | null;
+  stripe_subscription_id: string | null;
+  referral_rewards_earned: number | null;
+}
+
+interface ReferralRow {
+  id: string;
+  status: string;
+  reward_applied: boolean;
+}
+
 // ============================================================================
 // POST - Process referral reward
 // ============================================================================
@@ -38,11 +58,13 @@ export async function POST(request: NextRequest) {
     const supabase = supabaseAdmin;
     
     // Get the referee and their referrer
-    const { data: referee, error: refereeError } = await supabase
+    const { data: refereeData, error: refereeError } = await supabase
       .from('users')
       .select('id, referred_by, stripe_customer_id')
       .eq('id', refereeUserId)
       .single();
+    
+    const referee = refereeData as RefereeRow | null;
     
     if (refereeError || !referee || !referee.referred_by) {
       return NextResponse.json({ 
@@ -52,11 +74,13 @@ export async function POST(request: NextRequest) {
     }
     
     // Get the referrer
-    const { data: referrer, error: referrerError } = await supabase
+    const { data: referrerData, error: referrerError } = await supabase
       .from('users')
       .select('id, stripe_customer_id, stripe_subscription_id, referral_rewards_earned')
       .eq('id', referee.referred_by)
       .single();
+    
+    const referrer = referrerData as ReferrerRow | null;
     
     if (referrerError || !referrer) {
       return NextResponse.json({ 
@@ -74,12 +98,14 @@ export async function POST(request: NextRequest) {
     }
     
     // Find the referral record
-    const { data: referral, error: referralError } = await supabase
+    const { data: referralData, error: referralError } = await supabase
       .from('referrals')
       .select('id, status, reward_applied')
       .eq('referrer_id', referrer.id)
       .eq('referee_id', referee.id)
       .single();
+    
+    const referral = referralData as ReferralRow | null;
     
     if (referralError || !referral) {
       return NextResponse.json({ 
