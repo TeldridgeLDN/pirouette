@@ -962,7 +962,7 @@
         "description": "Enhance the user dashboard with a prominent URL submission form at the top and a clear display of remaining analysis quota based on the user's plan.",
         "details": "Currently the dashboard shows \"No analyses yet. Submit a landing page URL to get started!\" but provides no way to actually submit a URL.\n\nImplementation:\n1. Add URL submission form to dashboard:\n   - Prominent placement at top of page\n   - Reuse or adapt AnalyzeForm component\n   - URL input + optional traffic field + \"Analyse\" button\n   - Form submits to /api/analyze with authentication\n\n2. Add quota display component (QuotaDisplay.tsx):\n   - Shows remaining analyses: \"3 of 4 analyses remaining this week\"\n   - Visual progress bar\n   - Different display for Pro users: \"Unlimited analyses\"\n   - Upgrade CTA for free users near limit\n\n3. Fetch quota data:\n   - Query analyses_this_month from users table\n   - Calculate remaining based on plan limits\n   - For free tier: 1/week (reset on Sunday midnight UTC)\n   - For Pro tier: show \"Unlimited\"\n\n4. Update dashboard layout (src/app/dashboard/page.tsx):\n   ```\n   +------------------------------------------+\n   | Welcome back, [Name]!                    |\n   | Your design analysis dashboard           |\n   +------------------------------------------+\n   | [Quota: 3/4 remaining] [Upgrade to Pro]  |\n   +------------------------------------------+\n   | ANALYSE A NEW PAGE                       |\n   | [URL Input] [Traffic] [Analyse →]        |\n   +------------------------------------------+\n   | RECENT ANALYSES                          |\n   | [List of past reports with scores]       |\n   +------------------------------------------+\n   ```\n\n5. Handle rate limit in form:\n   - If limit reached, disable submit button\n   - Show upgrade modal/CTA\n   - Display when quota resets\n\n6. Connect to existing analysis flow:\n   - On submit, create job via /api/analyze\n   - Show progress indicator (Task 11)\n   - Redirect to report when complete",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           14,
           10,
@@ -1215,7 +1215,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T13:50:43.838Z"
+      "updated": "2025-11-28T13:59:47.306Z"
     }
   }
 }

@@ -5,6 +5,18 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Dashboard URL Submission & Quota Display** (Task 35)
+  - Complete dashboard redesign with URL submission form at top
+  - `QuotaDisplay` component showing remaining weekly analyses
+  - Visual progress bar for free tier quota tracking
+  - "Weekly limit reached" state with prominent upgrade CTA
+  - Quota reset countdown (next Sunday midnight UTC)
+  - "Unlimited" badge display for Pro users
+  - Recent analyses list with thumbnails, scores, and timestamps
+  - Collapsible Account Information section
+  - Integration with `DashboardAnalyzeForm` for authenticated submissions
+  - Real-time quota fetching from Supabase (weekly analysis count)
+
 - **Enhanced Recommendation Display** (Task 26.4)
   - Revenue impact estimates with calculation formula breakdown
   - Confidence level indicators (High ●●●, Medium ●●○, Low ●○○)
