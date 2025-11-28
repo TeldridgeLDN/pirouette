@@ -5,6 +5,14 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Subscription Cancellation Flow** (Task 46)
+  - `/api/subscription/cancel` endpoint for scheduling cancellations
+  - CancellationModal with reason survey and retention offers
+  - Customized offers based on cancellation reason
+  - Cancel at period end (maintains Pro access until billing cycle ends)
+  - Reactivate option via Stripe billing portal
+  - Updated billing page with cancel subscription section
+
 - **Account Deletion and GDPR Data Export** (Task 49)
   - `/api/account/export` endpoint for GDPR-compliant data export
   - `/api/account/delete` endpoint with subscription cancellation

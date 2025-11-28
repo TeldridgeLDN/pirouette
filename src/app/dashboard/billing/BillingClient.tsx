@@ -10,8 +10,10 @@
  */
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { Plan } from '@/lib/features';
+import CancellationModal from '@/components/CancellationModal';
 
 // ============================================================================
 // Types
@@ -91,12 +93,19 @@ function getDaysUntil(dateString: string | null): number {
 // ============================================================================
 
 export default function BillingClient({ subscriptionInfo }: BillingClientProps) {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
 
   const isPro = subscriptionInfo.plan !== 'free';
   const statusBadge = getStatusBadge(subscriptionInfo.status, subscriptionInfo.cancelAtPeriodEnd);
   const trialDaysRemaining = subscriptionInfo.trialEnd ? getDaysUntil(subscriptionInfo.trialEnd) : 0;
+
+  const handleCancelled = (periodEnd: string) => {
+    // Refresh the page to show updated status
+    router.refresh();
+  };
 
   const handleManageBilling = async () => {
     setIsLoading(true);
@@ -361,6 +370,32 @@ export default function BillingClient({ subscriptionInfo }: BillingClientProps) 
         )}
       </div>
 
+      {/* Cancel Subscription Section - Only for active Pro users */}
+      {isPro && subscriptionInfo.status === 'active' && !subscriptionInfo.cancelAtPeriodEnd && (
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="px-6 py-5 border-b border-slate-100">
+            <div className="flex items-center gap-2">
+              <svg className="w-5 h-5 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+              <h2 className="text-lg font-semibold text-slate-900">Cancel Subscription</h2>
+            </div>
+          </div>
+          <div className="px-6 py-5">
+            <p className="text-sm text-slate-600 mb-4">
+              If you cancel, you&apos;ll continue to have access to Pro features until the end of your
+              current billing period ({formatDate(subscriptionInfo.currentPeriodEnd)}). You can reactivate anytime.
+            </p>
+            <button
+              onClick={() => setShowCancelModal(true)}
+              className="text-sm text-red-600 hover:text-red-700 font-medium"
+            >
+              Cancel my subscription →
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Help Section */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 px-6 py-5">
         <h3 className="font-medium text-slate-900 mb-2">Need Help?</h3>
@@ -375,6 +410,13 @@ export default function BillingClient({ subscriptionInfo }: BillingClientProps) 
           Contact Support →
         </a>
       </div>
+
+      {/* Cancellation Modal */}
+      <CancellationModal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        onCancelled={handleCancelled}
+      />
     </>
   );
 }
