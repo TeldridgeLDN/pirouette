@@ -23,6 +23,7 @@ export interface SubscriptionStatus {
   trialEnd: string | null;
   analysesThisMonth: number;
   hasStripeCustomer: boolean;
+  hasPaymentMethod: boolean;
 }
 
 export interface UserPlanHook {
@@ -42,6 +43,7 @@ export interface UserPlanHook {
   currentPeriodEnd: Date | null;
   cancelAtPeriodEnd: boolean;
   hasStripeCustomer: boolean;
+  hasPaymentMethod: boolean;
   
   // Usage
   analysesThisMonth: number;
@@ -84,7 +86,18 @@ export function useUserPlan(): UserPlanHook {
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
-          setData(result.data);
+          // Map API response to SubscriptionStatus
+          const apiData = result.data;
+          setData({
+            plan: apiData.plan || 'free',
+            status: apiData.status || 'none',
+            currentPeriodEnd: apiData.currentPeriodEnd || null,
+            cancelAtPeriodEnd: apiData.cancelAtPeriodEnd || false,
+            trialEnd: apiData.trialEnd || null,
+            analysesThisMonth: apiData.analysesThisMonth || 0,
+            hasStripeCustomer: !!apiData.stripeCustomerId,
+            hasPaymentMethod: !!apiData.paymentMethod,
+          });
         } else {
           throw new Error(result.error || 'Failed to fetch subscription');
         }
@@ -98,6 +111,7 @@ export function useUserPlan(): UserPlanHook {
           trialEnd: null,
           analysesThisMonth: 0,
           hasStripeCustomer: false,
+          hasPaymentMethod: false,
         });
       }
     } catch (err) {
@@ -111,6 +125,7 @@ export function useUserPlan(): UserPlanHook {
         trialEnd: null,
         analysesThisMonth: 0,
         hasStripeCustomer: false,
+        hasPaymentMethod: false,
       });
     } finally {
       setIsLoading(false);
@@ -149,6 +164,7 @@ export function useUserPlan(): UserPlanHook {
     currentPeriodEnd,
     cancelAtPeriodEnd: data?.cancelAtPeriodEnd || false,
     hasStripeCustomer: data?.hasStripeCustomer || false,
+    hasPaymentMethod: data?.hasPaymentMethod || false,
     
     // Usage
     analysesThisMonth: data?.analysesThisMonth || 0,

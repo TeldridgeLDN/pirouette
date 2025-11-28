@@ -1148,7 +1148,7 @@
         "description": "Create the complete 7-day trial experience including onboarding, usage encouragement, trial-ending reminders, and smooth conversion to paid subscription.",
         "details": "PRD mentions 7-day free trial for Pro features. This task creates the complete trial journey.\n\nImplementation:\n1. Trial start experience:\n   - After checkout with trial: \"Your 7-day Pro trial has started! 🎉\"\n   - Welcome modal showing all Pro features unlocked\n   - Guided tour of Pro features (optional)\n   - \"Make the most of your trial\" tips\n\n2. Trial dashboard display:\n   ```\n   ┌─────────────────────────────────────────────────────────────┐\n   │ 🎁 PRO TRIAL                                                │\n   │ 5 days remaining • Ends Dec 5, 2025                        │\n   │                                                            │\n   │ [Add Payment Method]  to continue after trial              │\n   └─────────────────────────────────────────────────────────────┘\n   ```\n\n3. Trial-specific UI elements:\n   - \"TRIAL\" badge instead of \"PRO\" in nav\n   - Countdown banner showing days remaining\n   - Gentle reminders to add payment method\n   - Feature usage tracking (\"You've used 5 Pro features!\")\n\n4. Trial email sequence:\n   - Day 1: Welcome + getting started guide\n   - Day 3: \"Have you tried [feature]?\" based on usage\n   - Day 5: \"Your trial ends in 2 days\"\n   - Day 7 (morning): \"Last day of trial - don't lose access!\"\n   - Day 7 (if no payment): \"Trial ended - here's what you're missing\"\n\n5. Trial ending scenarios:\n\n   a) Payment method on file:\n   - Auto-convert to paid subscription\n   - Send confirmation email\n   - Seamless transition (no interruption)\n\n   b) No payment method:\n   - Downgrade to free at trial end\n   - Show \"Trial ended\" modal\n   - Prominent upgrade CTA\n   - Keep trial data accessible\n\n6. Trial conversion prompts:\n   - Day 5+: More prominent \"Add payment\" CTAs\n   - Before trial ends: \"Keep your Pro features\" modal\n   - Show what they'll lose: feature list with lock icons\n\n7. Database tracking:\n   - trial_ends_at: timestamp\n   - trial_started_at: timestamp\n   - payment_method_added: boolean\n   - trial_features_used: array\n   - converted_from_trial: boolean\n\n8. Analytics events:\n   - trial_started\n   - trial_feature_used (per feature)\n   - payment_method_added_during_trial\n   - trial_converted\n   - trial_expired\n   - trial_reactivated (if they come back)",
         "testStrategy": "",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           39,
           23,
@@ -1215,7 +1215,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T15:55:01.966Z"
+      "updated": "2025-11-28T16:00:53.941Z"
     }
   }
 }

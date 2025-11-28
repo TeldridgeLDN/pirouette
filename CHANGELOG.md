@@ -5,6 +5,16 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Trial User Experience & Conversion Flow** (Task 48)
+  - Trial Welcome Modal shows after checkout success (session_id param)
+  - Shows all Pro features unlocked with icons and tips
+  - Trial Expired Modal for ended trials with feature comparison
+  - Trial Ending Prompt (Day 5+) with urgent CTAs
+  - Dashboard layout wraps all pages with trial handler
+  - useUserPlan hook extended with hasPaymentMethod
+  - localStorage tracking for trial state persistence
+  - Automatic URL param cleanup after showing modal
+
 - **Pro Status Indicators Throughout UI** (Task 42)
   - Pro badge in Navigation bar (gradient purple, links to billing)
   - Trial badge with countdown ("TRIAL • 5d") for trialing users
