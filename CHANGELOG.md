@@ -5,6 +5,16 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Referral Programme** (Task 50)
+  - Database migration `007_referrals.sql` with referral tracking
+  - `/api/referrals` endpoints for stats and tracking
+  - `/api/referrals/reward` for processing Stripe rewards
+  - `ReferralDashboard` component with share buttons
+  - `/r/[code]` landing page for referred users
+  - Auto-generated unique referral codes (6 chars)
+  - Rewards: 1 free month for referrer, 20% off for referee
+  - Fraud prevention: 12 month/year cap, self-referral block
+
 - **Onboarding Flow for New Users** (Task 24)
   - `useOnboarding` hook for tracking progress in localStorage
   - `OnboardingWelcome` modal with product intro (2-step wizard)
