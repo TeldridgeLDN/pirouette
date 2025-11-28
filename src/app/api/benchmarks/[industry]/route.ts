@@ -26,6 +26,24 @@ const VALID_INDUSTRIES = [
 
 const MIN_SAMPLE_SIZE = 10;
 
+// Type for industry_benchmarks table row
+interface BenchmarkRow {
+  industry: string;
+  total_analyses: number;
+  avg_overall_score: number | null;
+  avg_colors_score: number | null;
+  avg_typography_score: number | null;
+  avg_whitespace_score: number | null;
+  avg_complexity_score: number | null;
+  avg_layout_score: number | null;
+  avg_cta_score: number | null;
+  avg_hierarchy_score: number | null;
+  min_overall_score: number | null;
+  max_overall_score: number | null;
+  score_std_dev: number | null;
+  last_updated: string;
+}
+
 // ============================================================================
 // Handler
 // ============================================================================
@@ -51,7 +69,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       .eq('industry', industry)
       .single();
     
-    if (error) {
+    if (error || !data) {
       console.error('Error fetching benchmarks:', error);
       return NextResponse.json(
         { error: 'Failed to fetch benchmarks' },
@@ -59,25 +77,28 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       );
     }
     
+    // Cast data to proper type
+    const row = data as BenchmarkRow;
+    
     // Format response
     const benchmark = {
-      industry: data.industry as Industry,
-      totalAnalyses: data.total_analyses || 0,
-      avgOverallScore: data.avg_overall_score,
+      industry: row.industry as Industry,
+      totalAnalyses: row.total_analyses || 0,
+      avgOverallScore: row.avg_overall_score,
       avgScores: {
-        colors: data.avg_colors_score,
-        typography: data.avg_typography_score,
-        whitespace: data.avg_whitespace_score,
-        complexity: data.avg_complexity_score,
-        layout: data.avg_layout_score,
-        cta: data.avg_cta_score,
-        hierarchy: data.avg_hierarchy_score,
+        colors: row.avg_colors_score,
+        typography: row.avg_typography_score,
+        whitespace: row.avg_whitespace_score,
+        complexity: row.avg_complexity_score,
+        layout: row.avg_layout_score,
+        cta: row.avg_cta_score,
+        hierarchy: row.avg_hierarchy_score,
       },
-      minScore: data.min_overall_score,
-      maxScore: data.max_overall_score,
-      stdDev: data.score_std_dev,
-      lastUpdated: data.last_updated,
-      hasEnoughData: (data.total_analyses || 0) >= MIN_SAMPLE_SIZE,
+      minScore: row.min_overall_score,
+      maxScore: row.max_overall_score,
+      stdDev: row.score_std_dev,
+      lastUpdated: row.last_updated,
+      hasEnoughData: (row.total_analyses || 0) >= MIN_SAMPLE_SIZE,
     };
     
     // Calculate comparison if userScore provided in query
