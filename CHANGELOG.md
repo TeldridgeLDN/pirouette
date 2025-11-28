@@ -5,6 +5,14 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Onboarding Flow for New Users** (Task 24)
+  - `useOnboarding` hook for tracking progress in localStorage
+  - `OnboardingWelcome` modal with product intro (2-step wizard)
+  - `OnboardingChecklist` component with progress ring
+  - `OnboardingHandler` for auto-completing steps
+  - 4 onboarding steps: first analysis, view report, explore recommendation, check comparison
+  - Dismissible checklist, persists until all steps complete
+
 - **Industry Benchmarking System** (Task 51)
   - `industry-classifier.ts` utility for detecting site industry
   - Database migration `006_industry_benchmarks.sql` with aggregate stats
