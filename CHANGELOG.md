@@ -5,6 +5,16 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Email Templates with Resend** (Task 23)
+  - Resend client configuration (`src/lib/email/resend.ts`)
+  - Base email template with Pirouette branding
+  - Welcome email for new signups
+  - Analysis Complete email with scores
+  - Subscription emails: trial started, trial ending, confirmed, payment failed, cancelled
+  - Referral emails: friend signed up, reward earned
+  - Easy-to-use send functions (`sendWelcomeEmail`, etc.)
+  - Tags for email categorisation and analytics
+
 - **Referral Programme** (Task 50)
   - Database migration `007_referrals.sql` with referral tracking
   - `/api/referrals` endpoints for stats and tracking

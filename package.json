@@ -11,12 +11,14 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.35.4",
+    "@react-email/components": "^0.5.7",
     "@supabase/supabase-js": "^2.78.0",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
     "next": "^15.0.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "resend": "^6.5.2",
     "stripe": "^20.0.0",
     "svix": "^1.81.0"
   },
