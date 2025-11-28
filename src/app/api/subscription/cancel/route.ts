@@ -94,17 +94,21 @@ export async function POST(request: NextRequest) {
     });
     
     // 7. Log cancellation for analytics
+    const periodEnd = updatedSubscription.current_period_end 
+      ? new Date(updatedSubscription.current_period_end * 1000).toISOString()
+      : new Date().toISOString();
+      
     console.log(`Subscription cancellation scheduled: ${subscription.id}`, {
       userId: user.id,
       reason: body.reason,
-      periodEnd: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
+      periodEnd,
     });
     
     // 8. Return success with period end date
     return NextResponse.json({
       success: true,
       message: 'Subscription will be cancelled at the end of your billing period',
-      periodEnd: new Date(updatedSubscription.current_period_end * 1000).toISOString(),
+      periodEnd,
     });
     
   } catch (error) {
