@@ -5,6 +5,21 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Real Benchmark Data System** (Pro UX Enhancement)
+  - Analyzed 36 award-winning sites using Pirouette's own scoring system
+  - Top performers: Warby Parker (88), Intercom (75), PlanetScale (71)
+  - Benchmark data stored in `railway/src/analyzer/benchmark-data.json`
+  - `generate-benchmarks` script for quarterly data refresh
+  - Benchmark rotation system prevents repeated examples in reports
+
+- **Percentile-Based Scoring Algorithm** (Scoring Improvement)
+  - Color scoring: 7 tiers from "exceptional" (≤5 colors: 92-100) to "complex" (60+: 32-42)
+  - CTA scoring: 60% weight on button CTAs, 40% on total interactive elements
+  - Typography scoring: Font count tiers with base font size bonus
+  - Complexity scoring: 7 tiers from "minimal" (<100 elements) to "extreme" (5000+)
+  - Random variance within tiers for natural score distribution
+  - New functions: `getPercentileScore()`, `getComparableBenchmark()`
+
 - **Pro Value Differentiation - Phase 1** (Task 52)
   - Expandable Dimension Cards for Pro users showing detailed findings
   - Dimension cards display "PRO INSIGHTS" with specific analysis results
