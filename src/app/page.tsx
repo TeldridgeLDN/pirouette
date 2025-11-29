@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import HeroAnalyzeForm from '@/components/HeroAnalyzeForm';
 import Navigation from '@/components/Navigation';
+import ScrollTracker from '@/components/ScrollTracker';
 
 // ============================================================================
 // PIROUETTE LANDING PAGE
@@ -10,6 +11,9 @@ import Navigation from '@/components/Navigation';
 export default function Home() {
   return (
     <main className="min-h-screen bg-slate-50">
+      {/* Scroll Depth Tracking */}
+      <ScrollTracker />
+      
       {/* Navigation - Dynamic auth state */}
       <Navigation />
       

@@ -23,6 +23,7 @@ import HistoricalTracking from '@/components/HistoricalTracking';
 import CompetitorComparison from '@/components/CompetitorComparison';
 import { useUserPlan } from '@/hooks/useUserPlan';
 import { shouldSortByEase, getTrafficClassification } from '@/lib/analysis/utils/traffic-classifier';
+import { trackReportViewed, trackAnalysisCompleted, trackRecommendationClicked, trackPDFDownloaded } from '@/lib/analytics';
 
 // ============================================================================
 // Types
@@ -646,6 +647,9 @@ export default function ReportPage({ params }: PageProps) {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      
+      // Track successful PDF download
+      trackPDFDownloaded();
     } catch (err) {
       console.error('Error downloading PDF:', err);
       alert('Failed to download PDF. Please try again.');
@@ -669,6 +673,13 @@ export default function ReportPage({ params }: PageProps) {
         }
         
         setReport(data.data.report);
+        
+        // Track report view and analysis completion
+        const reportData = data.data.report;
+        trackReportViewed(!reportData.isAnonymous);
+        if (reportData.overall_score) {
+          trackAnalysisCompleted(reportData.overall_score, reportData.url);
+        }
       } catch (err) {
         console.error('Error fetching report:', err);
         setError('Network error. Please try again.');

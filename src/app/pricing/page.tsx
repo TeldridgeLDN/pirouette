@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { useUser } from '@clerk/nextjs';
 import { useState, useEffect } from 'react';
 import Navigation from '@/components/Navigation';
+import ScrollTracker from '@/components/ScrollTracker';
+import { trackPricingViewed, trackUpgradeClicked, trackSignupStarted } from '@/lib/analytics';
 
 // ============================================================================
 // PRICING PAGE
@@ -25,8 +27,16 @@ export default function PricingPage() {
     }
   }, [user]);
 
+  // Track pricing page view on mount
+  useEffect(() => {
+    trackPricingViewed(document.referrer ? new URL(document.referrer).pathname : 'direct');
+  }, []);
+
   return (
     <main className="min-h-screen bg-slate-50">
+      {/* Scroll Depth Tracking */}
+      <ScrollTracker />
+      
       <Navigation />
       
       {/* Hero Section */}
@@ -280,6 +290,7 @@ function PricingCards({
                 {plan.id === 'free' ? (
                   <Link
                     href={plan.href}
+                    onClick={() => !plan.ctaDisabled && trackSignupStarted('pricing_page', 'free')}
                     className={`block w-full py-3 px-4 rounded-xl font-semibold text-center transition-all duration-200 ${
                       plan.ctaDisabled
                         ? 'bg-slate-100 text-slate-400 cursor-not-allowed'
@@ -340,6 +351,9 @@ function CheckoutButton({
 
   const handleCheckout = async () => {
     if (disabled) return;
+    
+    // Track upgrade intent
+    trackUpgradeClicked('pricing_page', plan as 'pro' | 'agency', 'checkout_button');
     
     setIsLoading(true);
     try {

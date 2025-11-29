@@ -4,6 +4,20 @@ All notable changes to Pirouette will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+- **Plausible Analytics Integration** (Task 22)
+  - Core tracking utilities (`src/lib/analytics/plausible.ts`)
+  - 16 custom events for full user journey tracking
+  - `TrackableButton` component with auto-tracking
+  - `ScrollTracker` component for scroll depth tracking
+  - Landing page tracking: scroll depth, CTA clicks, form submissions
+  - User journey tracking: signups, analysis completion, report views
+  - Conversion tracking: upgrade intent, trial starts, PDF downloads
+  - Comprehensive documentation (`docs/PLAUSIBLE_SETUP.md`, `docs/PLAUSIBLE_EVENTS_REFERENCE.md`)
+  - Environment-based script loading (set `NEXT_PUBLIC_PLAUSIBLE_DOMAIN`)
+  - Privacy-friendly: no cookies, GDPR compliant
+  - Adapted from portfolio-redesign sibling project skill
+
 ### Fixed
 - **Stripe SDK v20 Compatibility** - Fixed `current_period_end` access for Stripe API version `2025-11-17.clover` where the property moved from `Subscription` to `SubscriptionItem`
 - **Referral Click Tracking** - Stubbed referral click tracking pending Supabase type generation

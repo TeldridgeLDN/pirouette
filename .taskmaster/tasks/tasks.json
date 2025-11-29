@@ -636,7 +636,7 @@
         "subtasks": []
       },
       {
-        "id": "21",
+        "id": 21,
         "title": "Implement A/B testing for pricing tiers",
         "description": "Set up A/B testing to compare conversion rates between $29/mo and $49/mo pricing tiers after Product Hunt launch.",
         "status": "deferred",
@@ -724,7 +724,7 @@
         "dependencies": [
           "5"
         ],
-        "status": "pending",
+        "status": "done",
         "subtasks": []
       },
       {
@@ -1280,7 +1280,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-28T19:18:21.493Z"
+      "updated": "2025-11-29T07:27:00.387Z"
     }
   }
 }

@@ -15,6 +15,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import UpgradeModal from './UpgradeModal';
+import { trackAnalysisSubmitted, trackUpgradeClicked } from '@/lib/analytics';
 
 // ============================================================================
 // Types
@@ -130,6 +131,7 @@ export default function DashboardAnalyzeForm({
       if (!response.ok) {
         // Handle rate limiting - show upgrade modal
         if (response.status === 429) {
+          trackUpgradeClicked('dashboard', 'pro', 'limit_reached');
           setShowUpgradeModal(true);
           return;
         }
@@ -138,8 +140,9 @@ export default function DashboardAnalyzeForm({
         return;
       }
       
-      // Success! Redirect to progress page
+      // Success! Track and redirect to progress page
       if (data.jobId) {
+        trackAnalysisSubmitted('dashboard');
         router.push(`/analyze/${data.jobId}`);
       }
       

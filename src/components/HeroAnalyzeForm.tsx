@@ -15,6 +15,7 @@
 import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { trackAnalysisSubmitted, trackSignupStarted } from '@/lib/analytics';
 
 // ============================================================================
 // Types
@@ -140,8 +141,9 @@ export default function HeroAnalyzeForm({ className = '' }: HeroAnalyzeFormProps
         return;
       }
       
-      // Success! Redirect to progress page
+      // Success! Track and redirect to progress page
       if (data.jobId) {
+        trackAnalysisSubmitted('hero');
         router.push(`/analyze/${data.jobId}`);
       }
       
@@ -262,6 +264,7 @@ export default function HeroAnalyzeForm({ className = '' }: HeroAnalyzeFormProps
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link 
                 href="/sign-up"
+                onClick={() => trackSignupStarted('rate_limit_hero', 'free')}
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-700 underline"
               >
                 Create a free account for weekly analyses →

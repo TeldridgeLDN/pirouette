@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Space_Grotesk, DM_Sans } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import Script from "next/script";
 import "./globals.css";
 
 const spaceGrotesk = Space_Grotesk({ 
@@ -28,6 +29,24 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en" className={`${spaceGrotesk.variable} ${dmSans.variable}`}>
+        <head>
+          {/* Plausible Analytics - Privacy-friendly, no cookies, GDPR compliant */}
+          <Script
+            async
+            src="https://plausible.io/js/pa-_tjs5xvXV53Fm4u_z9vBw.js"
+            strategy="afterInteractive"
+          />
+          <Script
+            id="plausible-init"
+            strategy="afterInteractive"
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}};
+                plausible.init()
+              `,
+            }}
+          />
+        </head>
         <body className="font-body antialiased">{children}</body>
       </html>
     </ClerkProvider>

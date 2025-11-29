@@ -14,6 +14,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { trackSignupStarted, trackReportSaved } from '@/lib/analytics';
 
 // ============================================================================
 // Types
@@ -164,6 +165,10 @@ export default function EmailCaptureModal({
             <div className="space-y-3">
               <Link
                 href={signUpUrl}
+                onClick={() => {
+                  trackSignupStarted('email_capture_modal', 'free');
+                  trackReportSaved('signup');
+                }}
                 className="flex items-center justify-center w-full px-6 py-3 rounded-xl text-white font-semibold transition-all hover:-translate-y-0.5"
                 style={{ 
                   background: 'linear-gradient(135deg, #F97316 0%, #FB923C 100%)', 
@@ -184,6 +189,7 @@ export default function EmailCaptureModal({
               
               <Link
                 href={signInUrl}
+                onClick={() => trackReportSaved('email')}
                 className="flex items-center justify-center w-full px-6 py-3 rounded-xl bg-slate-100 text-slate-700 font-medium hover:bg-slate-200 transition-colors"
               >
                 Sign in to existing account

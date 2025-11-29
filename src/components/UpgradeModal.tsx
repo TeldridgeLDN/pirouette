@@ -15,8 +15,9 @@
  * - Direct Stripe Checkout integration
  */
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import { trackUpgradeClicked, trackTrialStarted } from '@/lib/analytics';
 
 // ============================================================================
 // Types
@@ -138,6 +139,18 @@ export default function UpgradeModal({
   const handleUpgrade = async (includeTrial: boolean = true) => {
     setIsLoading(true);
     setError(null);
+    
+    // Track upgrade intent
+    const triggerMap = {
+      rate_limit: 'limit_reached' as const,
+      pro_feature: 'feature_gate' as const,
+      manual: 'pricing_page' as const,
+    };
+    trackUpgradeClicked('upgrade_modal', selectedPlan === 'pro_29' ? 'pro' : 'agency', triggerMap[trigger]);
+    
+    if (includeTrial) {
+      trackTrialStarted('upgrade_modal');
+    }
     
     try {
       const plan = PLANS[selectedPlan];
