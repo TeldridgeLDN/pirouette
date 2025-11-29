@@ -1268,6 +1268,172 @@
         ],
         "priority": "medium",
         "subtasks": []
+      },
+      {
+        "id": 52,
+        "title": "Implement Pro Value Differentiation on Report Page",
+        "description": "Create clear value differentiation between Free and Pro users on the report page by displaying additional data and features exclusively for Pro users.",
+        "details": "This task will implement several features to differentiate Pro from Free user experience:\n\n1. **Expandable Dimension Cards (Pro Only)**:\n   - Modify the 7 dimension score cards in `src/app/report/[id]/page.tsx` to be expandable for Pro users\n   - Create a collapsible component that shows detailed findings when expanded\n   - Add a visual indicator showing Pro users can expand cards\n   - Implement conditional rendering based on user subscription status\n\n2. **Show Detected Data in Cards**:\n   - Display actual fonts detected with font names and usage statistics\n   - Create color swatches for detected colors with hex values\n   - Show CTA texts that were captured during analysis\n   - Format this data in an organized, visually appealing way within the expanded cards\n\n3. **Display Action Items in Recommendations**:\n   - Access and render the existing `actionItems` array that's already collected\n   - Format action items as a checklist with completion tracking\n   - Add visual hierarchy to distinguish action items from general recommendations\n\n4. **Limit Free Users to 3 Recommendations**:\n   - Modify the recommendations component to only show top 3 for free users\n   - Add a \"See X more (Pro)\" prompt with subscription upsell\n   - Implement a blur or preview effect for hidden recommendations\n   - Ensure Pro users see all recommendations without restrictions\n\n5. **Add Time Estimates to Recommendations**:\n   - Add \"Est. time: X minutes\" based on effort level\n   - Map effort levels to time estimates (low=15min, medium=2hr, high=1day)\n   - Style time estimates to be visually distinct but not overwhelming\n\nFiles to modify:\n- `src/app/report/[id]/page.tsx` (main report page)\n- `src/components/HistoricalTracking.tsx`\n- `src/components/CompetitorComparison.tsx`\n\nThe implementation should maintain a clean UI while clearly showing Pro users they're getting additional value. All Pro features should have subtle \"Pro\" badges or indicators.",
+        "testStrategy": "1. **Functional Testing**:\n   - Verify all 7 dimension cards are expandable for Pro users and static for Free users\n   - Confirm that detected data (fonts, colors, CTAs) displays correctly in expanded cards\n   - Validate that action items appear in recommendations for Pro users\n   - Ensure Free users see exactly 3 recommendations with proper \"See more\" prompt\n   - Check that time estimates appear on all recommendations with correct values\n\n2. **User Role Testing**:\n   - Test with both Free and Pro user accounts to verify correct feature visibility\n   - Verify the upgrade prompt appears appropriately for Free users\n   - Confirm Pro users see all features without upgrade prompts\n\n3. **Visual Testing**:\n   - Ensure Pro indicators and badges are visually consistent\n   - Verify expandable cards work correctly on different screen sizes\n   - Check that color swatches render correctly with accurate colors\n\n4. **Edge Cases**:\n   - Test with reports that have minimal data to ensure graceful handling\n   - Verify behavior when a report has fewer than 3 recommendations\n   - Test with extremely long text content to ensure layout doesn't break\n\n5. **Performance Testing**:\n   - Measure any impact on page load time with the additional Pro features\n   - Ensure smooth animations for expandable components",
+        "status": "pending",
+        "dependencies": [
+          33,
+          9,
+          10
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Expandable Dimension Cards for Pro Users",
+            "description": "Modify the dimension score cards to be expandable only for Pro users, with visual indicators and conditional rendering.",
+            "dependencies": [],
+            "details": "Modify the 7 dimension score cards in `src/app/report/[id]/page.tsx` to create a collapsible component that shows detailed findings when expanded. Add a visual indicator (like a 'Pro' badge or expand icon) showing Pro users can expand cards. Implement conditional rendering based on user subscription status using the existing auth context. Ensure Free users see static, non-expandable cards with minimal information.",
+            "status": "in-progress",
+            "testStrategy": "Test expansion functionality works only for Pro users. Verify visual indicators appear correctly. Confirm conditional rendering works based on subscription status. Test across different screen sizes to ensure responsive behavior."
+          },
+          {
+            "id": 2,
+            "title": "Display Detected Data in Expandable Cards",
+            "description": "Show detailed data like fonts, colors, and CTA texts within the expanded Pro-only cards with proper formatting.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create components to display actual fonts detected with font names and usage statistics. Implement color swatches for detected colors with hex values. Format CTA texts that were captured during analysis. Ensure all data is organized in a visually appealing way within the expanded cards. Use appropriate spacing, typography, and visual hierarchy to make the information scannable and useful.",
+            "status": "pending",
+            "testStrategy": "Verify all detected data displays correctly in expanded cards. Test with various data sets to ensure formatting handles different lengths and types of content. Check that color swatches render correctly with accurate hex values."
+          },
+          {
+            "id": 3,
+            "title": "Implement Action Items in Recommendations for Pro Users",
+            "description": "Access and render the existing actionItems array as a formatted checklist with completion tracking for Pro users.",
+            "dependencies": [],
+            "details": "Access the existing `actionItems` array that's already collected in the application. Format these items as an interactive checklist with completion tracking functionality. Add visual hierarchy to distinguish action items from general recommendations. Implement conditional rendering to show these action items only for Pro users. Style the checklist to match the overall design system while making it clear this is a Pro-only feature.",
+            "status": "pending",
+            "testStrategy": "Test that action items render correctly only for Pro users. Verify checklist functionality works for tracking completion. Ensure visual hierarchy clearly distinguishes action items from general recommendations."
+          },
+          {
+            "id": 4,
+            "title": "Limit Free Users to 3 Recommendations with Upsell",
+            "description": "Modify the recommendations component to show only top 3 for free users with a Pro upsell prompt and preview effect.",
+            "dependencies": [],
+            "details": "Modify the recommendations component to only show the top 3 recommendations for free users. Add a \"See X more (Pro)\" prompt with subscription upsell messaging. Implement a blur or preview effect for hidden recommendations to entice upgrades. Ensure Pro users see all recommendations without restrictions. The implementation should make it clear that more value is available with a Pro subscription without degrading the free user experience.",
+            "status": "pending",
+            "testStrategy": "Test that free users see only top 3 recommendations. Verify the upsell prompt displays correctly with accurate count of hidden recommendations. Confirm Pro users see all recommendations without restrictions. Test the blur/preview effect renders properly."
+          },
+          {
+            "id": 5,
+            "title": "Add Time Estimates to Recommendations",
+            "description": "Implement time estimates for each recommendation based on effort level, with appropriate styling.",
+            "dependencies": [],
+            "details": "Add \"Est. time: X minutes\" labels to each recommendation based on the effort level. Map effort levels to time estimates using the following scale: low=15min, medium=2hr, high=1day. Style time estimates to be visually distinct but not overwhelming within the recommendation cards. Ensure the estimates are visible to both Free and Pro users, but consider showing more precise estimates for Pro users if the data is available.",
+            "status": "pending",
+            "testStrategy": "Verify time estimates display correctly for each recommendation. Test that effort levels map to the correct time estimates. Ensure styling is consistent and visually distinct without overwhelming the UI."
+          }
+        ]
+      },
+      {
+        "id": 53,
+        "title": "Implement Pro Value Differentiation Quick Wins",
+        "description": "Implement medium-effort features that further differentiate Pro value, including fold line indicator, executive summary, industry benchmarks, CSS snippet generator, and shareable score badges.",
+        "details": "This task builds on Phase 1 Pro Value Differentiation by implementing several medium-effort features:\n\n1. **Above-the-fold Line Indicator**:\n   - Modify the screenshot component in `src/app/report/[id]/components/Screenshot.tsx`\n   - Add a horizontal line overlay at 800px height with label \"Above the fold\"\n   - Implement toggle visibility option for Pro users\n   - Add visual styling to make the line stand out (dashed, with label)\n\n2. **Executive Summary Section (Pro Only)**:\n   - Create new component `src/app/report/[id]/components/ExecutiveSummary.tsx`\n   - Generate 2-3 sentence summary using the following format:\n     - \"Your page scores X/100 (top Y%). Priority fix: Z. Total implementation time: N hours.\"\n   - Calculate percentile ranking based on stored aggregate scores\n   - Extract highest impact recommendation for \"Priority fix\"\n   - Sum implementation time estimates from recommendations\n   - Position prominently at top of report for Pro users\n\n3. **Industry Benchmarks**:\n   - Modify the score display component to include industry comparison\n   - Add database query to fetch aggregate scores by industry category\n   - Implement logic to categorize websites (e.g., SaaS, eCommerce, etc.)\n   - Display comparison: \"Your score of X is above/below average for [category] (avg: Y)\"\n   - Create admin dashboard to view and manage benchmark data\n\n4. **CSS Snippet Generator**:\n   - Enhance applicable recommendations with copy-paste CSS fixes\n   - Create utility function `generateCssSnippet(recommendation)` in `src/lib/css-generator.ts`\n   - Identify recommendation types that can have automated CSS fixes\n   - Generate properly formatted CSS with comments explaining the fix\n   - Add copy-to-clipboard functionality\n   - Include before/after visual preview where possible\n\n5. **Share Your Score Badge**:\n   - Create embeddable badge showing Pirouette score\n   - Design SVG template for the badge in `src/components/ScoreBadge.tsx`\n   - Generate dynamic SVG based on score and user preferences\n   - Provide HTML embed code and direct link options\n   - Include badge customization options (size, color scheme)\n   - Track badge impressions for marketing insights\n\nAll features should be gated behind Pro subscription using the existing feature gates system from Task 40.",
+        "testStrategy": "1. **Functional Testing**:\n   - Verify fold line indicator appears at correct position (800px) on screenshots for Pro users only\n   - Confirm executive summary generates correctly with accurate score, percentile, priority fix, and time estimate\n   - Test industry benchmark display with websites from different categories\n   - Validate CSS snippet generation for various recommendation types\n   - Ensure score badges generate correctly and embed properly on external sites\n\n2. **User Access Testing**:\n   - Confirm all new features are properly gated behind Pro subscription\n   - Verify Free users see appropriate upgrade prompts when attempting to access these features\n   - Test that Pro users can access all features without restrictions\n\n3. **Edge Cases**:\n   - Test with extreme scores (very high/low) to ensure percentile calculations work correctly\n   - Verify CSS snippet generator handles complex recommendations appropriately\n   - Test industry benchmarks with websites that don't clearly fit a single category\n   - Ensure fold line indicator works with screenshots of varying heights\n\n4. **Performance Testing**:\n   - Measure impact of new features on report page load time\n   - Optimize database queries for industry benchmark comparisons\n   - Ensure badge generation doesn't impact page performance\n\n5. **Cross-browser Testing**:\n   - Verify all features work correctly across Chrome, Firefox, Safari, and Edge\n   - Test badge embedding on various platforms and content management systems",
+        "status": "pending",
+        "dependencies": [
+          52,
+          40,
+          17,
+          9,
+          19
+        ],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": "54",
+        "title": "Implement AI Vision Analysis for Pro Design Feedback",
+        "description": "Integrate Claude Vision API to analyze screenshots and provide qualitative design feedback as a premium Pro feature called \"Designer's Eye Review\", including visual assessment, missing elements identification, and emotional impact suggestions.",
+        "status": "pending",
+        "dependencies": [
+          52,
+          53,
+          17,
+          9,
+          40
+        ],
+        "priority": "medium",
+        "details": "This task implements the \"Designer's Eye Review\" feature for Pro users, creating a significant value differentiator:\n\n1. **Claude Vision API Integration**:\n   - Create a new service module `src/services/claudeVision.ts` to handle API interactions\n   - Implement authentication and request handling for Claude Vision API\n   - Set up proper error handling and retry logic for API failures\n   - Configure rate limiting to manage API costs\n\n2. **Screenshot Processing**:\n   - Retrieve the stored screenshot from Supabase Storage\n   - Prepare the image for Claude Vision API (format, compression if needed)\n   - Send the image with appropriate prompts to guide the analysis\n\n3. **Analysis Generation**:\n   - Create structured prompts that guide Claude to analyze:\n     * Overall design cohesiveness and professionalism\n     * Visual hierarchy and clarity of message\n     * CTA effectiveness and placement\n     * Missing elements (social proof, trust signals, urgency elements)\n     * Emotional impact assessment\n   - Parse and structure the API response for display\n\n4. **UI Implementation**:\n   - Add a new \"Designer's Eye Review\" tab in the report page for Pro users\n   - Create components to display the qualitative feedback with visual styling\n   - Implement a visual appeal rating system with explanations\n   - Add a \"Refresh Review\" button for Pro users to request fresh feedback\n\n5. **Pro Feature Gating**:\n   - Integrate with the existing feature gates system\n   - Show upgrade prompts for Free users attempting to access this feature\n   - Add a preview/teaser of this functionality for Free users\n\n6. **Performance Optimization**:\n   - Implement caching for analysis results to avoid redundant API calls\n   - Store analysis results in Supabase for persistence\n   - Add background processing for analysis to avoid blocking user experience\n\n7. **Branding**:\n   - Ensure all user-facing elements use \"Designer's Eye Review\" branding\n   - Avoid any references to AI/LLM technology in the UI\n   - Present the feature as providing professional designer-level feedback",
+        "testStrategy": "1. **API Integration Testing**:\n   - Verify Claude Vision API connection works with proper authentication\n   - Test error handling with simulated API failures\n   - Confirm rate limiting functions correctly\n\n2. **Functional Testing**:\n   - Test with various types of landing pages (e-commerce, SaaS, blog, etc.)\n   - Verify that analysis covers all required aspects (design quality, missing elements, emotional impact)\n   - Confirm the visual appeal rating system works consistently\n   - Test the \"Refresh Review\" functionality for Pro users\n\n3. **UI/UX Testing**:\n   - Verify the \"Designer's Eye Review\" tab appears only for Pro users\n   - Confirm that Free users see appropriate upgrade prompts\n   - Test responsive design of the analysis display on various devices\n   - Ensure the analysis is presented in a readable, actionable format\n   - Verify all user-facing elements use \"Designer's Eye Review\" branding with no AI references\n\n4. **Performance Testing**:\n   - Measure and optimize API call latency\n   - Test caching mechanism effectiveness\n   - Verify background processing doesn't impact user experience\n\n5. **Integration Testing**:\n   - Confirm proper integration with the existing report page\n   - Verify that analysis results are correctly stored in Supabase\n   - Test the feature with the complete user flow from URL submission to viewing results",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Claude Vision API integration service",
+            "description": "Create a new service module to handle API interactions with Claude Vision API while keeping the implementation details hidden from the UI layer.",
+            "dependencies": [],
+            "details": "Create the `src/services/claudeVision.ts` module with the following functionality:\n- Authentication with Claude Vision API using environment variables\n- Request handling with proper typing for requests/responses\n- Error handling with appropriate error classes and retry logic\n- Rate limiting configuration to manage API costs\n- Service methods that abstract the API complexity",
+            "status": "pending",
+            "testStrategy": "Write unit tests to verify:\n- Authentication flow works correctly\n- Error handling captures and processes API errors appropriately\n- Rate limiting prevents excessive API calls\n- Service methods return expected data structures"
+          },
+          {
+            "id": 2,
+            "title": "Implement screenshot processing for Designer's Eye Review",
+            "description": "Create functionality to retrieve, prepare and process screenshots for analysis through the Claude Vision API.",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement the following functionality:\n- Retrieve stored screenshots from Supabase Storage\n- Process images as needed (format conversion, compression)\n- Create a pipeline that prepares images for Claude Vision API\n- Implement proper error handling for image processing failures",
+            "status": "pending",
+            "testStrategy": "Test with various image types and sizes to ensure:\n- Images are correctly retrieved from storage\n- Processing maintains sufficient quality for analysis\n- Error handling works for corrupted or invalid images"
+          },
+          {
+            "id": 3,
+            "title": "Create structured prompts for Designer's Eye Review analysis",
+            "description": "Develop a set of structured prompts that guide the Claude Vision API to provide professional design feedback without revealing the AI nature of the service.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create prompts that:\n- Guide Claude to analyze design cohesiveness, visual hierarchy, CTA effectiveness\n- Identify missing elements like social proof or trust signals\n- Assess emotional impact of the design\n- Format responses in a way that appears to come from a professional designer\n- Avoid any AI/LLM terminology or references\n- Maintain consistent \"Designer's Eye Review\" branding",
+            "status": "pending",
+            "testStrategy": "Test prompts with various website types to ensure:\n- Feedback is professional and actionable\n- Analysis covers all required aspects\n- Language is consistent with professional design terminology\n- No references to AI technology appear in the output"
+          },
+          {
+            "id": 4,
+            "title": "Implement Designer's Eye Review UI components",
+            "description": "Create UI components to display the design feedback in the report page for Pro users, maintaining the Designer's Eye Review branding.",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement the following UI elements:\n- New \"Designer's Eye Review\" tab in the report page\n- Components to display qualitative feedback with appropriate styling\n- Visual appeal rating system with explanations\n- \"Refresh Review\" button for Pro users\n- Preview/teaser for Free users with upgrade prompt\n- Ensure all components use the \"Designer's Eye Review\" branding",
+            "status": "pending",
+            "testStrategy": "Perform UI testing to verify:\n- Components render correctly across devices\n- Pro users see the full feature while Free users see upgrade prompts\n- Visual appeal rating system is intuitive\n- Refresh functionality works correctly\n- All text and branding is consistent with \"Designer's Eye Review\""
+          },
+          {
+            "id": 5,
+            "title": "Implement Pro feature gating for Designer's Eye Review",
+            "description": "Integrate the Designer's Eye Review feature with the existing feature gates system to ensure it's only fully available to Pro users.",
+            "dependencies": [
+              4
+            ],
+            "details": "Implement the following:\n- Connect to existing feature gates system\n- Show appropriate upgrade prompts for Free users\n- Create a compelling preview/teaser of the functionality\n- Track feature usage for analytics\n- Ensure seamless upgrade flow from teaser to full feature",
+            "status": "pending",
+            "testStrategy": "Test with both Free and Pro user accounts to verify:\n- Pro users have full access to the feature\n- Free users see appropriate upgrade prompts\n- Teaser effectively demonstrates value without giving full access\n- Upgrade flow works correctly"
+          },
+          {
+            "id": 6,
+            "title": "Implement performance optimization for Designer's Eye Review",
+            "description": "Optimize the performance of the Designer's Eye Review feature to ensure good user experience and efficient API usage.",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Implement the following optimizations:\n- Caching mechanism for analysis results\n- Supabase storage for persistence of results\n- Background processing to avoid blocking the UI\n- Efficient loading states during analysis generation\n- Optimized API usage to minimize costs",
+            "status": "pending",
+            "testStrategy": "Perform performance testing to verify:\n- Caching reduces redundant API calls\n- Background processing maintains responsive UI\n- Results are correctly persisted in Supabase\n- Loading states provide good user feedback"
+          }
+        ]
       }
     ],
     "metadata": {
@@ -1280,7 +1446,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-29T07:27:00.387Z"
+      "updated": "2025-11-29T16:49:10.819Z"
     }
   }
 }

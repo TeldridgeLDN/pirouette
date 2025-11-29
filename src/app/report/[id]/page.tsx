@@ -152,16 +152,16 @@ function getPriorityBadge(priority: string): { bg: string; text: string } {
   }
 }
 
-function getEffortBadge(effort: string): { bg: string; text: string; label: string } {
+function getEffortBadge(effort: string): { bg: string; text: string; label: string; timeEstimate: string } {
   switch (effort) {
     case 'low':
-      return { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Quick Fix' };
+      return { bg: 'bg-emerald-50', text: 'text-emerald-700', label: 'Quick Fix', timeEstimate: '~15 min' };
     case 'medium':
-      return { bg: 'bg-amber-50', text: 'text-amber-700', label: 'Medium Effort' };
+      return { bg: 'bg-amber-50', text: 'text-amber-700', label: 'Medium Effort', timeEstimate: '~2 hours' };
     case 'high':
-      return { bg: 'bg-red-50', text: 'text-red-700', label: 'Major Change' };
+      return { bg: 'bg-red-50', text: 'text-red-700', label: 'Major Change', timeEstimate: '~1 day' };
     default:
-      return { bg: 'bg-slate-50', text: 'text-slate-700', label: effort };
+      return { bg: 'bg-slate-50', text: 'text-slate-700', label: effort, timeEstimate: '' };
   }
 }
 
@@ -227,32 +227,190 @@ function ScoreRing({ score, size = 'lg' }: { score: number; size?: 'sm' | 'md' |
   );
 }
 
+// Dimension data mapping from analyzer keys to display keys
+const DIMENSION_KEY_MAP: Record<string, string> = {
+  'typography_score': 'typography',
+  'colors_score': 'colors',
+  'whitespace_score': 'whitespace',
+  'complexity_score': 'complexity',
+  'layout_score': 'layout',
+  'cta_score': 'ctaProminence',
+  'hierarchy_score': 'hierarchy',
+};
+
+interface DimensionData {
+  score?: number;
+  findings?: string[];
+  data?: {
+    fontFamilies?: string[];
+    fontSizes?: number[];
+    minFontSize?: number;
+    maxFontSize?: number;
+    uniqueColors?: string[];
+    dominantColors?: string[];
+    totalCTAs?: number;
+    buttonCTAs?: number;
+    linkCTAs?: number;
+    ctaTexts?: string[];
+    elementCount?: number;
+    complexity?: string;
+  };
+}
+
 function DimensionCard({ 
   name, 
   score, 
-  icon 
+  icon,
+  dimensionKey,
+  dimensionData,
+  isPro,
 }: { 
   name: string; 
   score: number | undefined; 
   icon: string;
+  dimensionKey: string;
+  dimensionData?: DimensionData;
+  isPro: boolean;
 }) {
+  const [isExpanded, setIsExpanded] = useState(false);
   const displayScore = score ?? 0;
+  const findings = dimensionData?.findings || [];
+  const hasFindings = findings.length > 0;
   
   return (
-    <div className="bg-white rounded-xl p-4 border border-slate-100 hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-2xl">{icon}</span>
-        <span className={`text-2xl font-bold ${getScoreColor(displayScore)}`}>
-          {displayScore}
-        </span>
-      </div>
-      <div className="text-sm font-medium text-slate-700 mb-2">{name}</div>
-      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-        <div 
-          className={`h-full rounded-full transition-all duration-1000 bg-gradient-to-r ${getScoreGradient(displayScore)}`}
-          style={{ width: `${displayScore}%` }}
-        />
-      </div>
+    <div className={`bg-white rounded-xl border transition-all duration-200 ${
+      isExpanded ? 'border-indigo-200 shadow-md col-span-2 sm:col-span-3 lg:col-span-4 xl:col-span-7' : 'border-slate-100 hover:shadow-md'
+    }`}>
+      <button
+        onClick={() => isPro && hasFindings && setIsExpanded(!isExpanded)}
+        className={`w-full p-4 text-left ${isPro && hasFindings ? 'cursor-pointer' : 'cursor-default'}`}
+        disabled={!isPro || !hasFindings}
+      >
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-2xl">{icon}</span>
+          <div className="flex items-center gap-2">
+            <span className={`text-2xl font-bold ${getScoreColor(displayScore)}`}>
+              {displayScore}
+            </span>
+            {isPro && hasFindings && (
+              <svg 
+                className={`w-4 h-4 text-slate-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            )}
+          </div>
+        </div>
+        <div className="text-sm font-medium text-slate-700 mb-2">{name}</div>
+        <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+          <div 
+            className={`h-full rounded-full transition-all duration-1000 bg-gradient-to-r ${getScoreGradient(displayScore)}`}
+            style={{ width: `${displayScore}%` }}
+          />
+        </div>
+        
+        {/* Pro teaser for non-Pro users */}
+        {!isPro && hasFindings && (
+          <div className="mt-3 flex items-center gap-1 text-xs text-slate-400">
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+            </svg>
+            <span>See insights (Pro)</span>
+          </div>
+        )}
+      </button>
+      
+      {/* Expanded Pro content */}
+      {isExpanded && isPro && hasFindings && (
+        <div className="px-4 pb-4 border-t border-slate-100">
+          <div className="pt-4">
+            {/* Pro badge */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded">
+                PRO INSIGHTS
+              </span>
+            </div>
+            
+            {/* Findings list */}
+            <div className="space-y-2">
+              {findings.map((finding, idx) => (
+                <div key={idx} className="flex items-start gap-2 text-sm text-slate-600">
+                  <span className="text-indigo-500 mt-0.5">•</span>
+                  <span>{finding}</span>
+                </div>
+              ))}
+            </div>
+            
+            {/* Additional data if available */}
+            {dimensionData?.data && (
+              <div className="mt-4 p-3 bg-slate-50 rounded-lg">
+                {/* Font families */}
+                {dimensionData.data.fontFamilies && dimensionData.data.fontFamilies.length > 0 && (
+                  <div className="mb-2">
+                    <span className="text-xs font-medium text-slate-500 uppercase">Fonts Detected:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {dimensionData.data.fontFamilies.slice(0, 5).map((font, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-white text-slate-700 text-xs rounded border border-slate-200">
+                          {font}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* Color swatches */}
+                {dimensionData.data.dominantColors && dimensionData.data.dominantColors.length > 0 && (
+                  <div className="mb-2">
+                    <span className="text-xs font-medium text-slate-500 uppercase">Colours Detected:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {dimensionData.data.dominantColors.slice(0, 6).map((color, idx) => (
+                        <div 
+                          key={idx} 
+                          className="w-6 h-6 rounded border border-slate-200" 
+                          style={{ backgroundColor: color }}
+                          title={color}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
+                {/* CTA info */}
+                {dimensionData.data.totalCTAs !== undefined && (
+                  <div className="mb-2">
+                    <span className="text-xs font-medium text-slate-500 uppercase">CTAs Found:</span>
+                    <div className="text-sm text-slate-700 mt-1">
+                      {dimensionData.data.totalCTAs} total ({dimensionData.data.buttonCTAs || 0} buttons, {dimensionData.data.linkCTAs || 0} links)
+                    </div>
+                    {dimensionData.data.ctaTexts && dimensionData.data.ctaTexts.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {dimensionData.data.ctaTexts.slice(0, 4).map((text, idx) => (
+                          <span key={idx} className="px-2 py-0.5 bg-white text-slate-600 text-xs rounded border border-slate-200 truncate max-w-[120px]">
+                            "{text}"
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+                
+                {/* Complexity */}
+                {dimensionData.data.complexity && (
+                  <div>
+                    <span className="text-xs font-medium text-slate-500 uppercase">Page Complexity:</span>
+                    <div className="text-sm text-slate-700 mt-1">
+                      {dimensionData.data.complexity} ({dimensionData.data.elementCount} elements)
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -312,6 +470,14 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
               <span className={`px-2 py-0.5 rounded text-xs font-medium ${effort.bg} ${effort.text}`}>
                 {effort.label}
               </span>
+              {effort.timeEstimate && (
+                <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-50 text-slate-500 flex items-center gap-1">
+                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  {effort.timeEstimate}
+                </span>
+              )}
               <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
                 {recommendation.dimension}
               </span>
@@ -932,16 +1098,32 @@ export default function ReportPage({ params }: PageProps) {
         
         {/* Dimension Scores */}
         <section className="mb-8">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">Analysis Dimensions</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-slate-900">Analysis Dimensions</h2>
+            {isPro && (
+              <span className="text-xs text-slate-500">Click any dimension for detailed insights</span>
+            )}
+          </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
-            {DIMENSIONS.map(dim => (
-              <DimensionCard
-                key={dim.key}
-                name={dim.name}
-                score={report[dim.key as keyof Report] as number | undefined}
-                icon={dim.icon}
-              />
-            ))}
+            {DIMENSIONS.map(dim => {
+              // Map display key to analyzer key for dimensions data
+              const analyzerKey = DIMENSION_KEY_MAP[dim.key];
+              const dimensionData = analyzerKey 
+                ? (report.dimensions as Record<string, DimensionData>)?.[analyzerKey]
+                : undefined;
+              
+              return (
+                <DimensionCard
+                  key={dim.key}
+                  name={dim.name}
+                  score={report[dim.key as keyof Report] as number | undefined}
+                  icon={dim.icon}
+                  dimensionKey={dim.key}
+                  dimensionData={dimensionData}
+                  isPro={isPro}
+                />
+              );
+            })}
           </div>
         </section>
         
@@ -1030,9 +1212,54 @@ export default function ReportPage({ params }: PageProps) {
           
           {filteredRecommendations.length > 0 ? (
             <div className="space-y-4">
-              {filteredRecommendations.map(rec => (
+              {/* Limit free users to 3 recommendations */}
+              {(isPro ? filteredRecommendations : filteredRecommendations.slice(0, 3)).map(rec => (
                 <RecommendationCard key={rec.id} recommendation={rec} />
               ))}
+              
+              {/* Show upgrade prompt if free user has more recommendations */}
+              {!isPro && filteredRecommendations.length > 3 && (
+                <div className="relative">
+                  {/* Blurred preview of next recommendation */}
+                  <div className="blur-sm pointer-events-none opacity-50">
+                    <div className="bg-white rounded-xl border border-slate-100 p-5">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="px-2 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-600">
+                          RECOMMENDATION
+                        </span>
+                      </div>
+                      <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-3 bg-slate-100 rounded w-full"></div>
+                    </div>
+                  </div>
+                  
+                  {/* Upgrade overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-xl">
+                    <div className="text-center p-6">
+                      <div className="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mx-auto mb-3">
+                        <svg className="w-6 h-6 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                      </div>
+                      <h4 className="font-semibold text-slate-900 mb-1">
+                        {filteredRecommendations.length - 3} more recommendation{filteredRecommendations.length - 3 > 1 ? 's' : ''} available
+                      </h4>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Upgrade to Pro to see all recommendations with detailed action items
+                      </p>
+                      <Link
+                        href="/pricing"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+                      >
+                        <span>Unlock All Recommendations</span>
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           ) : roiFilter !== 'all' ? (
             <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">

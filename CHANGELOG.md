@@ -5,6 +5,16 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Added
+- **Pro Value Differentiation - Phase 1** (Task 52)
+  - Expandable Dimension Cards for Pro users showing detailed findings
+  - Dimension cards display "PRO INSIGHTS" with specific analysis results
+  - Free users see "🔒 See insights (Pro)" teaser on dimension cards
+  - Recommendations limited to 3 for free users with upgrade prompt
+  - Blurred preview of additional recommendations for free users
+  - Time estimates added to recommendations (~15 min, ~2 hours, ~1 day)
+  - Clock icon with time estimate badge on each recommendation
+  - "Click any dimension for detailed insights" hint for Pro users
+
 - **Plausible Analytics Integration** (Task 22)
   - Core tracking utilities (`src/lib/analytics/plausible.ts`)
   - 16 custom events for full user journey tracking
