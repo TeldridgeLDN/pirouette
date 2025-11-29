@@ -115,7 +115,7 @@ f9d2bdf data: Add real benchmark data from 36 award-winning sites
 ## 🔑 Environment & Access
 
 ### Production URLs
-- **Frontend:** https://pirouette-git-main-tom-es-projects-93b76b93.vercel.app (requires Vercel login)
+- **Frontend:** https://pirouette-app.vercel.app/ ✅
 - **Railway Worker:** https://pirouette-production.up.railway.app
 - **Supabase:** rgsgahybkxsdmzgwhpou.supabase.co
 
