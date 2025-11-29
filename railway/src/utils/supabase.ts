@@ -14,6 +14,11 @@ export function getSupabaseClient(): SupabaseClient {
     const supabaseUrl = process.env.SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+    // Debug logging - show what we're reading
+    console.log('[Supabase] URL from env:', supabaseUrl ? `${supabaseUrl.substring(0, 30)}...` : 'MISSING');
+    console.log('[Supabase] Key from env:', supabaseKey ? `${supabaseKey.substring(0, 20)}...${supabaseKey.substring(supabaseKey.length - 10)}` : 'MISSING');
+    console.log('[Supabase] Key length:', supabaseKey?.length || 0);
+
     if (!supabaseUrl || !supabaseKey) {
       throw new Error(
         'Missing Supabase credentials: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY required'
