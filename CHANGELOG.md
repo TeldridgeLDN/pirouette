@@ -57,6 +57,19 @@ All notable changes to Pirouette will be documented in this file.
   - Copyable HTML embed code with Copy button
   - API endpoint at /api/badge/[id] generates dynamic SVG
 
+### Added (Task 54 - Designer's Eye Review)
+- **AI Vision Analysis** - Claude-powered qualitative design feedback for Pro users
+  - Visual appeal rating (1-10) with detailed explanation
+  - First impression feedback (what catches the eye in 3 seconds)
+  - Design insights categorised as strengths, improvements, or critical issues
+  - Missing elements detection (social proof, trust signals, etc.)
+  - Emotional impact analysis with improvement suggestions
+  - Top 3 priorities for maximum impact
+  - Reviews cached in Supabase for persistence
+  - Regenerate button for fresh feedback
+  - Free users see blurred teaser with upgrade prompt
+  - Branded as "Designer's Eye Review" with no AI references in UI
+
 - **Enhanced Analysis Insights with Benchmarks** (Pro UX Enhancement)
   - Typography findings now compare with **Stripe**, **Linear**, **Apple**, **Vercel**
   - Colour analysis references **Notion**, **Superhuman** palette sizes
