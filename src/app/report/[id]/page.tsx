@@ -861,6 +861,24 @@ export default function ReportPage({ params }: PageProps) {
   const [claimStatus, setClaimStatus] = useState<'idle' | 'claiming' | 'claimed' | 'error'>('idle');
   const [roiFilter, setRoiFilter] = useState<ROIFilterType>('all');
   const [isExportingPDF, setIsExportingPDF] = useState(false);
+  const [showFoldLine, setShowFoldLine] = useState(true);
+  const [foldLinePosition, setFoldLinePosition] = useState<number | null>(null);
+  const screenshotRef = useCallback((node: HTMLImageElement | null) => {
+    if (node) {
+      const updateFoldPosition = () => {
+        // Railway captures at 1280px width, fold is at 800px height
+        // Calculate scaled position based on displayed width
+        const scaleFactor = node.clientWidth / 1280;
+        setFoldLinePosition(800 * scaleFactor);
+      };
+      node.addEventListener('load', updateFoldPosition);
+      if (node.complete) updateFoldPosition();
+      // Also update on resize
+      const resizeObserver = new ResizeObserver(updateFoldPosition);
+      resizeObserver.observe(node);
+      return () => resizeObserver.disconnect();
+    }
+  }, []);
   
   // Resolve params
   useEffect(() => {
@@ -1437,13 +1455,47 @@ export default function ReportPage({ params }: PageProps) {
                 <div className="flex-1 text-center text-sm text-slate-500 truncate">
                   {report.url}
                 </div>
+                {/* Above-the-fold toggle (Pro feature) */}
+                {isPro && (
+                  <button
+                    onClick={() => setShowFoldLine(!showFoldLine)}
+                    className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-colors ${
+                      showFoldLine 
+                        ? 'bg-indigo-100 text-indigo-700' 
+                        : 'bg-slate-200 text-slate-600 hover:bg-slate-300'
+                    }`}
+                    title="Toggle above-the-fold indicator"
+                  >
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16" />
+                    </svg>
+                    Fold Line
+                  </button>
+                )}
               </div>
               <div className="p-4">
-                <img 
-                  src={report.screenshot_url} 
-                  alt={`Screenshot of ${report.url}`}
-                  className="w-full rounded-lg shadow-lg"
-                />
+                <div className="relative">
+                  <img 
+                    ref={screenshotRef}
+                    src={report.screenshot_url} 
+                    alt={`Screenshot of ${report.url}`}
+                    className="w-full rounded-lg shadow-lg"
+                  />
+                  {/* Above-the-fold line indicator (Pro feature) */}
+                  {isPro && showFoldLine && foldLinePosition && (
+                    <div 
+                      className="absolute left-0 right-0 pointer-events-none z-10"
+                      style={{ top: `${foldLinePosition}px` }}
+                    >
+                      <div className="relative flex items-center">
+                        <div className="flex-1 border-t-2 border-dashed border-rose-500" />
+                        <span className="absolute -top-3 left-4 bg-rose-500 text-white text-xs font-medium px-2 py-0.5 rounded shadow-sm">
+                          ↑ Above the fold (800px)
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </section>
