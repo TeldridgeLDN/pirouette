@@ -42,8 +42,8 @@ export async function GET(
   }
 }
 
-// Rate limit: max reviews per user per day
-const MAX_REVIEWS_PER_DAY = 10;
+// Rate limit: max reviews per user per day (conservative to manage API costs)
+const MAX_REVIEWS_PER_DAY = 5;
 
 export async function POST(
   request: NextRequest,
