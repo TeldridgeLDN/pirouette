@@ -36,6 +36,17 @@ All notable changes to Pirouette will be documented in this file.
     - Free users see blurred preview with "Unlock Action Items" upgrade prompt
     - Violet/indigo gradient styling to distinguish from other sections
 
+### Added (Task 55 - Traffic Context Input)
+- **Traffic Input for Report Page** (Pro Feature)
+  - Pro users can add/update weekly traffic data directly on the report page
+  - New API endpoint `/api/reports/[id]/traffic` for traffic updates
+  - Input field appears when no traffic data exists (Pro users only)
+  - Edit button for Pro users to update existing traffic data
+  - Success/error feedback with loading states
+  - Traffic data updates local state and triggers recommendation re-sort
+  - Free users see upgrade prompt instead of input field
+  - Help text linking to Google Analytics for finding traffic data
+
 ### Changed
 - **Neutral Language in Recommendations** - Changed "Your page" to "This page" throughout recommendations to support users analysing competitor/third-party sites
 - **Unified Card System for Recommendations & Designer's Eye Review** (UX Improvement)

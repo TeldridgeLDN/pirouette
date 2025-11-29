@@ -1586,7 +1586,15 @@ export default function ReportPage({ params }: PageProps) {
         {/* Traffic Context Section - Earned ask after delivering value */}
         <section className="mb-8">
           <h2 className="text-xl font-bold text-slate-900 mb-4">Your Traffic Context</h2>
-          <TrafficContext weeklyVisitors={report.weeklyTraffic} />
+          <TrafficContext 
+            weeklyVisitors={report.weeklyTraffic} 
+            reportId={reportId || undefined}
+            isPro={isPro}
+            onTrafficUpdate={(newTraffic) => {
+              // Update local report state with new traffic
+              setReport(prev => prev ? { ...prev, weeklyTraffic: newTraffic } : prev);
+            }}
+          />
           {sortByEase && report.weeklyTraffic && (
             <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
               <p className="text-sm text-amber-800">
