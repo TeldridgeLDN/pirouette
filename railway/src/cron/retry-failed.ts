@@ -9,7 +9,9 @@
  * Runs every 30 minutes
  */
 
-import { supabase } from '../utils/supabase';
+import { getSupabaseClient } from '../utils/supabase';
+
+const supabase = getSupabaseClient();
 
 // ============================================================================
 // Types
