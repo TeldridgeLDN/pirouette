@@ -1626,7 +1626,7 @@ export default function ReportPage({ params }: PageProps) {
         )}
         
         {/* Share Score Badge (Pro Feature) */}
-        {isPro && !report.isAnonymous && (
+        {isPro && (
           <section className="mb-8">
             <div className="bg-white rounded-xl border border-slate-200 p-6">
               <div className="flex items-center gap-2 mb-4">
