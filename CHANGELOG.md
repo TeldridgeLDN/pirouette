@@ -38,6 +38,14 @@ All notable changes to Pirouette will be documented in this file.
 
 ### Changed
 - **Neutral Language in Recommendations** - Changed "Your page" to "This page" throughout recommendations to support users analysing competitor/third-party sites
+- **Unified Card System for Recommendations & Designer's Eye Review** (UX Improvement)
+  - Designer's Eye Review now styled consistently with recommendation cards
+  - Added accent bar, tag-style indicators (Visual Appeal score, date, PRO badge)
+  - Mini-preview of overall impression in collapsed state
+  - Insight summary badges showing strength/improvement/critical counts
+  - Free user teaser styled as locked recommendation card
+  - Consistent expand/collapse interaction pattern
+  - Subtle gradient backgrounds only in expanded content sections
 
 ### Added (Task 53 - Pro Quick Wins)
 - **Above-the-Fold Line Indicator** (53.1) - Toggleable fold line overlay on page screenshots
