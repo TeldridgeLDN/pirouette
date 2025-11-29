@@ -29,6 +29,15 @@ All notable changes to Pirouette will be documented in this file.
   - Time estimates added to recommendations (~15 min, ~2 hours, ~1 day)
   - Clock icon with time estimate badge on each recommendation
   - "Click any dimension for detailed insights" hint for Pro users
+  - **Action Items Checklist** (Subtask 52.3) - Interactive checklist in recommendations
+    - Pro users see actionable steps with checkbox completion tracking
+    - Progress bar showing completion percentage
+    - Completion state persisted in localStorage per report/recommendation
+    - Free users see blurred preview with "Unlock Action Items" upgrade prompt
+    - Violet/indigo gradient styling to distinguish from other sections
+
+### Changed
+- **Neutral Language in Recommendations** - Changed "Your page" to "This page" throughout recommendations to support users analysing competitor/third-party sites
 
 - **Enhanced Analysis Insights with Benchmarks** (Pro UX Enhancement)
   - Typography findings now compare with **Stripe**, **Linear**, **Apple**, **Vercel**

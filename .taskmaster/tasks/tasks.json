@@ -1275,7 +1275,7 @@
         "description": "Create clear value differentiation between Free and Pro users on the report page by displaying additional data and features exclusively for Pro users.",
         "details": "This task will implement several features to differentiate Pro from Free user experience:\n\n1. **Expandable Dimension Cards (Pro Only)**:\n   - Modify the 7 dimension score cards in `src/app/report/[id]/page.tsx` to be expandable for Pro users\n   - Create a collapsible component that shows detailed findings when expanded\n   - Add a visual indicator showing Pro users can expand cards\n   - Implement conditional rendering based on user subscription status\n\n2. **Show Detected Data in Cards**:\n   - Display actual fonts detected with font names and usage statistics\n   - Create color swatches for detected colors with hex values\n   - Show CTA texts that were captured during analysis\n   - Format this data in an organized, visually appealing way within the expanded cards\n\n3. **Display Action Items in Recommendations**:\n   - Access and render the existing `actionItems` array that's already collected\n   - Format action items as a checklist with completion tracking\n   - Add visual hierarchy to distinguish action items from general recommendations\n\n4. **Limit Free Users to 3 Recommendations**:\n   - Modify the recommendations component to only show top 3 for free users\n   - Add a \"See X more (Pro)\" prompt with subscription upsell\n   - Implement a blur or preview effect for hidden recommendations\n   - Ensure Pro users see all recommendations without restrictions\n\n5. **Add Time Estimates to Recommendations**:\n   - Add \"Est. time: X minutes\" based on effort level\n   - Map effort levels to time estimates (low=15min, medium=2hr, high=1day)\n   - Style time estimates to be visually distinct but not overwhelming\n\nFiles to modify:\n- `src/app/report/[id]/page.tsx` (main report page)\n- `src/components/HistoricalTracking.tsx`\n- `src/components/CompetitorComparison.tsx`\n\nThe implementation should maintain a clean UI while clearly showing Pro users they're getting additional value. All Pro features should have subtle \"Pro\" badges or indicators.",
         "testStrategy": "1. **Functional Testing**:\n   - Verify all 7 dimension cards are expandable for Pro users and static for Free users\n   - Confirm that detected data (fonts, colors, CTAs) displays correctly in expanded cards\n   - Validate that action items appear in recommendations for Pro users\n   - Ensure Free users see exactly 3 recommendations with proper \"See more\" prompt\n   - Check that time estimates appear on all recommendations with correct values\n\n2. **User Role Testing**:\n   - Test with both Free and Pro user accounts to verify correct feature visibility\n   - Verify the upgrade prompt appears appropriately for Free users\n   - Confirm Pro users see all features without upgrade prompts\n\n3. **Visual Testing**:\n   - Ensure Pro indicators and badges are visually consistent\n   - Verify expandable cards work correctly on different screen sizes\n   - Check that color swatches render correctly with accurate colors\n\n4. **Edge Cases**:\n   - Test with reports that have minimal data to ensure graceful handling\n   - Verify behavior when a report has fewer than 3 recommendations\n   - Test with extremely long text content to ensure layout doesn't break\n\n5. **Performance Testing**:\n   - Measure any impact on page load time with the additional Pro features\n   - Ensure smooth animations for expandable components",
-        "status": "pending",
+        "status": "done",
         "dependencies": [
           33,
           9,
@@ -1309,7 +1309,7 @@
             "description": "Access and render the existing actionItems array as a formatted checklist with completion tracking for Pro users.",
             "dependencies": [],
             "details": "Access the existing `actionItems` array that's already collected in the application. Format these items as an interactive checklist with completion tracking functionality. Add visual hierarchy to distinguish action items from general recommendations. Implement conditional rendering to show these action items only for Pro users. Style the checklist to match the overall design system while making it clear this is a Pro-only feature.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test that action items render correctly only for Pro users. Verify checklist functionality works for tracking completion. Ensure visual hierarchy clearly distinguishes action items from general recommendations."
           },
           {
@@ -1446,7 +1446,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-29T16:55:06.193Z"
+      "updated": "2025-11-29T18:06:15.131Z"
     }
   }
 }

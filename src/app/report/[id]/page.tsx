@@ -78,6 +78,7 @@ interface Recommendation {
   successMetrics?: SuccessMetrics;
   roiScore?: ROIScore;
   timeToResultsWeeks?: number;
+  actionItems?: string[];
 }
 
 interface Report {
@@ -439,15 +440,51 @@ function getROICategoryBadge(category: 'quick-win' | 'strategic' | 'long-term'):
   }
 }
 
-function RecommendationCard({ recommendation }: { recommendation: Recommendation }) {
+function RecommendationCard({ recommendation, isPro, reportId }: { recommendation: Recommendation; isPro: boolean; reportId: string }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [completedItems, setCompletedItems] = useState<Set<number>>(new Set());
   const priority = getPriorityBadge(recommendation.priority);
   const effort = getEffortBadge(recommendation.effort);
+  
+  // Load completed items from localStorage on mount
+  useEffect(() => {
+    const storageKey = `pirouette-action-items-${reportId}-${recommendation.id}`;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setCompletedItems(new Set(parsed));
+      } catch {
+        // Ignore parse errors
+      }
+    }
+  }, [reportId, recommendation.id]);
+  
+  // Save completed items to localStorage
+  const toggleActionItem = (index: number) => {
+    setCompletedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(index)) {
+        next.delete(index);
+      } else {
+        next.add(index);
+      }
+      // Save to localStorage
+      const storageKey = `pirouette-action-items-${reportId}-${recommendation.id}`;
+      localStorage.setItem(storageKey, JSON.stringify(Array.from(next)));
+      return next;
+    });
+  };
   
   // Get ROI badge if available
   const roiBadge = recommendation.roiScore 
     ? getROICategoryBadge(recommendation.roiScore.category) 
     : null;
+  
+  // Check if action items exist
+  const hasActionItems = recommendation.actionItems && recommendation.actionItems.length > 0;
+  const actionItemsCount = recommendation.actionItems?.length || 0;
+  const completedCount = completedItems.size;
   
   return (
     <div className="bg-white rounded-xl border border-slate-100 overflow-hidden hover:shadow-md transition-shadow">
@@ -685,6 +722,98 @@ function RecommendationCard({ recommendation }: { recommendation: Recommendation
                     <span className="font-semibold text-indigo-700">{recommendation.roiScore.normalizedScore.toFixed(1)}/10</span>
                   </div>
                 </div>
+              </div>
+            )}
+            
+            {/* Action Items Checklist (Pro Feature) */}
+            {hasActionItems && (
+              <div className={`p-4 rounded-lg border ${isPro ? 'bg-gradient-to-br from-violet-50 to-indigo-50 border-violet-200' : 'bg-slate-50 border-slate-200'}`}>
+                <div className="flex items-center justify-between mb-3">
+                  <h4 className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                    ✅ Action Items
+                    {isPro && completedCount > 0 && (
+                      <span className="text-xs font-normal text-slate-500">
+                        ({completedCount}/{actionItemsCount} complete)
+                      </span>
+                    )}
+                  </h4>
+                  {isPro && (
+                    <span className="px-2 py-0.5 bg-violet-100 text-violet-700 text-xs font-medium rounded">
+                      PRO
+                    </span>
+                  )}
+                </div>
+                
+                {isPro ? (
+                  <ul className="space-y-2">
+                    {recommendation.actionItems?.map((item, idx) => (
+                      <li key={idx} className="flex items-start gap-3">
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleActionItem(idx);
+                          }}
+                          className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all ${
+                            completedItems.has(idx)
+                              ? 'bg-violet-600 border-violet-600 text-white'
+                              : 'border-slate-300 hover:border-violet-400 bg-white'
+                          }`}
+                          aria-label={completedItems.has(idx) ? 'Mark as incomplete' : 'Mark as complete'}
+                        >
+                          {completedItems.has(idx) && (
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </button>
+                        <span className={`text-sm ${completedItems.has(idx) ? 'text-slate-400 line-through' : 'text-slate-700'}`}>
+                          {item}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="relative">
+                    {/* Blurred preview for free users */}
+                    <ul className="space-y-2 blur-sm pointer-events-none select-none">
+                      {recommendation.actionItems?.slice(0, 3).map((item, idx) => (
+                        <li key={idx} className="flex items-start gap-3">
+                          <div className="mt-0.5 w-5 h-5 rounded border-2 border-slate-300 bg-white flex-shrink-0" />
+                          <span className="text-sm text-slate-700">{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                    {/* Upgrade overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/60 rounded">
+                      <Link
+                        href="/pricing"
+                        className="flex items-center gap-2 px-3 py-1.5 bg-violet-600 text-white text-xs font-medium rounded-lg hover:bg-violet-700 transition-colors shadow-sm"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                        </svg>
+                        Unlock Action Items
+                      </Link>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Progress bar for Pro users */}
+                {isPro && actionItemsCount > 0 && (
+                  <div className="mt-3 pt-3 border-t border-violet-200">
+                    <div className="flex items-center justify-between text-xs text-slate-500 mb-1">
+                      <span>Progress</span>
+                      <span>{Math.round((completedCount / actionItemsCount) * 100)}%</span>
+                    </div>
+                    <div className="h-1.5 bg-violet-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-violet-600 rounded-full transition-all duration-300"
+                        style={{ width: `${(completedCount / actionItemsCount) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             )}
             
@@ -1214,7 +1343,7 @@ export default function ReportPage({ params }: PageProps) {
             <div className="space-y-4">
               {/* Limit free users to 3 recommendations */}
               {(isPro ? filteredRecommendations : filteredRecommendations.slice(0, 3)).map(rec => (
-                <RecommendationCard key={rec.id} recommendation={rec} />
+                <RecommendationCard key={rec.id} recommendation={rec} isPro={isPro} reportId={reportId || ''} />
               ))}
               
               {/* Show upgrade prompt if free user has more recommendations */}

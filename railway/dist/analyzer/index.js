@@ -322,8 +322,8 @@ function generateRecommendations(analysisData, dimensions) {
         if (colorData.uniqueColors.length > 7) {
             recommendations.push({
                 id: `rec-${recId++}`,
-                title: 'Simplify Your Colour Palette',
-                description: `Your page uses ${colorData.uniqueColors.length} different colours. High-converting landing pages typically use 3-5 core colours. A focused palette creates visual harmony and guides attention to key elements.`,
+                title: 'Simplify the Colour Palette',
+                description: `This page uses ${colorData.uniqueColors.length} different colours. High-converting landing pages typically use 3-5 core colours. A focused palette creates visual harmony and guides attention to key elements.`,
                 priority: colorData.uniqueColors.length > 12 ? 'high' : 'medium',
                 effort: 'medium',
                 impact: 'Reducing colour complexity can improve visual focus and increase conversions by 10-15%',
@@ -360,13 +360,13 @@ function generateRecommendations(analysisData, dimensions) {
             recommendations.push({
                 id: `rec-${recId++}`,
                 title: 'Consolidate Font Families',
-                description: `Your page uses ${typoData.fontFamilies.length} different fonts: ${typoData.fontFamilies.slice(0, 4).join(', ')}${typoData.fontFamilies.length > 4 ? '...' : ''}. Professional designs typically use 1-2 fonts. Multiple fonts slow page loading and create visual inconsistency.`,
+                description: `This page uses ${typoData.fontFamilies.length} different fonts: ${typoData.fontFamilies.slice(0, 4).join(', ')}${typoData.fontFamilies.length > 4 ? '...' : ''}. Professional designs typically use 1-2 fonts. Multiple fonts slow page loading and create visual inconsistency.`,
                 priority: typoData.fontFamilies.length > 4 ? 'high' : 'medium',
                 effort: 'medium',
                 impact: 'Consolidating fonts improves loading speed and brand consistency',
                 dimension: 'Typography',
                 actionItems: [
-                    'Choose 1 font for headings (consider: ${typoData.fontFamilies[0]})',
+                    `Choose 1 font for headings (consider: ${typoData.fontFamilies[0]})`,
                     'Use 1 complementary font for body text',
                     'Remove or replace decorative fonts',
                     'Each font adds ~100-400KB to page load time',
@@ -377,7 +377,7 @@ function generateRecommendations(analysisData, dimensions) {
             recommendations.push({
                 id: `rec-${recId++}`,
                 title: 'Increase Minimum Font Size',
-                description: `Your smallest text is ${typoData.minFontSize}px. Modern accessibility guidelines recommend a minimum of 16px for body text. Small text increases bounce rates, especially on mobile devices.`,
+                description: `The smallest text on this page is ${typoData.minFontSize}px. Modern accessibility guidelines recommend a minimum of 16px for body text. Small text increases bounce rates, especially on mobile devices.`,
                 priority: typoData.minFontSize < 12 ? 'high' : 'medium',
                 effort: 'low',
                 impact: 'Improving readability can reduce bounce rates by 10-20%',
@@ -398,10 +398,10 @@ function generateRecommendations(analysisData, dimensions) {
             recommendations.push({
                 id: `rec-${recId++}`,
                 title: 'Add Clear Call-to-Action Buttons',
-                description: 'No prominent CTAs detected on your page. Every landing page needs clear, visible calls-to-action to convert visitors. Without CTAs, visitors don\'t know what action to take.',
+                description: 'No prominent CTAs detected on this page. Every landing page needs clear, visible calls-to-action to convert visitors. Without CTAs, visitors don\'t know what action to take.',
                 priority: 'high',
                 effort: 'low',
-                impact: 'Adding clear CTAs is the single most impactful change you can make - essential for any conversion',
+                impact: 'Adding clear CTAs is the single most impactful change - essential for any conversion',
                 dimension: 'CTA Design',
                 actionItems: [
                     'Add a primary CTA above the fold (e.g., "Get Started", "Try Free")',
@@ -415,13 +415,13 @@ function generateRecommendations(analysisData, dimensions) {
             recommendations.push({
                 id: `rec-${recId++}`,
                 title: 'Reduce CTA Clutter',
-                description: `Your page has ${ctaData.totalCTAs} CTAs, which may overwhelm visitors. Too many options lead to decision paralysis. Focus on 1-3 key actions to improve conversion rates.`,
+                description: `This page has ${ctaData.totalCTAs} CTAs, which may overwhelm visitors. Too many options lead to decision paralysis. Focus on 1-3 key actions to improve conversion rates.`,
                 priority: 'medium',
                 effort: 'medium',
                 impact: 'Reducing choice overload can improve conversions by 15-25%',
                 dimension: 'CTA Design',
                 actionItems: [
-                    'Identify your single most important action',
+                    'Identify the single most important action',
                     'Make the primary CTA visually dominant',
                     'Reduce secondary CTAs or make them less prominent',
                     `Current CTAs: ${ctaData.ctaTexts.slice(0, 5).join(', ')}`,
@@ -432,13 +432,13 @@ function generateRecommendations(analysisData, dimensions) {
             recommendations.push({
                 id: `rec-${recId++}`,
                 title: 'Convert Links to Button CTAs',
-                description: `Your ${ctaData.totalCTAs} CTAs are text links rather than buttons. Button-style CTAs are 45% more likely to be clicked than text links due to increased visual prominence.`,
+                description: `The ${ctaData.totalCTAs} CTAs on this page are text links rather than buttons. Button-style CTAs are 45% more likely to be clicked than text links due to increased visual prominence.`,
                 priority: 'medium',
                 effort: 'low',
                 impact: 'Button CTAs typically convert 30-45% better than text links',
                 dimension: 'CTA Design',
                 actionItems: [
-                    'Convert your primary CTA to a button style',
+                    'Convert the primary CTA to a button style',
                     'Use padding and background colour for prominence',
                     'Ensure good colour contrast with surrounding content',
                 ],
@@ -452,7 +452,7 @@ function generateRecommendations(analysisData, dimensions) {
             recommendations.push({
                 id: `rec-${recId++}`,
                 title: 'Simplify Page Structure',
-                description: `Your page has ${complexityData.elementCount} elements, classified as "${complexityData.complexity}". Award-winning landing pages average 150-250 elements. Complex pages have higher bounce rates and lower conversion rates.`,
+                description: `This page has ${complexityData.elementCount} elements, classified as "${complexityData.complexity}". Award-winning landing pages average 150-250 elements. Complex pages have higher bounce rates and lower conversion rates.`,
                 priority: complexityData.elementCount > 600 ? 'high' : 'medium',
                 effort: 'high',
                 impact: 'Simpler pages load faster and convert up to 35% better',
