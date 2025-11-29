@@ -15,6 +15,15 @@ All notable changes to Pirouette will be documented in this file.
   - Clock icon with time estimate badge on each recommendation
   - "Click any dimension for detailed insights" hint for Pro users
 
+- **Enhanced Analysis Insights with Benchmarks** (Pro UX Enhancement)
+  - Typography findings now compare with **Stripe**, **Linear**, **Apple**, **Vercel**
+  - Colour analysis references **Notion**, **Superhuman** palette sizes
+  - CTA findings compare against **Dropbox**, **Slack**, **Vercel** patterns
+  - Complexity analysis benchmarks against **Linear** (~150), **Apple** (~200) element counts
+  - Added benchmarks.ts with design data from 50+ award-winning sites
+  - Findings use ✓/⚠/✗ indicators for quick scanning
+  - WCAG accessibility notes included where relevant
+
 - **Plausible Analytics Integration** (Task 22)
   - Core tracking utilities (`src/lib/analytics/plausible.ts`)
   - 16 custom events for full user journey tracking

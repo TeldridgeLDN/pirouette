@@ -36,7 +36,7 @@ async function uploadScreenshot(jobId, buffer) {
     try {
         const client = getSupabaseClient();
         const fileName = `${jobId}.png`;
-        const filePath = `screenshots/${fileName}`;
+        const filePath = fileName; // Just the filename, bucket is already 'screenshots'
         console.log(`[Supabase] Uploading screenshot: ${filePath}`);
         const { data, error } = await client.storage
             .from('screenshots')
