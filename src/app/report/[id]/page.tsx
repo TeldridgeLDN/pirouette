@@ -854,7 +854,7 @@ export default function ReportPage({ params }: PageProps) {
               <div className="text-sm text-slate-400 mb-2">
                 Analysis completed {formatDate(report.created_at)}
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold mb-2 break-all">
+              <h1 className="text-2xl sm:text-3xl font-bold mb-2 break-all text-white">
                 {report.url}
               </h1>
               <div className="flex flex-wrap gap-3 text-sm">
