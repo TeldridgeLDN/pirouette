@@ -1,0 +1,210 @@
+{
+    "summary": {
+        "generatedAt": "2025-11-29T17:00:00.000Z",
+        "totalSites": 10,
+        "note": "Initial seed data - run 'npm run generate-benchmarks' for full dataset",
+        "averageScores": {
+            "overall": 82,
+            "typography": 85,
+            "colors": 80,
+            "cta": 83,
+            "complexity": 78
+        },
+        "topPerformers": [
+            { "name": "Linear", "score": 92 },
+            { "name": "Vercel", "score": 90 },
+            { "name": "Stripe", "score": 89 },
+            { "name": "Notion", "score": 88 },
+            { "name": "Superhuman", "score": 87 }
+        ],
+        "byCategory": {
+            "SaaS": 86,
+            "DevTools": 88,
+            "Startup": 85,
+            "BigTech": 82
+        }
+    },
+    "sites": [
+        {
+            "name": "Linear",
+            "url": "https://linear.app",
+            "category": "SaaS",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 92, "typography": 95, "colors": 90, "cta": 95, "complexity": 88 },
+            "data": {
+                "fontCount": 1,
+                "fontFamilies": ["Inter"],
+                "baseFontSize": 16,
+                "colorCount": 4,
+                "dominantColors": ["#5E6AD2", "#171717", "#FFFFFF", "#A3A3A3"],
+                "ctaCount": 2,
+                "buttonCtaCount": 1,
+                "ctaTexts": ["Start building", "Sign in"],
+                "elementCount": 145
+            }
+        },
+        {
+            "name": "Vercel",
+            "url": "https://vercel.com",
+            "category": "DevTools",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 90, "typography": 92, "colors": 88, "cta": 92, "complexity": 88 },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": ["Geist Sans", "Geist Mono"],
+                "baseFontSize": 16,
+                "colorCount": 4,
+                "dominantColors": ["#000000", "#FFFFFF", "#0070F3", "#666666"],
+                "ctaCount": 2,
+                "buttonCtaCount": 2,
+                "ctaTexts": ["Start Deploying", "Get a Demo"],
+                "elementCount": 180
+            }
+        },
+        {
+            "name": "Stripe",
+            "url": "https://stripe.com",
+            "category": "DevTools",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 89, "typography": 90, "colors": 88, "cta": 90, "complexity": 88 },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": ["Söhne", "Söhne Mono"],
+                "baseFontSize": 16,
+                "colorCount": 5,
+                "dominantColors": ["#635BFF", "#0A2540", "#FFFFFF", "#425466", "#00D4FF"],
+                "ctaCount": 3,
+                "buttonCtaCount": 2,
+                "ctaTexts": ["Start now", "Contact sales", "Sign in"],
+                "elementCount": 220
+            }
+        },
+        {
+            "name": "Notion",
+            "url": "https://notion.so",
+            "category": "SaaS",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 88, "typography": 88, "colors": 85, "cta": 92, "complexity": 85 },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": ["Inter", "Georgia"],
+                "baseFontSize": 16,
+                "colorCount": 5,
+                "dominantColors": ["#000000", "#FFFFFF", "#2EAADC", "#F7F6F3", "#37352F"],
+                "ctaCount": 2,
+                "buttonCtaCount": 1,
+                "ctaTexts": ["Get Notion free", "Request a demo"],
+                "elementCount": 195
+            }
+        },
+        {
+            "name": "Superhuman",
+            "url": "https://superhuman.com",
+            "category": "Startup",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 87, "typography": 88, "colors": 92, "cta": 85, "complexity": 82 },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": ["GT America", "GT Sectra"],
+                "baseFontSize": 17,
+                "colorCount": 3,
+                "dominantColors": ["#5865F2", "#FFFFFF", "#1A1A1A"],
+                "ctaCount": 1,
+                "buttonCtaCount": 1,
+                "ctaTexts": ["Get started"],
+                "elementCount": 165
+            }
+        },
+        {
+            "name": "Figma",
+            "url": "https://figma.com",
+            "category": "SaaS",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 86, "typography": 88, "colors": 85, "cta": 88, "complexity": 82 },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": ["Whyte", "Whyte Inktrap"],
+                "baseFontSize": 16,
+                "colorCount": 5,
+                "dominantColors": ["#F24E1E", "#FFFFFF", "#0ACF83", "#1ABCFE", "#1E1E1E"],
+                "ctaCount": 2,
+                "buttonCtaCount": 2,
+                "ctaTexts": ["Get started for free", "Contact sales"],
+                "elementCount": 210
+            }
+        },
+        {
+            "name": "Apple",
+            "url": "https://apple.com",
+            "category": "BigTech",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 85, "typography": 90, "colors": 85, "cta": 80, "complexity": 85 },
+            "data": {
+                "fontCount": 1,
+                "fontFamilies": ["SF Pro"],
+                "baseFontSize": 17,
+                "colorCount": 4,
+                "dominantColors": ["#000000", "#FFFFFF", "#0071E3", "#86868B"],
+                "ctaCount": 3,
+                "buttonCtaCount": 1,
+                "ctaTexts": ["Buy", "Learn more", "Watch the event"],
+                "elementCount": 175
+            }
+        },
+        {
+            "name": "Slack",
+            "url": "https://slack.com",
+            "category": "SaaS",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 84, "typography": 85, "colors": 82, "cta": 88, "complexity": 80 },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": ["Slack-Larsseit", "Slack-Circular"],
+                "baseFontSize": 16,
+                "colorCount": 5,
+                "dominantColors": ["#4A154B", "#FFFFFF", "#36C5F0", "#2EB67D", "#ECB22E"],
+                "ctaCount": 2,
+                "buttonCtaCount": 2,
+                "ctaTexts": ["Try for free", "Talk to sales"],
+                "elementCount": 230
+            }
+        },
+        {
+            "name": "Raycast",
+            "url": "https://raycast.com",
+            "category": "Startup",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 88, "typography": 90, "colors": 88, "cta": 85, "complexity": 90 },
+            "data": {
+                "fontCount": 1,
+                "fontFamilies": ["Inter"],
+                "baseFontSize": 16,
+                "colorCount": 3,
+                "dominantColors": ["#FF6363", "#1A1A2E", "#FFFFFF"],
+                "ctaCount": 2,
+                "buttonCtaCount": 1,
+                "ctaTexts": ["Download for free", "Get Raycast for Teams"],
+                "elementCount": 125
+            }
+        },
+        {
+            "name": "Dropbox",
+            "url": "https://dropbox.com",
+            "category": "BigTech",
+            "analyzedAt": "2025-11-29T17:00:00.000Z",
+            "scores": { "overall": 82, "typography": 85, "colors": 80, "cta": 88, "complexity": 75 },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": ["Sharp Grotesk", "Atlas Grotesk"],
+                "baseFontSize": 16,
+                "colorCount": 5,
+                "dominantColors": ["#0061FF", "#FFFFFF", "#1E1919", "#B4D0E7", "#FFD830"],
+                "ctaCount": 1,
+                "buttonCtaCount": 1,
+                "ctaTexts": ["Get started"],
+                "elementCount": 280
+            }
+        }
+    ],
+    "errors": []
+}

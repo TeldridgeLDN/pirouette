@@ -12,7 +12,8 @@
     "dev:worker": "tsx watch src/worker.ts",
     "dev:all": "concurrently \"npm run dev\" \"npm run dev:worker\"",
     "test": "node dist/analyzer/index.js",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "generate-benchmarks": "tsx scripts/generate-benchmarks.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.38.0",

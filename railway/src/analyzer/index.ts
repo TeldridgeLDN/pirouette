@@ -108,22 +108,26 @@ function analyzeColors(colors: string[]): ColorAnalysisResult {
   let score = 60;
   const findings: string[] = [];
   
-  // Score based on color count with benchmarks
+  // Get real benchmark for comparison
+  const benchmark = getRealBenchmark('colors');
+  const benchmarkColors = benchmark ? `**${benchmark.name}** uses ${benchmark.data.colorCount} colours (scored ${benchmark.scores.colors})` : '';
+  
+  // Score based on color count with real benchmarks
   if (colorCount >= 3 && colorCount <= 5) {
     score = 85;
-    findings.push(`✓ ${colorCount} colours matches **Notion** (4-5) & **Superhuman** (3-4) - focused palette`);
+    findings.push(`✓ ${colorCount} colours - ${benchmarkColors || 'optimal focused palette'}`);
   } else if (colorCount >= 2 && colorCount <= 7) {
     score = 75;
-    findings.push(`${colorCount} colours similar to **Linear** (5) & **Stripe** (4-5) - good balance`);
+    findings.push(`${colorCount} colours - ${benchmarkColors || 'good balance'}`);
   } else if (colorCount === 1) {
     score = 50;
-    findings.push(`Only 1 colour - **Superhuman** uses 3-4 colours for visual interest while staying focused`);
+    findings.push(`Only 1 colour detected - ${benchmarkColors || 'consider 3-5 for visual interest'}`);
   } else if (colorCount > 7 && colorCount <= 10) {
     score = 60;
-    findings.push(`⚠ ${colorCount} colours exceeds **Notion** (4-5) - consider consolidating for focus`);
+    findings.push(`⚠ ${colorCount} colours - ${benchmarkColors || 'consider consolidating'}`);
   } else if (colorCount > 10) {
     score = 45;
-    findings.push(`✗ ${colorCount} colours is 2x+ more than **Stripe** or **Linear** - reduces visual clarity`);
+    findings.push(`✗ ${colorCount} colours may reduce visual clarity - ${benchmarkColors || 'best sites use 3-6'}`);
   } else {
     findings.push('Unable to extract meaningful colour data');
   }
@@ -133,7 +137,7 @@ function analyzeColors(colors: string[]): ColorAnalysisResult {
   
   // Add accessibility note
   if (colorCount > 0) {
-    findings.push(`Pro tip: **Apple** & **Gov.uk** achieve 7:1+ contrast ratios for maximum accessibility`);
+    findings.push(`Pro tip: WCAG AA requires 4.5:1 contrast, AAA requires 7:1 for best accessibility`);
   }
   
   return {
@@ -147,6 +151,9 @@ function analyzeColors(colors: string[]): ColorAnalysisResult {
   };
 }
 
+// Import real benchmark data
+import { getRealBenchmark, resetExampleTracker } from './benchmarks';
+
 function analyzeTypography(typography: { fontFamilies: string[]; fontSizes: number[] }): TypographyAnalysisResult {
   const uniqueFonts = [...new Set(typography.fontFamilies.filter(f => f && f.trim()))];
   const fontCount = uniqueFonts.length;
@@ -157,44 +164,51 @@ function analyzeTypography(typography: { fontFamilies: string[]; fontSizes: numb
   let score = 60;
   const findings: string[] = [];
   
-  // Font family analysis with benchmarks
+  // Get real benchmark for comparison
+  const benchmark = getRealBenchmark('typography');
+  const benchmarkFonts = benchmark ? `**${benchmark.name}** uses ${benchmark.data.fontCount} font${benchmark.data.fontCount !== 1 ? 's' : ''}` : '';
+  
+  // Font family analysis with real benchmarks
   if (fontCount === 1) {
     score += 15;
-    findings.push(`✓ Single font family (${uniqueFonts[0]}) like **Linear** which uses 1 font for clean consistency`);
+    findings.push(`✓ Single font (${uniqueFonts[0]}) - ${benchmarkFonts || 'top sites use 1-2 fonts'}`);
   } else if (fontCount === 2) {
     score += 25;
-    findings.push(`✓ ${fontCount} font families - matches **Stripe** & **Vercel** who use 2 fonts for clear hierarchy`);
+    findings.push(`✓ ${fontCount} fonts - ${benchmarkFonts || 'optimal for clear hierarchy'}`);
   } else if (fontCount === 3) {
     score += 15;
-    findings.push(`3 font families detected - **Apple** uses 2, consider consolidating for consistency`);
+    findings.push(`3 fonts detected - ${benchmarkFonts || 'consider consolidating to 1-2'}`);
   } else if (fontCount > 3) {
     score -= 10;
-    findings.push(`${fontCount} fonts detected - award-winning sites like **Notion** & **Linear** use only 1-2 fonts`);
+    findings.push(`${fontCount} fonts detected - ${benchmarkFonts || 'best sites use 1-2 fonts'}`);
   }
   
-  // Font size analysis with WCAG and examples
+  // Font size analysis with real benchmarks
+  const benchmark2 = getRealBenchmark('typography');
+  const benchmarkSize = benchmark2 ? `**${benchmark2.name}** uses ${benchmark2.data.baseFontSize}px` : '';
+  
   if (minSize >= 16) {
     score += 15;
-    findings.push(`✓ Base font ${minSize}px matches **Apple** (17px) & **Stripe** (16px) - exceeds WCAG AA (14px)`);
+    findings.push(`✓ Base font ${minSize}px - ${benchmarkSize || 'exceeds WCAG AA (14px)'}`);
   } else if (minSize >= 14) {
     score += 10;
-    findings.push(`Base font ${minSize}px meets WCAG AA - **Medium** uses 18px, consider 16px+ for modern feel`);
+    findings.push(`Base font ${minSize}px meets WCAG AA - ${benchmarkSize || 'consider 16px+ for modern feel'}`);
   } else if (minSize >= 12) {
     score += 0;
-    findings.push(`⚠ Base font ${minSize}px below modern standard - **Stripe** & **Linear** use 16px minimum`);
+    findings.push(`⚠ Base font ${minSize}px below modern standard - ${benchmarkSize || 'best sites use 16-18px'}`);
   } else {
     score -= 10;
-    findings.push(`✗ ${minSize}px font is too small - WCAG AA requires 14px+, best sites use 16-18px`);
+    findings.push(`✗ ${minSize}px font is too small - WCAG AA requires 14px+`);
   }
   
-  // Size range analysis (type scale) with examples
+  // Size range analysis (type scale)
   const sizeRange = maxSize - minSize;
   if (sizeRange >= 20 && sizeRange <= 60) {
-    findings.push(`✓ Type scale (${minSize}px→${maxSize}px) similar to **Tailwind** (14px→72px) - clear hierarchy`);
+    findings.push(`✓ Type scale (${minSize}px→${maxSize}px) creates clear hierarchy`);
   } else if (sizeRange < 10) {
-    findings.push(`Limited type scale (${minSize}px→${maxSize}px) - **Stripe** uses ${16}px→64px for stronger hierarchy`);
+    findings.push(`Limited type scale (${minSize}px→${maxSize}px) - consider more variation`);
   } else if (sizeRange > 60) {
-    findings.push(`Wide type scale (${minSize}px→${maxSize}px) - ensure mid-range sizes for smooth transitions`);
+    findings.push(`Wide type scale (${minSize}px→${maxSize}px) - ensure smooth transitions`);
   }
   
   return {
@@ -217,33 +231,40 @@ function analyzeCTAs(ctas: { text: string; isButton: boolean }[]): CTAAnalysisRe
   let score = 50;
   const findings: string[] = [];
   
-  // CTA count analysis with benchmarks
+  // Get real benchmarks for comparison
+  const benchmark = getRealBenchmark('cta');
+  const benchmarkCta = benchmark ? `**${benchmark.name}** has ${benchmark.data.ctaCount} CTA${benchmark.data.ctaCount !== 1 ? 's' : ''} (scored ${benchmark.scores.cta})` : '';
+  
+  // CTA count analysis with real benchmarks
   if (ctas.length === 0) {
     score = 30;
-    findings.push('✗ No CTAs found - **Dropbox** & **Vercel** use 1-2 prominent CTAs above fold');
+    findings.push(`✗ No CTAs found - ${benchmarkCta || 'best sites use 1-2 prominent CTAs'}`);
   } else if (ctas.length === 1) {
     score = 75;
-    findings.push(`✓ Single focused CTA like **Dropbox** - they use 1 hero CTA for maximum conversion`);
+    findings.push(`✓ Single focused CTA - ${benchmarkCta || 'focused approach for conversion'}`);
   } else if (ctas.length >= 2 && ctas.length <= 3) {
     score = 90;
-    findings.push(`✓ ${ctas.length} CTAs matches **Vercel** & **Slack** pattern - primary + secondary actions`);
+    findings.push(`✓ ${ctas.length} CTAs - ${benchmarkCta || 'optimal for primary + secondary actions'}`);
   } else if (ctas.length > 3 && ctas.length <= 5) {
     score = 75;
-    findings.push(`${ctas.length} CTAs detected - **Stripe** uses 2-3 with clear hierarchy, consider reducing`);
+    findings.push(`${ctas.length} CTAs detected - ${benchmarkCta || 'consider reducing to 2-3'}`);
   } else {
     score = 55;
-    findings.push(`⚠ ${ctas.length} CTAs may dilute focus - **Linear** uses just 1-2 for 45%+ conversion lift`);
+    findings.push(`⚠ ${ctas.length} CTAs may dilute focus - ${benchmarkCta || 'best sites use 1-3'}`);
   }
   
-  // Button vs link analysis with conversion data
+  // Button vs link analysis
+  const benchmark2 = getRealBenchmark('cta');
+  const benchmarkButtons = benchmark2 ? `**${benchmark2.name}** has ${benchmark2.data.buttonCtaCount} button CTA${benchmark2.data.buttonCtaCount !== 1 ? 's' : ''}` : '';
+  
   if (buttonCTAs.length > 0) {
     score += 10;
-    findings.push(`✓ ${buttonCTAs.length} button CTA${buttonCTAs.length > 1 ? 's' : ''} - buttons convert 30-45% better than text links`);
+    findings.push(`✓ ${buttonCTAs.length} button CTA${buttonCTAs.length > 1 ? 's' : ''} - buttons convert 30-45% better than links`);
   } else if (ctas.length > 0) {
-    findings.push('⚠ No button CTAs - **Stripe** uses solid buttons that convert 30-45% better than links');
+    findings.push(`⚠ No button CTAs - ${benchmarkButtons || 'buttons convert 30-45% better than links'}`);
   }
   
-  // CTA text quality hints with examples
+  // CTA text quality hints
   const hasActionWords = ctaTexts.some(t => 
     t.toLowerCase().includes('free') || 
     t.toLowerCase().includes('start') || 
@@ -252,9 +273,9 @@ function analyzeCTAs(ctas: { text: string; isButton: boolean }[]): CTAAnalysisRe
   );
   
   if (hasActionWords) {
-    findings.push(`✓ Action-oriented copy detected - similar to **Notion** ("Get Notion free") & **Linear** ("Start building")`);
+    findings.push(`✓ Action-oriented copy detected - proven to increase conversions`);
   } else if (ctaTexts.length > 0) {
-    findings.push(`Consider action verbs - **Vercel** uses "Start Deploying", **Linear** uses "Start building"`);
+    findings.push(`Consider action verbs like "Start", "Get", "Try" for better conversions`);
   }
   
   return {
@@ -274,31 +295,38 @@ function analyzeComplexity(elementCount: number): ComplexityAnalysisResult {
   const findings: string[] = [];
   let complexity: 'minimal' | 'simple' | 'moderate' | 'complex' | 'very-complex';
   
+  // Get real benchmark for comparison
+  const benchmark = getRealBenchmark('complexity');
+  const benchmarkElements = benchmark ? `**${benchmark.name}** has ${benchmark.data.elementCount} elements (scored ${benchmark.scores.complexity})` : '';
+  
   if (elementCount < 50) {
     score = 80;
     complexity = 'minimal';
-    findings.push(`✓ Ultra-minimal (${elementCount} elements) - even cleaner than **Linear** (~150 elements)`);
+    findings.push(`✓ Ultra-minimal (${elementCount} elements) - ${benchmarkElements || 'very clean'}`);
   } else if (elementCount < 150) {
     score = 90;
     complexity = 'simple';
-    findings.push(`✓ ${elementCount} elements matches **Linear** (~150) & **Apple** (~150-200) - optimal for focus`);
+    findings.push(`✓ ${elementCount} elements - ${benchmarkElements || 'optimal for focus'}`);
   } else if (elementCount < 300) {
     score = 75;
     complexity = 'moderate';
-    findings.push(`${elementCount} elements similar to **Stripe** (~200-300) - feature-rich but well-balanced`);
+    findings.push(`${elementCount} elements - ${benchmarkElements || 'well-balanced'}`);
   } else if (elementCount < 500) {
     score = 60;
     complexity = 'complex';
-    findings.push(`⚠ ${elementCount} elements exceeds **Stripe** (200-300) - **Linear** achieves more with ~150`);
+    findings.push(`⚠ ${elementCount} elements - ${benchmarkElements || 'consider simplifying'}`);
   } else {
     score = 45;
     complexity = 'very-complex';
-    findings.push(`✗ ${elementCount} elements is 2-3x more than **Apple** or **Linear** - significantly impacts load time`);
+    findings.push(`✗ ${elementCount} elements may impact load time - ${benchmarkElements || 'best sites use <300'}`);
   }
   
-  // Add context about industry benchmarks with examples
+  // Add context
   if (elementCount > 300) {
-    findings.push(`Best-in-class sites: **Linear** ~150, **Apple** ~150-200, **Stripe** ~200-300 elements`);
+    const benchmark2 = getRealBenchmark('complexity');
+    if (benchmark2) {
+      findings.push(`Top performers like **${benchmark2.name}** achieve great results with ${benchmark2.data.elementCount} elements`);
+    }
   } else if (elementCount < 100) {
     findings.push(`Exceptionally minimal - ensure key content isn't missing (hero, CTA, social proof)`);
   }
@@ -508,6 +536,9 @@ export async function analyzeWebsite(
 ): Promise<any> {
   const { jobId, url, userId } = job;
   const startTime = Date.now();
+  
+  // Reset benchmark example tracker for fresh comparisons each analysis
+  resetExampleTracker();
   
   console.log(`[Analyzer] Starting analysis for job ${jobId}: ${url}`);
   
