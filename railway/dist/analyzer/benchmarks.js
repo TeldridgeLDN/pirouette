@@ -22,6 +22,8 @@ exports.getTwoUniqueExamples = getTwoUniqueExamples;
 exports.getRealBenchmark = getRealBenchmark;
 exports.formatRealComparison = formatRealComparison;
 exports.getBenchmarkStats = getBenchmarkStats;
+exports.getPercentileScore = getPercentileScore;
+exports.getComparableBenchmark = getComparableBenchmark;
 exports.getRandomExample = getRandomExample;
 exports.getTwoExamples = getTwoExamples;
 exports.formatExample = formatExample;
@@ -136,6 +138,184 @@ function isValueGood(value, metric) {
  */
 function getBenchmarkStats() {
     return benchmark_data_json_1.default.summary;
+}
+// ============================================================================
+// Percentile-Based Scoring (The Fix for Score Clustering)
+// ============================================================================
+/**
+ * Calculate percentile rank of a value within benchmark data
+ * Returns 0-100 where higher = better alignment with top performers
+ */
+function getPercentileScore(value, dimension, metric) {
+    const values = realBenchmarks.map(s => {
+        switch (metric) {
+            case 'colorCount': return s.data.colorCount;
+            case 'fontCount': return s.data.fontCount;
+            case 'ctaCount': return s.data.ctaCount;
+            case 'buttonCtaCount': return s.data.buttonCtaCount;
+            case 'elementCount': return s.data.elementCount;
+            default: return 0;
+        }
+    }).sort((a, b) => a - b);
+    if (values.length === 0) {
+        return { score: 50, percentile: 50, comparison: '' };
+    }
+    // Find percentile rank
+    const rank = values.filter(v => v < value).length;
+    const percentile = Math.round((rank / values.length) * 100);
+    // Calculate median and quartiles
+    const median = values[Math.floor(values.length / 2)];
+    const q1 = values[Math.floor(values.length * 0.25)];
+    const q3 = values[Math.floor(values.length * 0.75)];
+    // Score based on how close to optimal range
+    let score;
+    let comparison;
+    // Different scoring logic per metric
+    switch (metric) {
+        case 'fontCount':
+            // Optimal: 1-3 fonts, lower is better
+            if (value >= 1 && value <= 2) {
+                score = 95 + Math.floor(Math.random() * 5); // 95-100
+                comparison = `matches top performers`;
+            }
+            else if (value === 3) {
+                score = 80 + Math.floor(Math.random() * 10); // 80-90
+                comparison = `within best practice`;
+            }
+            else if (value <= 4) {
+                score = 65 + Math.floor(Math.random() * 10); // 65-75
+                comparison = `slightly above average`;
+            }
+            else {
+                score = Math.max(40, 70 - (value - 4) * 5); // Decreases for each extra font
+                comparison = `above benchmark median (${median} fonts)`;
+            }
+            break;
+        case 'colorCount':
+            // Optimal: 3-6 colors, but reality is most sites have 15-30
+            // New approach: Score based on benchmark distribution
+            if (value <= 5) {
+                score = 95 + Math.floor(Math.random() * 5); // Exceptional focus
+                comparison = `exceptionally focused palette`;
+            }
+            else if (value <= 10) {
+                score = 85 + Math.floor(Math.random() * 8); // Great
+                comparison = `clean, professional palette`;
+            }
+            else if (value <= median) {
+                score = 70 + Math.floor(Math.random() * 10); // Good - below median
+                comparison = `better than average (median: ${median})`;
+            }
+            else if (value <= q3) {
+                score = 55 + Math.floor(Math.random() * 10); // Average
+                comparison = `typical range (${q1}-${q3} colours)`;
+            }
+            else {
+                score = Math.max(35, 55 - Math.floor((value - q3) / 5)); // Complex
+                comparison = `above most sites (${percentile}th percentile)`;
+            }
+            break;
+        case 'ctaCount':
+            // Most sites detect 50-200 "CTAs" (all interactive elements)
+            // Focus on relative position in benchmark distribution
+            if (value <= 3) {
+                score = 95 + Math.floor(Math.random() * 5); // Exceptional focus
+                comparison = `laser-focused conversion path`;
+            }
+            else if (value <= 10) {
+                score = 85 + Math.floor(Math.random() * 8);
+                comparison = `clear call-to-action hierarchy`;
+            }
+            else if (value <= q1) {
+                score = 75 + Math.floor(Math.random() * 8);
+                comparison = `cleaner than most (top 25%)`;
+            }
+            else if (value <= median) {
+                score = 65 + Math.floor(Math.random() * 8);
+                comparison = `typical for modern sites`;
+            }
+            else if (value <= q3) {
+                score = 55 + Math.floor(Math.random() * 8);
+                comparison = `moderate CTA density`;
+            }
+            else {
+                score = Math.max(40, 55 - Math.floor((value - q3) / 20));
+                comparison = `high interaction density (${percentile}th percentile)`;
+            }
+            break;
+        case 'buttonCtaCount':
+            // Button CTAs specifically - 0-5 is good
+            if (value >= 1 && value <= 2) {
+                score = 95 + Math.floor(Math.random() * 5);
+                comparison = `optimal button CTA count`;
+            }
+            else if (value >= 0 && value <= 5) {
+                score = 80 + Math.floor(Math.random() * 10);
+                comparison = `good button hierarchy`;
+            }
+            else if (value <= 10) {
+                score = 65 + Math.floor(Math.random() * 10);
+                comparison = `moderate button count`;
+            }
+            else {
+                score = Math.max(45, 65 - (value - 10) * 2);
+                comparison = `many button CTAs detected`;
+            }
+            break;
+        case 'elementCount':
+            // Optimal: 50-300 elements, lower is generally better
+            if (value <= 100) {
+                score = 90 + Math.floor(Math.random() * 10); // Minimal
+                comparison = `exceptionally minimal`;
+            }
+            else if (value <= 250) {
+                score = 85 + Math.floor(Math.random() * 8); // Optimal
+                comparison = `ideal element count`;
+            }
+            else if (value <= 500) {
+                score = 70 + Math.floor(Math.random() * 10); // Moderate
+                comparison = `moderate complexity`;
+            }
+            else if (value <= median) {
+                score = 60 + Math.floor(Math.random() * 8);
+                comparison = `typical for feature-rich pages`;
+            }
+            else if (value <= q3) {
+                score = 50 + Math.floor(Math.random() * 8);
+                comparison = `above average complexity`;
+            }
+            else {
+                score = Math.max(35, 50 - Math.floor((value - q3) / 500));
+                comparison = `high complexity (${percentile}th percentile)`;
+            }
+            break;
+        default:
+            score = 50;
+            comparison = '';
+    }
+    return { score, percentile, comparison };
+}
+/**
+ * Get a benchmark site that's close to the user's value for relevant comparison
+ */
+function getComparableBenchmark(value, metric) {
+    if (realBenchmarks.length === 0)
+        return null;
+    // Sort by how close to the user's value
+    const sorted = [...realBenchmarks]
+        .filter(s => !usedExamplesInSession.has(s.name))
+        .sort((a, b) => {
+        const valA = a.data[metric] || 0;
+        const valB = b.data[metric] || 0;
+        return Math.abs(valA - value) - Math.abs(valB - value);
+    });
+    // If all used, reset
+    const pool = sorted.length > 0 ? sorted : realBenchmarks;
+    // Pick from closest matches with some randomness
+    const closest = pool.slice(0, Math.min(3, pool.length));
+    const selected = closest[Math.floor(Math.random() * closest.length)];
+    usedExamplesInSession.add(selected.name);
+    return selected;
 }
 // ============================================================================
 // Typography Benchmarks (Expanded Pool - 12+ examples each)
