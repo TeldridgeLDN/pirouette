@@ -42,6 +42,9 @@ export async function GET(
   }
 }
 
+// Rate limit: max reviews per user per day
+const MAX_REVIEWS_PER_DAY = 10;
+
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -71,6 +74,23 @@ export async function POST(
       return NextResponse.json(
         { error: 'Pro subscription required for Designer\'s Eye Review' },
         { status: 403 }
+      );
+    }
+    
+    // Rate limiting: Check reviews generated today
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const { count: reviewsToday } = await supabaseAdmin
+      .from('designers_eye_reviews')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', userId)
+      .gte('created_at', today.toISOString()) as { count: number | null };
+    
+    if ((reviewsToday ?? 0) >= MAX_REVIEWS_PER_DAY) {
+      return NextResponse.json(
+        { error: `Daily limit reached (${MAX_REVIEWS_PER_DAY} reviews/day). Try again tomorrow.` },
+        { status: 429 }
       );
     }
     
