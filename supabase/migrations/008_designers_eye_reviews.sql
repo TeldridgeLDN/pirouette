@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS designers_eye_reviews (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  report_id UUID NOT NULL REFERENCES analysis_jobs(id) ON DELETE CASCADE,
+  report_id UUID NOT NULL REFERENCES jobs(id) ON DELETE CASCADE,
   user_id TEXT NOT NULL,
   
   -- Review content

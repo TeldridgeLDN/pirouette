@@ -79,9 +79,9 @@ export async function POST(
       );
     }
     
-    // Get the report data
+    // Get the report data (jobs table stores the analysis data)
     const { data: report, error: reportError } = await supabase
-      .from('analysis_jobs')
+      .from('jobs')
       .select('url, screenshot_url, overall_score, typography_score, colors_score, cta_score, complexity_score')
       .eq('id', reportId)
       .single();
