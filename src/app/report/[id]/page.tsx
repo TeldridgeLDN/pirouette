@@ -1625,6 +1625,69 @@ export default function ReportPage({ params }: PageProps) {
           </section>
         )}
         
+        {/* Share Score Badge (Pro Feature) */}
+        {isPro && !report.isAnonymous && (
+          <section className="mb-8">
+            <div className="bg-white rounded-xl border border-slate-200 p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <h2 className="text-xl font-bold text-slate-900">Share Your Score</h2>
+                <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded">PRO</span>
+              </div>
+              <p className="text-slate-600 mb-6">
+                Showcase your design quality with an embeddable badge. Add it to your website footer or portfolio.
+              </p>
+              
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Badge Preview */}
+                <div>
+                  <h3 className="text-sm font-medium text-slate-700 mb-3">Badge Preview</h3>
+                  <div className="bg-slate-50 rounded-lg p-4 flex justify-center">
+                    <svg width="180" height="48" viewBox="0 0 180 48" xmlns="http://www.w3.org/2000/svg">
+                      <defs>
+                        <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#6366f1" />
+                          <stop offset="100%" stopColor="#8b5cf6" />
+                        </linearGradient>
+                      </defs>
+                      <rect width="180" height="48" rx="8" fill="url(#bgGradient)" />
+                      <text x="12" y="20" fill="white" fontSize="10" fontWeight="500" fontFamily="system-ui, sans-serif">Pirouette Score</text>
+                      <text x="12" y="38" fill="white" fontSize="18" fontWeight="700" fontFamily="system-ui, sans-serif">{report.overall_score}/100</text>
+                      <circle cx="150" cy="24" r="16" fill="rgba(255,255,255,0.2)" />
+                      <text x="150" y="29" fill="white" fontSize="14" fontWeight="700" fontFamily="system-ui, sans-serif" textAnchor="middle">
+                        {report.overall_score >= 80 ? '★' : report.overall_score >= 60 ? '◆' : '●'}
+                      </text>
+                    </svg>
+                  </div>
+                </div>
+                
+                {/* Embed Code */}
+                <div>
+                  <h3 className="text-sm font-medium text-slate-700 mb-3">Embed Code</h3>
+                  <div className="relative">
+                    <textarea
+                      readOnly
+                      value={`<a href="https://pirouette-app.vercel.app" target="_blank" rel="noopener"><img src="https://pirouette-app.vercel.app/api/badge/${reportId}?score=${report.overall_score}" alt="Pirouette Score: ${report.overall_score}/100" width="180" height="48" /></a>`}
+                      className="w-full h-24 p-3 text-xs font-mono bg-slate-50 border border-slate-200 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    />
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`<a href="https://pirouette-app.vercel.app" target="_blank" rel="noopener"><img src="https://pirouette-app.vercel.app/api/badge/${reportId}?score=${report.overall_score}" alt="Pirouette Score: ${report.overall_score}/100" width="180" height="48" /></a>`);
+                        // Could add toast notification here
+                      }}
+                      className="absolute top-2 right-2 px-3 py-1 bg-indigo-600 text-white text-xs font-medium rounded hover:bg-indigo-700 transition-colors"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                  <p className="text-xs text-slate-500 mt-2">
+                    Paste this code in your website&apos;s HTML to display the badge.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+        
         {/* Footer CTA */}
         <section className="mt-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 text-center text-white">
           <h2 className="text-2xl font-bold mb-2">
