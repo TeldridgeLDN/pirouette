@@ -1,10 +1,10 @@
 {
     "summary": {
-        "generatedAt": "2025-11-29T17:32:16.952Z",
-        "totalSites": 36,
+        "generatedAt": "2025-11-29T17:51:30.956Z",
+        "totalSites": 38,
         "averageScores": {
             "overall": 62,
-            "typography": 71,
+            "typography": 72,
             "colors": 51,
             "cta": 70,
             "complexity": 53
@@ -31,6 +31,10 @@
                 "score": 68
             },
             {
+                "name": "Airbnb",
+                "score": 65
+            },
+            {
                 "name": "Ghost",
                 "score": 65
             },
@@ -45,20 +49,16 @@
             {
                 "name": "Arc",
                 "score": 64
-            },
-            {
-                "name": "Basecamp",
-                "score": 64
             }
         ],
         "byCategory": {
             "Consumer": 68,
             "Marketing": 64,
             "DevTools": 62,
+            "BigTech": 62,
             "Media": 60,
             "SaaS": 60,
             "Startup": 60,
-            "BigTech": 62,
             "Finance": 62,
             "Design": 64
         }
@@ -68,7 +68,7 @@
             "name": "Warby Parker",
             "url": "https://warbyparker.com",
             "category": "Consumer",
-            "analyzedAt": "2025-11-29T17:28:04.543Z",
+            "analyzedAt": "2025-11-29T17:47:15.042Z",
             "scores": {
                 "overall": 88,
                 "typography": 85,
@@ -103,7 +103,7 @@
             "name": "Intercom",
             "url": "https://intercom.com",
             "category": "Marketing",
-            "analyzedAt": "2025-11-29T17:31:28.401Z",
+            "analyzedAt": "2025-11-29T17:50:41.505Z",
             "scores": {
                 "overall": 75,
                 "typography": 100,
@@ -143,7 +143,7 @@
             "name": "PlanetScale",
             "url": "https://planetscale.com",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:23:53.145Z",
+            "analyzedAt": "2025-11-29T17:43:37.505Z",
             "scores": {
                 "overall": 71,
                 "typography": 100,
@@ -183,7 +183,7 @@
             "name": "Supabase",
             "url": "https://supabase.com",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:23:42.134Z",
+            "analyzedAt": "2025-11-29T17:43:26.018Z",
             "scores": {
                 "overall": 68,
                 "typography": 100,
@@ -223,7 +223,7 @@
             "name": "Tailwind CSS",
             "url": "https://tailwindcss.com",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:23:58.376Z",
+            "analyzedAt": "2025-11-29T17:43:42.629Z",
             "scores": {
                 "overall": 68,
                 "typography": 100,
@@ -256,14 +256,54 @@
                     "Docs",
                     "Blog"
                 ],
-                "elementCount": 2278
+                "elementCount": 2277
+            }
+        },
+        {
+            "name": "Airbnb",
+            "url": "https://airbnb.com",
+            "category": "BigTech",
+            "analyzedAt": "2025-11-29T17:45:36.175Z",
+            "scores": {
+                "overall": 65,
+                "typography": 90,
+                "colors": 50,
+                "cta": 70,
+                "complexity": 50
+            },
+            "data": {
+                "fontCount": 2,
+                "fontFamilies": [
+                    "Times",
+                    "Airbnb Cereal VF"
+                ],
+                "baseFontSize": 14,
+                "colorCount": 11,
+                "dominantColors": [
+                    "rgb(0, 0, 0)",
+                    "rgb(34, 34, 34)",
+                    "rgb(255, 255, 255)",
+                    "rgb(255, 56, 92)",
+                    "rgba(0, 0, 0, 0)",
+                    "rgb(106, 106, 106)"
+                ],
+                "ctaCount": 169,
+                "buttonCtaCount": 24,
+                "ctaTexts": [
+                    "Skip to content",
+                    "Homes\nHomes",
+                    "NEW\nNEW\nExperiences\nExperiences, new",
+                    "NEW\nNEW\nServices\nServices, new",
+                    "When\nAdd dates"
+                ],
+                "elementCount": 1009
             }
         },
         {
             "name": "Ghost",
             "url": "https://ghost.org",
             "category": "Media",
-            "analyzedAt": "2025-11-29T17:29:06.349Z",
+            "analyzedAt": "2025-11-29T17:48:18.269Z",
             "scores": {
                 "overall": 65,
                 "typography": 90,
@@ -303,7 +343,7 @@
             "name": "Notion",
             "url": "https://notion.so",
             "category": "SaaS",
-            "analyzedAt": "2025-11-29T17:22:07.198Z",
+            "analyzedAt": "2025-11-29T17:41:44.573Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -344,7 +384,7 @@
             "name": "Slack",
             "url": "https://slack.com",
             "category": "SaaS",
-            "analyzedAt": "2025-11-29T17:22:14.918Z",
+            "analyzedAt": "2025-11-29T17:41:54.833Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -385,7 +425,7 @@
             "name": "Arc",
             "url": "https://arc.net",
             "category": "Startup",
-            "analyzedAt": "2025-11-29T17:24:44.754Z",
+            "analyzedAt": "2025-11-29T17:44:30.491Z",
             "scores": {
                 "overall": 64,
                 "typography": 60,
@@ -428,7 +468,7 @@
             "name": "Basecamp",
             "url": "https://basecamp.com",
             "category": "Startup",
-            "analyzedAt": "2025-11-29T17:24:54.681Z",
+            "analyzedAt": "2025-11-29T17:44:40.042Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -469,7 +509,7 @@
             "name": "Apple",
             "url": "https://apple.com",
             "category": "BigTech",
-            "analyzedAt": "2025-11-29T17:25:42.362Z",
+            "analyzedAt": "2025-11-29T17:45:30.221Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -510,7 +550,7 @@
             "name": "Spotify",
             "url": "https://spotify.com",
             "category": "BigTech",
-            "analyzedAt": "2025-11-29T17:26:49.047Z",
+            "analyzedAt": "2025-11-29T17:45:57.719Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -551,7 +591,7 @@
             "name": "Mercury",
             "url": "https://mercury.com",
             "category": "Finance",
-            "analyzedAt": "2025-11-29T17:29:12.377Z",
+            "analyzedAt": "2025-11-29T17:48:24.014Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -585,14 +625,14 @@
                     "About",
                     "Pricing"
                 ],
-                "elementCount": 1042
+                "elementCount": 1072
             }
         },
         {
             "name": "Brex",
             "url": "https://brex.com",
             "category": "Finance",
-            "analyzedAt": "2025-11-29T17:29:47.390Z",
+            "analyzedAt": "2025-11-29T17:48:59.863Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -633,7 +673,7 @@
             "name": "Webflow",
             "url": "https://webflow.com",
             "category": "Design",
-            "analyzedAt": "2025-11-29T17:30:34.656Z",
+            "analyzedAt": "2025-11-29T17:49:47.586Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -674,7 +714,7 @@
             "name": "Sketch",
             "url": "https://sketch.com",
             "category": "Design",
-            "analyzedAt": "2025-11-29T17:30:50.197Z",
+            "analyzedAt": "2025-11-29T17:50:02.108Z",
             "scores": {
                 "overall": 64,
                 "typography": 85,
@@ -715,7 +755,7 @@
             "name": "Hey",
             "url": "https://hey.com",
             "category": "Startup",
-            "analyzedAt": "2025-11-29T17:24:49.921Z",
+            "analyzedAt": "2025-11-29T17:44:35.448Z",
             "scores": {
                 "overall": 59,
                 "typography": 50,
@@ -757,7 +797,7 @@
             "name": "Pitch",
             "url": "https://pitch.com",
             "category": "SaaS",
-            "analyzedAt": "2025-11-29T17:23:08.569Z",
+            "analyzedAt": "2025-11-29T17:42:51.432Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -799,7 +839,7 @@
             "name": "Loom",
             "url": "https://loom.com",
             "category": "SaaS",
-            "analyzedAt": "2025-11-29T17:23:15.243Z",
+            "analyzedAt": "2025-11-29T17:42:58.509Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -841,7 +881,7 @@
             "name": "Miro",
             "url": "https://miro.com",
             "category": "SaaS",
-            "analyzedAt": "2025-11-29T17:23:20.399Z",
+            "analyzedAt": "2025-11-29T17:43:04.699Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -884,7 +924,7 @@
             "name": "Vercel",
             "url": "https://vercel.com",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:23:27.307Z",
+            "analyzedAt": "2025-11-29T17:43:11.367Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -919,14 +959,14 @@
                     "AI Gateway\n\nOne endpoint, all your models",
                     "Vercel Agent\n\nAn agent that knows your stack"
                 ],
-                "elementCount": 2796
+                "elementCount": 2795
             }
         },
         {
             "name": "Stripe",
             "url": "https://stripe.com",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:23:32.627Z",
+            "analyzedAt": "2025-11-29T17:43:16.597Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -969,7 +1009,7 @@
             "name": "GitHub",
             "url": "https://github.com",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:23:37.652Z",
+            "analyzedAt": "2025-11-29T17:43:21.624Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1004,14 +1044,14 @@
                     "Platform",
                     "Solutions"
                 ],
-                "elementCount": 1955
+                "elementCount": 1953
             }
         },
         {
             "name": "Railway",
             "url": "https://railway.app",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:23:48.057Z",
+            "analyzedAt": "2025-11-29T17:43:32.426Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1054,7 +1094,7 @@
             "name": "Prisma",
             "url": "https://prisma.io",
             "category": "DevTools",
-            "analyzedAt": "2025-11-29T17:24:03.557Z",
+            "analyzedAt": "2025-11-29T17:43:47.893Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1097,7 +1137,7 @@
             "name": "Raycast",
             "url": "https://raycast.com",
             "category": "Startup",
-            "analyzedAt": "2025-11-29T17:24:39.239Z",
+            "analyzedAt": "2025-11-29T17:44:25.058Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1132,14 +1172,14 @@
                     "iOS",
                     "Windows"
                 ],
-                "elementCount": 2970
+                "elementCount": 2977
             }
         },
         {
             "name": "Dub",
             "url": "https://dub.co",
             "category": "Startup",
-            "analyzedAt": "2025-11-29T17:25:07.303Z",
+            "analyzedAt": "2025-11-29T17:44:53.829Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1175,14 +1215,57 @@
                     "Solutions",
                     "Resources"
                 ],
-                "elementCount": 4906
+                "elementCount": 4907
+            }
+        },
+        {
+            "name": "Dropbox",
+            "url": "https://dropbox.com",
+            "category": "BigTech",
+            "analyzedAt": "2025-11-29T17:45:48.776Z",
+            "scores": {
+                "overall": 58,
+                "typography": 60,
+                "colors": 50,
+                "cta": 70,
+                "complexity": 50
+            },
+            "data": {
+                "fontCount": 5,
+                "fontFamilies": [
+                    "Times",
+                    "Atlas Grotesk Web",
+                    "Arial",
+                    "Sharp Grotesk",
+                    "Sharp Grotesk 23"
+                ],
+                "baseFontSize": 16,
+                "colorCount": 14,
+                "dominantColors": [
+                    "rgb(0, 0, 0)",
+                    "rgb(247, 245, 242)",
+                    "rgb(30, 25, 25)",
+                    "rgb(255, 255, 255)",
+                    "rgb(0, 0, 238)",
+                    "rgb(0, 97, 254)"
+                ],
+                "ctaCount": 114,
+                "buttonCtaCount": 38,
+                "ctaTexts": [
+                    "Skip to main content",
+                    "Products",
+                    "Solutions",
+                    "Enterprise",
+                    "Pricing"
+                ],
+                "elementCount": 1630
             }
         },
         {
             "name": "Shopify",
             "url": "https://shopify.com",
             "category": "BigTech",
-            "analyzedAt": "2025-11-29T17:26:53.446Z",
+            "analyzedAt": "2025-11-29T17:46:02.447Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1224,7 +1307,7 @@
             "name": "Allbirds",
             "url": "https://allbirds.com",
             "category": "Consumer",
-            "analyzedAt": "2025-11-29T17:28:00.672Z",
+            "analyzedAt": "2025-11-29T17:47:11.196Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1267,7 +1350,7 @@
             "name": "Casper",
             "url": "https://casper.com",
             "category": "Consumer",
-            "analyzedAt": "2025-11-29T17:28:12.824Z",
+            "analyzedAt": "2025-11-29T17:47:24.631Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1310,7 +1393,7 @@
             "name": "Wise",
             "url": "https://wise.com",
             "category": "Finance",
-            "analyzedAt": "2025-11-29T17:29:54.315Z",
+            "analyzedAt": "2025-11-29T17:49:07.925Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1346,14 +1429,14 @@
                     "Platform",
                     "Send money"
                 ],
-                "elementCount": 4276
+                "elementCount": 4420
             }
         },
         {
             "name": "HubSpot",
             "url": "https://hubspot.com",
             "category": "Marketing",
-            "analyzedAt": "2025-11-29T17:31:34.348Z",
+            "analyzedAt": "2025-11-29T17:50:47.425Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1396,7 +1479,7 @@
             "name": "Amplitude",
             "url": "https://amplitude.com",
             "category": "Marketing",
-            "analyzedAt": "2025-11-29T17:32:15.580Z",
+            "analyzedAt": "2025-11-29T17:51:29.203Z",
             "scores": {
                 "overall": 58,
                 "typography": 60,
@@ -1439,7 +1522,7 @@
             "name": "Framer",
             "url": "https://framer.com",
             "category": "SaaS",
-            "analyzedAt": "2025-11-29T17:22:50.092Z",
+            "analyzedAt": "2025-11-29T17:42:29.839Z",
             "scores": {
                 "overall": 55,
                 "typography": 50,
@@ -1482,7 +1565,7 @@
             "name": "Cal.com",
             "url": "https://cal.com",
             "category": "Startup",
-            "analyzedAt": "2025-11-29T17:24:59.790Z",
+            "analyzedAt": "2025-11-29T17:44:45.286Z",
             "scores": {
                 "overall": 55,
                 "typography": 60,
@@ -1525,7 +1608,7 @@
             "name": "Substack",
             "url": "https://substack.com",
             "category": "Media",
-            "analyzedAt": "2025-11-29T17:28:53.145Z",
+            "analyzedAt": "2025-11-29T17:48:05.046Z",
             "scores": {
                 "overall": 55,
                 "typography": 50,
@@ -1581,14 +1664,6 @@
         {
             "url": "https://resend.com",
             "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://resend.com/\", waiting until \"networkidle\"\n"
-        },
-        {
-            "url": "https://airbnb.com",
-            "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://airbnb.com/\", waiting until \"networkidle\"\n"
-        },
-        {
-            "url": "https://dropbox.com",
-            "error": "page.goto: Timeout 30000ms exceeded.\nCall log:\n  - navigating to \"https://dropbox.com/\", waiting until \"networkidle\"\n"
         },
         {
             "url": "https://squarespace.com",

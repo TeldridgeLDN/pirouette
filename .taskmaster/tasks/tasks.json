@@ -1338,7 +1338,7 @@
         "description": "Implement medium-effort features that further differentiate Pro value, including fold line indicator, executive summary, industry benchmarks, CSS snippet generator, and shareable score badges.",
         "details": "This task builds on Phase 1 Pro Value Differentiation by implementing several medium-effort features:\n\n1. **Above-the-fold Line Indicator**:\n   - Modify the screenshot component in `src/app/report/[id]/components/Screenshot.tsx`\n   - Add a horizontal line overlay at 800px height with label \"Above the fold\"\n   - Implement toggle visibility option for Pro users\n   - Add visual styling to make the line stand out (dashed, with label)\n\n2. **Executive Summary Section (Pro Only)**:\n   - Create new component `src/app/report/[id]/components/ExecutiveSummary.tsx`\n   - Generate 2-3 sentence summary using the following format:\n     - \"Your page scores X/100 (top Y%). Priority fix: Z. Total implementation time: N hours.\"\n   - Calculate percentile ranking based on stored aggregate scores\n   - Extract highest impact recommendation for \"Priority fix\"\n   - Sum implementation time estimates from recommendations\n   - Position prominently at top of report for Pro users\n\n3. **Industry Benchmarks**:\n   - Modify the score display component to include industry comparison\n   - Add database query to fetch aggregate scores by industry category\n   - Implement logic to categorize websites (e.g., SaaS, eCommerce, etc.)\n   - Display comparison: \"Your score of X is above/below average for [category] (avg: Y)\"\n   - Create admin dashboard to view and manage benchmark data\n\n4. **CSS Snippet Generator**:\n   - Enhance applicable recommendations with copy-paste CSS fixes\n   - Create utility function `generateCssSnippet(recommendation)` in `src/lib/css-generator.ts`\n   - Identify recommendation types that can have automated CSS fixes\n   - Generate properly formatted CSS with comments explaining the fix\n   - Add copy-to-clipboard functionality\n   - Include before/after visual preview where possible\n\n5. **Share Your Score Badge**:\n   - Create embeddable badge showing Pirouette score\n   - Design SVG template for the badge in `src/components/ScoreBadge.tsx`\n   - Generate dynamic SVG based on score and user preferences\n   - Provide HTML embed code and direct link options\n   - Include badge customization options (size, color scheme)\n   - Track badge impressions for marketing insights\n\nAll features should be gated behind Pro subscription using the existing feature gates system from Task 40.",
         "testStrategy": "1. **Functional Testing**:\n   - Verify fold line indicator appears at correct position (800px) on screenshots for Pro users only\n   - Confirm executive summary generates correctly with accurate score, percentile, priority fix, and time estimate\n   - Test industry benchmark display with websites from different categories\n   - Validate CSS snippet generation for various recommendation types\n   - Ensure score badges generate correctly and embed properly on external sites\n\n2. **User Access Testing**:\n   - Confirm all new features are properly gated behind Pro subscription\n   - Verify Free users see appropriate upgrade prompts when attempting to access these features\n   - Test that Pro users can access all features without restrictions\n\n3. **Edge Cases**:\n   - Test with extreme scores (very high/low) to ensure percentile calculations work correctly\n   - Verify CSS snippet generator handles complex recommendations appropriately\n   - Test industry benchmarks with websites that don't clearly fit a single category\n   - Ensure fold line indicator works with screenshots of varying heights\n\n4. **Performance Testing**:\n   - Measure impact of new features on report page load time\n   - Optimize database queries for industry benchmark comparisons\n   - Ensure badge generation doesn't impact page performance\n\n5. **Cross-browser Testing**:\n   - Verify all features work correctly across Chrome, Firefox, Safari, and Edge\n   - Test badge embedding on various platforms and content management systems",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           52,
           40,
@@ -1387,7 +1387,7 @@
               3
             ],
             "details": "Create a utility function generateCssSnippet() in src/lib/css-generator.ts that can generate CSS fixes for applicable recommendations. Identify which recommendation types can have automated CSS fixes. Generate properly formatted CSS with explanatory comments. Add copy-to-clipboard functionality for the snippets. Include before/after visual previews where possible. Gate this feature to Pro users only using the existing feature gates system.",
-            "status": "cancelled",
+            "status": "done",
             "testStrategy": "Test CSS generation for different recommendation types. Verify the copy-to-clipboard functionality works. Test that generated CSS actually fixes the identified issues. Confirm the feature is only available to Pro users. Test edge cases with complex recommendations."
           },
           {
@@ -1407,7 +1407,7 @@
         "id": 54,
         "title": "Implement AI Vision Analysis for Pro Design Feedback",
         "description": "Integrate Claude Vision API to analyze screenshots and provide qualitative design feedback as a premium Pro feature called \"Designer's Eye Review\", including visual assessment, missing elements identification, and emotional impact suggestions.",
-        "status": "pending",
+        "status": "in-progress",
         "dependencies": [
           52,
           53,
@@ -1500,7 +1500,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-29T18:39:04.812Z"
+      "updated": "2025-11-29T18:39:51.596Z"
     }
   }
 }

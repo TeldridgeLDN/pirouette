@@ -21,6 +21,7 @@ import TrafficContext from '@/components/TrafficContext';
 import ValidationTimeline from '@/components/ValidationTimeline';
 import HistoricalTracking from '@/components/HistoricalTracking';
 import CompetitorComparison from '@/components/CompetitorComparison';
+import { DesignersEyeReview } from '@/components/DesignersEyeReview';
 import { useUserPlan } from '@/hooks/useUserPlan';
 import { shouldSortByEase, getTrafficClassification } from '@/lib/analysis/utils/traffic-classifier';
 import { trackReportViewed, trackAnalysisCompleted, trackRecommendationClicked, trackPDFDownloaded } from '@/lib/analytics';
@@ -1516,6 +1517,11 @@ export default function ReportPage({ params }: PageProps) {
             </div>
           )}
         </section>
+        
+        {/* Designer's Eye Review (Pro Feature) */}
+        {reportId && (
+          <DesignersEyeReview reportId={reportId} isPro={isPro} />
+        )}
         
         {/* Screenshot Preview - Supporting evidence after recommendations */}
         {report.screenshot_url && (

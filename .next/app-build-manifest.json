@@ -31,15 +31,15 @@
       "static/chunks/main-app.js",
       "static/chunks/app/report/[id]/page.js"
     ],
-    "/api/user/subscription/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/user/subscription/route.js"
-    ],
     "/api/reports/[id]/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/reports/[id]/route.js"
+    ],
+    "/api/user/subscription/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/user/subscription/route.js"
     ]
   }
 }

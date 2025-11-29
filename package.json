@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.71.0",
     "@clerk/nextjs": "^6.35.4",
     "@react-email/components": "^0.5.7",
     "@supabase/supabase-js": "^2.78.0",
