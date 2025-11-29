@@ -389,7 +389,7 @@ function DimensionCard({
                       <div className="flex flex-wrap gap-1 mt-1">
                         {dimensionData.data.ctaTexts.slice(0, 4).map((text, idx) => (
                           <span key={idx} className="px-2 py-0.5 bg-white text-slate-600 text-xs rounded border border-slate-200 truncate max-w-[120px]">
-                            "{text}"
+                            &ldquo;{text}&rdquo;
                           </span>
                         ))}
                       </div>

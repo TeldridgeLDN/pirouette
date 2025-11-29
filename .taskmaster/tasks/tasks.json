@@ -1289,7 +1289,7 @@
             "description": "Modify the dimension score cards to be expandable only for Pro users, with visual indicators and conditional rendering.",
             "dependencies": [],
             "details": "Modify the 7 dimension score cards in `src/app/report/[id]/page.tsx` to create a collapsible component that shows detailed findings when expanded. Add a visual indicator (like a 'Pro' badge or expand icon) showing Pro users can expand cards. Implement conditional rendering based on user subscription status using the existing auth context. Ensure Free users see static, non-expandable cards with minimal information.",
-            "status": "in-progress",
+            "status": "done",
             "testStrategy": "Test expansion functionality works only for Pro users. Verify visual indicators appear correctly. Confirm conditional rendering works based on subscription status. Test across different screen sizes to ensure responsive behavior."
           },
           {
@@ -1300,7 +1300,7 @@
               1
             ],
             "details": "Create components to display actual fonts detected with font names and usage statistics. Implement color swatches for detected colors with hex values. Format CTA texts that were captured during analysis. Ensure all data is organized in a visually appealing way within the expanded cards. Use appropriate spacing, typography, and visual hierarchy to make the information scannable and useful.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify all detected data displays correctly in expanded cards. Test with various data sets to ensure formatting handles different lengths and types of content. Check that color swatches render correctly with accurate hex values."
           },
           {
@@ -1318,7 +1318,7 @@
             "description": "Modify the recommendations component to show only top 3 for free users with a Pro upsell prompt and preview effect.",
             "dependencies": [],
             "details": "Modify the recommendations component to only show the top 3 recommendations for free users. Add a \"See X more (Pro)\" prompt with subscription upsell messaging. Implement a blur or preview effect for hidden recommendations to entice upgrades. Ensure Pro users see all recommendations without restrictions. The implementation should make it clear that more value is available with a Pro subscription without degrading the free user experience.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Test that free users see only top 3 recommendations. Verify the upsell prompt displays correctly with accurate count of hidden recommendations. Confirm Pro users see all recommendations without restrictions. Test the blur/preview effect renders properly."
           },
           {
@@ -1327,7 +1327,7 @@
             "description": "Implement time estimates for each recommendation based on effort level, with appropriate styling.",
             "dependencies": [],
             "details": "Add \"Est. time: X minutes\" labels to each recommendation based on the effort level. Map effort levels to time estimates using the following scale: low=15min, medium=2hr, high=1day. Style time estimates to be visually distinct but not overwhelming within the recommendation cards. Ensure the estimates are visible to both Free and Pro users, but consider showing more precise estimates for Pro users if the data is available.",
-            "status": "pending",
+            "status": "done",
             "testStrategy": "Verify time estimates display correctly for each recommendation. Test that effort levels map to the correct time estimates. Ensure styling is consistent and visually distinct without overwhelming the UI."
           }
         ]
@@ -1350,7 +1350,7 @@
         "subtasks": []
       },
       {
-        "id": "54",
+        "id": 54,
         "title": "Implement AI Vision Analysis for Pro Design Feedback",
         "description": "Integrate Claude Vision API to analyze screenshots and provide qualitative design feedback as a premium Pro feature called \"Designer's Eye Review\", including visual assessment, missing elements identification, and emotional impact suggestions.",
         "status": "pending",
@@ -1446,7 +1446,7 @@
       ],
       "created": "2025-11-23T17:50:08.898Z",
       "description": "Tasks for master context",
-      "updated": "2025-11-29T16:49:10.819Z"
+      "updated": "2025-11-29T16:55:06.193Z"
     }
   }
 }
