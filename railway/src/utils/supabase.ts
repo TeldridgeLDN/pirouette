@@ -79,7 +79,7 @@ export async function updateJobProgress(
   try {
     const client = getSupabaseClient();
 
-    await client
+    const { error, count } = await client
       .from('jobs')
       .update({
         progress,
@@ -87,6 +87,11 @@ export async function updateJobProgress(
         updated_at: new Date().toISOString(),
       })
       .eq('id', jobId);
+
+    if (error) {
+      console.error(`[Supabase] Progress update FAILED for ${jobId}:`, error.message);
+      return;
+    }
 
     console.log(`[Supabase] Job ${jobId} progress: ${progress}% - ${step}`);
   } catch (error) {
@@ -106,9 +111,9 @@ export async function saveReport(
   try {
     const client = getSupabaseClient();
 
-    await client.from('reports').insert({
+    const { error } = await client.from('reports').insert({
       id: jobId,
-      user_id: userId,
+      user_id: userId === 'anonymous' ? null : userId,
       url,
       screenshot_url: report.screenshot,
       overall_score: report.overallScore,
@@ -125,10 +130,15 @@ export async function saveReport(
       created_at: new Date().toISOString(),
     });
 
+    if (error) {
+      console.error(`[Supabase] Report save FAILED for ${jobId}:`, error.message);
+      throw error;
+    }
+
     console.log(`[Supabase] Report saved: ${jobId}`);
-  } catch (error) {
-    console.error('[Supabase] Report save failed:', error);
-    throw error;
+  } catch (err) {
+    console.error('[Supabase] Report save failed:', err);
+    throw err;
   }
 }
 
@@ -138,12 +148,12 @@ export async function saveReport(
 export async function updateJobStatus(
   jobId: string,
   status: 'queued' | 'processing' | 'completed' | 'failed',
-  error?: string
+  errorMsg?: string
 ): Promise<void> {
   try {
     const client = getSupabaseClient();
 
-    const updates: any = {
+    const updates: Record<string, unknown> = {
       status,
       updated_at: new Date().toISOString(),
     };
@@ -153,15 +163,20 @@ export async function updateJobStatus(
       updates.progress = 100;
     }
 
-    if (error) {
-      updates.error = error;
+    if (errorMsg) {
+      updates.error = errorMsg;
     }
 
-    await client.from('jobs').update(updates).eq('id', jobId);
+    const { error } = await client.from('jobs').update(updates).eq('id', jobId);
+
+    if (error) {
+      console.error(`[Supabase] Status update FAILED for ${jobId}:`, error.message);
+      return;
+    }
 
     console.log(`[Supabase] Job ${jobId} status: ${status}`);
-  } catch (error) {
-    console.error('[Supabase] Status update failed:', error);
+  } catch (err) {
+    console.error('[Supabase] Status update failed:', err);
   }
 }
 
