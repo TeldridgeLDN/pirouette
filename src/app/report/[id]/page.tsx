@@ -260,13 +260,13 @@ interface DimensionData {
 
 // Benchmark averages from 38 award-winning sites
 const BENCHMARK_AVERAGES: Record<string, number> = {
-  typography: 72,
-  colors: 51,
-  whitespace: 62,
-  visualHierarchy: 53,
-  layout: 62,
-  cta: 70,
-  contentHierarchy: 53,
+  typography_score: 72,
+  colors_score: 51,
+  whitespace_score: 62,
+  complexity_score: 53,
+  layout_score: 62,
+  cta_score: 70,
+  hierarchy_score: 53,
 };
 
 function DimensionCard({ 
