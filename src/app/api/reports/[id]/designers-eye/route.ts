@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
-import { createClient } from '@/lib/supabase/server';
-import { claudeVision, DesignReviewResponse } from '@/lib/ai/claude-vision';
+import { supabaseAdmin } from '@/lib/supabase/server';
+import { claudeVision } from '@/lib/ai/claude-vision';
 
 /**
  * Designer's Eye Review API
@@ -17,10 +17,8 @@ export async function GET(
   const { id: reportId } = await params;
   
   try {
-    const supabase = await createClient();
-    
     // Check for existing review
-    const { data: review, error } = await supabase
+    const { data: review, error } = await supabaseAdmin
       .from('designers_eye_reviews')
       .select('*')
       .eq('report_id', reportId)
@@ -60,17 +58,14 @@ export async function POST(
       );
     }
     
-    const supabase = await createClient();
-    
     // Check user's subscription status
-    const { data: user } = await supabase
+    const { data: user } = await supabaseAdmin
       .from('users')
-      .select('subscription_tier, subscription_status')
+      .select('plan')
       .eq('clerk_id', userId)
-      .single();
+      .single() as { data: { plan: string } | null; error: unknown };
     
-    const isPro = user?.subscription_tier === 'pro' && 
-                  (user?.subscription_status === 'active' || user?.subscription_status === 'trialing');
+    const isPro = user?.plan === 'pro_29' || user?.plan === 'pro_49' || user?.plan === 'agency';
     
     if (!isPro) {
       return NextResponse.json(
@@ -80,11 +75,20 @@ export async function POST(
     }
     
     // Get the report data (jobs table stores the analysis data)
-    const { data: report, error: reportError } = await supabase
+    interface JobData {
+      url: string;
+      screenshot_url: string | null;
+      overall_score: number;
+      typography_score: number | null;
+      colors_score: number | null;
+      cta_score: number | null;
+      complexity_score: number | null;
+    }
+    const { data: report, error: reportError } = await supabaseAdmin
       .from('jobs')
       .select('url, screenshot_url, overall_score, typography_score, colors_score, cta_score, complexity_score')
       .eq('id', reportId)
-      .single();
+      .single() as { data: JobData | null; error: unknown };
     
     if (reportError || !report) {
       return NextResponse.json(
@@ -106,15 +110,16 @@ export async function POST(
       pageUrl: report.url,
       existingScores: {
         overall: report.overall_score,
-        typography: report.typography_score,
-        colors: report.colors_score,
-        cta: report.cta_score,
-        complexity: report.complexity_score,
+        typography: report.typography_score ?? undefined,
+        colors: report.colors_score ?? undefined,
+        cta: report.cta_score ?? undefined,
+        complexity: report.complexity_score ?? undefined,
       },
     });
     
     // Store the review in Supabase
-    const { data: savedReview, error: saveError } = await supabase
+    // Note: Using 'as never' because designers_eye_reviews table types aren't generated yet
+    const { data: savedReview, error: saveError } = await supabaseAdmin
       .from('designers_eye_reviews')
       .upsert({
         report_id: reportId,
@@ -128,7 +133,7 @@ export async function POST(
         emotional_impact: reviewData.emotionalImpact,
         top_priorities: reviewData.topPriorities,
         generated_at: reviewData.generatedAt,
-      }, {
+      } as never, {
         onConflict: 'report_id',
       })
       .select()
