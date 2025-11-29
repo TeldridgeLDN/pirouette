@@ -94,8 +94,8 @@ export async function POST(
       );
     }
     
-    // Get the report data (jobs table stores the analysis data)
-    interface JobData {
+    // Get the report data from reports table
+    interface ReportData {
       url: string;
       screenshot_url: string | null;
       overall_score: number;
@@ -105,10 +105,10 @@ export async function POST(
       complexity_score: number | null;
     }
     const { data: report, error: reportError } = await supabaseAdmin
-      .from('jobs')
+      .from('reports')
       .select('url, screenshot_url, overall_score, typography_score, colors_score, cta_score, complexity_score')
       .eq('id', reportId)
-      .single() as { data: JobData | null; error: unknown };
+      .single() as { data: ReportData | null; error: unknown };
     
     if (reportError || !report) {
       return NextResponse.json(
