@@ -90,7 +90,7 @@ async function saveReport(jobId, userId, url, report) {
     try {
         const client = getSupabaseClient();
         const { error } = await client.from('reports').insert({
-            id: jobId,
+            job_id: jobId,
             user_id: userId === 'anonymous' ? null : userId,
             url,
             screenshot_url: report.screenshot,
