@@ -39,6 +39,24 @@ All notable changes to Pirouette will be documented in this file.
 ### Changed
 - **Neutral Language in Recommendations** - Changed "Your page" to "This page" throughout recommendations to support users analysing competitor/third-party sites
 
+### Added (Task 53 - Pro Quick Wins)
+- **Above-the-Fold Line Indicator** (53.1) - Toggleable fold line overlay on page screenshots
+  - Rose dashed line at 800px viewport height
+  - Dynamic positioning based on image scale factor
+  - Toggle button in browser chrome area (Pro only)
+- **Executive Summary** (53.2) - At-a-glance overview for Pro users
+  - Shows overall score with estimated percentile ranking
+  - Displays priority fix (first recommendation)
+  - Calculates total implementation time from all recommendations
+- **Benchmark Comparison** (53.3) - Compare dimension scores to top sites
+  - Shows score vs average from 38 award-winning sites
+  - Green indicator when above benchmark, amber when below
+  - Point difference displayed in expanded dimension cards
+- **Shareable Score Badge** (53.5) - Embeddable SVG badge
+  - Badge preview on report page with gradient design
+  - Copyable HTML embed code with Copy button
+  - API endpoint at /api/badge/[id] generates dynamic SVG
+
 - **Enhanced Analysis Insights with Benchmarks** (Pro UX Enhancement)
   - Typography findings now compare with **Stripe**, **Linear**, **Apple**, **Vercel**
   - Colour analysis references **Notion**, **Superhuman** palette sizes
