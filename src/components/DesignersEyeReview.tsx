@@ -143,7 +143,7 @@ export function DesignersEyeReview({ reportId, isPro }: DesignersEyeReviewProps)
             <div className="absolute inset-0 flex items-center justify-center bg-white/60">
               <div className="text-center">
                 <p className="text-slate-700 font-medium mb-3">
-                  Get expert-level design feedback on your landing page
+                  Get expert-level design feedback on this landing page
                 </p>
                 <Link
                   href="/pricing"
@@ -193,7 +193,7 @@ export function DesignersEyeReview({ reportId, isPro }: DesignersEyeReviewProps)
                 Designer&apos;s Eye Review
                 <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded">PRO</span>
               </h2>
-              <p className="text-sm text-slate-600">Get expert-level design critique for your landing page</p>
+              <p className="text-sm text-slate-600">Get expert-level design critique for this landing page</p>
             </div>
           </div>
           
