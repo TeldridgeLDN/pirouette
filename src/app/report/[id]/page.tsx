@@ -1200,6 +1200,49 @@ export default function ReportPage({ params }: PageProps) {
           </div>
         </div>
         
+        {/* Executive Summary (Pro Feature) */}
+        {isPro && sortedRecommendations.length > 0 && (
+          <div className="bg-gradient-to-r from-indigo-50 to-violet-50 border border-indigo-200 rounded-xl p-6 mb-8">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-lg">📊</span>
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-slate-900">Executive Summary</h3>
+                  <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded">PRO</span>
+                </div>
+                <p className="text-slate-700">
+                  This page scores <strong className={
+                    report.overall_score >= 80 ? 'text-emerald-600' :
+                    report.overall_score >= 60 ? 'text-amber-600' : 'text-red-600'
+                  }>{report.overall_score}/100</strong>
+                  {report.overall_score >= 85 ? ' (top 10% of sites analysed)' :
+                   report.overall_score >= 75 ? ' (top 25% of sites analysed)' :
+                   report.overall_score >= 60 ? ' (average performance)' :
+                   ' (below average - significant improvements possible)'}.
+                  {sortedRecommendations.length > 0 && (
+                    <> Priority fix: <strong className="text-slate-900">{sortedRecommendations[0].title}</strong>.</>
+                  )}
+                  {' '}Total estimated implementation time:{' '}
+                  <strong className="text-slate-900">
+                    {(() => {
+                      const totalMinutes = sortedRecommendations.reduce((acc, r) => {
+                        if (r.effort === 'low') return acc + 15;
+                        if (r.effort === 'medium') return acc + 120;
+                        return acc + 480; // high = 1 day
+                      }, 0);
+                      if (totalMinutes < 60) return `${totalMinutes} minutes`;
+                      if (totalMinutes < 480) return `${Math.round(totalMinutes / 60)} hours`;
+                      return `${Math.round(totalMinutes / 480)} day${Math.round(totalMinutes / 480) > 1 ? 's' : ''}`;
+                    })()}
+                  </strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         {/* Claim success message */}
         {claimStatus === 'claimed' && (
           <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 mb-8">
