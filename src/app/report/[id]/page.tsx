@@ -258,6 +258,17 @@ interface DimensionData {
   };
 }
 
+// Benchmark averages from 38 award-winning sites
+const BENCHMARK_AVERAGES: Record<string, number> = {
+  typography: 72,
+  colors: 51,
+  whitespace: 62,
+  visualHierarchy: 53,
+  layout: 62,
+  cta: 70,
+  contentHierarchy: 53,
+};
+
 function DimensionCard({ 
   name, 
   score, 
@@ -277,6 +288,9 @@ function DimensionCard({
   const displayScore = score ?? 0;
   const findings = dimensionData?.findings || [];
   const hasFindings = findings.length > 0;
+  const benchmarkAverage = BENCHMARK_AVERAGES[dimensionKey] || 62;
+  const isAboveBenchmark = displayScore >= benchmarkAverage;
+  const benchmarkDiff = Math.abs(displayScore - benchmarkAverage);
   
   return (
     <div className={`bg-white rounded-xl border transition-all duration-200 ${
@@ -333,6 +347,25 @@ function DimensionCard({
               <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 text-xs font-medium rounded">
                 PRO INSIGHTS
               </span>
+            </div>
+            
+            {/* Benchmark comparison */}
+            <div className={`p-3 rounded-lg mb-4 ${isAboveBenchmark ? 'bg-emerald-50 border border-emerald-200' : 'bg-amber-50 border border-amber-200'}`}>
+              <div className="flex items-center gap-2">
+                <span className={`text-lg ${isAboveBenchmark ? 'text-emerald-600' : 'text-amber-600'}`}>
+                  {isAboveBenchmark ? '📈' : '📉'}
+                </span>
+                <div>
+                  <p className={`text-sm font-medium ${isAboveBenchmark ? 'text-emerald-800' : 'text-amber-800'}`}>
+                    {isAboveBenchmark 
+                      ? `${benchmarkDiff} points above benchmark` 
+                      : `${benchmarkDiff} points below benchmark`}
+                  </p>
+                  <p className={`text-xs ${isAboveBenchmark ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    Your score: {displayScore} vs average of top sites: {benchmarkAverage}
+                  </p>
+                </div>
+              </div>
             </div>
             
             {/* Findings list */}
