@@ -42,7 +42,7 @@ export async function uploadScreenshot(
   try {
     const client = getSupabaseClient();
     const fileName = `${jobId}.png`;
-    const filePath = `screenshots/${fileName}`;
+    const filePath = fileName; // Just the filename, bucket is already 'screenshots'
 
     console.log(`[Supabase] Uploading screenshot: ${filePath}`);
 
