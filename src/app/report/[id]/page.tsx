@@ -945,48 +945,7 @@ export default function ReportPage({ params }: PageProps) {
           </div>
         </section>
         
-        {/* Traffic Context Section */}
-        <section className="mb-8">
-          <h2 className="text-xl font-bold text-slate-900 mb-4">Your Traffic Context</h2>
-          <TrafficContext weeklyVisitors={report.weeklyTraffic} />
-          {sortByEase && report.weeklyTraffic && (
-            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
-              <p className="text-sm text-amber-800">
-                <strong>📊 Sorting adapted for your traffic:</strong> Recommendations are sorted by implementation 
-                ease (quickest to implement first) rather than ROI because A/B testing isn&apos;t statistically 
-                reliable at very low traffic levels. Focus on implementing multiple quick wins together.
-              </p>
-            </div>
-          )}
-        </section>
-        
-        {/* Screenshot Preview */}
-        {report.screenshot_url && (
-          <section className="mb-8">
-            <h2 className="text-xl font-bold text-slate-900 mb-4">Page Screenshot</h2>
-            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-              <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex items-center gap-2">
-                <div className="flex gap-1.5">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
-                  <div className="w-3 h-3 rounded-full bg-green-400" />
-                </div>
-                <div className="flex-1 text-center text-sm text-slate-500 truncate">
-                  {report.url}
-                </div>
-              </div>
-              <div className="p-4">
-                <img 
-                  src={report.screenshot_url} 
-                  alt={`Screenshot of ${report.url}`}
-                  className="w-full rounded-lg shadow-lg"
-                />
-              </div>
-            </div>
-          </section>
-        )}
-        
-        {/* Recommendations */}
+        {/* Recommendations - Primary Value (moved up for value-first UX) */}
         <section>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
             <h2 className="text-xl font-bold text-slate-900">
@@ -1103,6 +1062,47 @@ export default function ReportPage({ params }: PageProps) {
               <h3 className="font-semibold text-slate-900 mb-2">Looking Great!</h3>
               <p className="text-slate-600">
                 No major recommendations at this time. Your landing page is performing well!
+              </p>
+            </div>
+          )}
+        </section>
+        
+        {/* Screenshot Preview - Supporting evidence after recommendations */}
+        {report.screenshot_url && (
+          <section className="mb-8">
+            <h2 className="text-xl font-bold text-slate-900 mb-4">Page Screenshot</h2>
+            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+              <div className="bg-slate-100 px-4 py-2 border-b border-slate-200 flex items-center gap-2">
+                <div className="flex gap-1.5">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-yellow-400" />
+                  <div className="w-3 h-3 rounded-full bg-green-400" />
+                </div>
+                <div className="flex-1 text-center text-sm text-slate-500 truncate">
+                  {report.url}
+                </div>
+              </div>
+              <div className="p-4">
+                <img 
+                  src={report.screenshot_url} 
+                  alt={`Screenshot of ${report.url}`}
+                  className="w-full rounded-lg shadow-lg"
+                />
+              </div>
+            </div>
+          </section>
+        )}
+        
+        {/* Traffic Context Section - Earned ask after delivering value */}
+        <section className="mb-8">
+          <h2 className="text-xl font-bold text-slate-900 mb-4">Your Traffic Context</h2>
+          <TrafficContext weeklyVisitors={report.weeklyTraffic} />
+          {sortByEase && report.weeklyTraffic && (
+            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+              <p className="text-sm text-amber-800">
+                <strong>📊 Sorting adapted for your traffic:</strong> Recommendations are sorted by implementation 
+                ease (quickest to implement first) rather than ROI because A/B testing isn&apos;t statistically 
+                reliable at very low traffic levels. Focus on implementing multiple quick wins together.
               </p>
             </div>
           )}
