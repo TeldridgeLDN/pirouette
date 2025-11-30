@@ -43,8 +43,9 @@ function normalizeUrl(url: string): string {
   try {
     const parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
     // Remove trailing slash and www prefix for consistent matching
-    let hostname = parsed.hostname.replace(/^www\./, '');
+    const hostname = parsed.hostname.replace(/^www\./, '');
     let pathname = parsed.pathname.replace(/\/$/, '') || '/';
+    if (pathname === '') pathname = '/';
     return `${hostname}${pathname}`;
   } catch {
     return url.toLowerCase().trim();
@@ -110,8 +111,11 @@ export async function GET(request: NextRequest) {
     const normalizedUrl = normalizeUrl(url);
     
     // 6. Fetch historical reports for this URL
-    // We need to match URLs flexibly (with/without www, trailing slashes, etc.)
-    const { data: reports, error: reportsError } = await supabase
+    // Try using normalized_url field first (if migration has run), fallback to URL matching
+    let matchingReports: HistoricalReport[] = [];
+    
+    // First try: Use normalized_url field (efficient)
+    const { data: reportsWithNormalized, error: normalizedError } = await supabase
       .from('reports')
       .select(`
         id,
@@ -127,22 +131,47 @@ export async function GET(request: NextRequest) {
         hierarchy_score
       `)
       .eq('user_id', user.id)
+      .eq('normalized_url', normalizedUrl)
       .order('created_at', { ascending: false })
       .limit(20) as { data: HistoricalReport[] | null; error: Error | null };
     
-    if (reportsError) {
-      console.error('Error fetching reports:', reportsError);
-      return NextResponse.json(
-        { success: false, error: 'Failed to fetch historical reports' },
-        { status: 500 }
-      );
+    if (!normalizedError && reportsWithNormalized && reportsWithNormalized.length > 0) {
+      matchingReports = reportsWithNormalized;
+    } else {
+      // Fallback: Fetch all and filter manually (for pre-migration data)
+      const { data: allReports, error: reportsError } = await supabase
+        .from('reports')
+        .select(`
+          id,
+          url,
+          created_at,
+          overall_score,
+          colors_score,
+          whitespace_score,
+          complexity_score,
+          typography_score,
+          layout_score,
+          cta_score,
+          hierarchy_score
+        `)
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(50) as { data: HistoricalReport[] | null; error: Error | null };
+      
+      if (reportsError) {
+        console.error('Error fetching reports:', reportsError);
+        return NextResponse.json(
+          { success: false, error: 'Failed to fetch historical reports' },
+          { status: 500 }
+        );
+      }
+      
+      // Filter to matching URLs (normalize each for comparison)
+      matchingReports = (allReports || []).filter(report => {
+        const reportNormalized = normalizeUrl(report.url);
+        return reportNormalized === normalizedUrl;
+      }).slice(0, 20);
     }
-    
-    // 7. Filter to matching URLs (normalize each for comparison)
-    const matchingReports = (reports || []).filter(report => {
-      const reportNormalized = normalizeUrl(report.url);
-      return reportNormalized === normalizedUrl;
-    });
     
     // 8. Calculate improvement metrics if we have multiple reports
     let improvements = null;

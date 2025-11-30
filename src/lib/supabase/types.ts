@@ -25,7 +25,7 @@ export interface Database {
           clerk_id: string;
           email: string;
           name: string | null;
-          plan: 'free' | 'pro_29' | 'pro_49' | 'agency';
+          plan: 'free' | 'pro' | 'pro_29' | 'pro_49' | 'agency';
           stripe_customer_id: string | null;
           stripe_subscription_id: string | null;
           analyses_this_month: number;
@@ -37,7 +37,7 @@ export interface Database {
           clerk_id: string;
           email: string;
           name?: string | null;
-          plan?: 'free' | 'pro_29' | 'pro_49' | 'agency';
+          plan?: 'free' | 'pro' | 'pro_29' | 'pro_49' | 'agency';
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
           analyses_this_month?: number;
@@ -49,7 +49,7 @@ export interface Database {
           clerk_id?: string;
           email?: string;
           name?: string | null;
-          plan?: 'free' | 'pro_29' | 'pro_49' | 'agency';
+          plan?: 'free' | 'pro' | 'pro_29' | 'pro_49' | 'agency';
           stripe_customer_id?: string | null;
           stripe_subscription_id?: string | null;
           analyses_this_month?: number;
@@ -230,8 +230,8 @@ export type UpdateJob = Database['public']['Tables']['jobs']['Update'];
 export type UpdateReport = Database['public']['Tables']['reports']['Update'];
 export type UpdatePattern = Database['public']['Tables']['patterns']['Update'];
 
-// Plan types
-export type UserPlan = 'free' | 'pro_29' | 'pro_49' | 'agency';
+// Plan types (includes legacy pro_29/pro_49 for backwards compatibility)
+export type UserPlan = 'free' | 'pro' | 'pro_29' | 'pro_49' | 'agency';
 
 // Job status types
 export type JobStatus = 'queued' | 'processing' | 'completed' | 'failed';

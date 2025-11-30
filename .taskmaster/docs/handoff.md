@@ -7,32 +7,37 @@
 
 ## Session Summary (30 Nov 2025)
 
-### Completed: Task 56 - Competitor Comparison Analysis ✅
+### Completed: Task 57 - Historical Tracking Visualization ✅
 
-Implemented full competitor comparison feature allowing Pro users to analyse up to 3 competitor URLs and compare scores.
+Implemented full historical tracking feature with enhanced visualization and comparison tools.
 
 **Key Changes Made:**
 
-1. **Database**: Created `competitor_analyses` table (`supabase/migrations/009_competitor_analyses.sql`)
+1. **Database Migration** (`supabase/migrations/010_historical_tracking.sql`):
+   - `previous_analysis_id` field to link analyses for same URL (linked list)
+   - `version` counter for tracking analysis sequence (1 = first, increments)
+   - `normalized_url` field for efficient URL matching
+   - `normalize_url()` PostgreSQL function (removes www, trailing slashes)
+   - Auto-trigger `set_report_metadata` to set fields on INSERT
+   - Backfill query for existing data
 
-2. **API Endpoints**: 
-   - `POST /api/competitors/analyze` - Initiate competitor analysis
-   - `GET /api/competitors/analyze?reportId=X` - Fetch results
-   - Includes retry support with `retry: true` flag
+2. **API Endpoint** (`/api/reports/reanalyze`):
+   - POST endpoint for one-click re-analysis
+   - Pro-only feature gating
+   - Preserves weekly traffic from previous analysis
+   - Returns jobId for progress tracking
 
-3. **Frontend Component**: `src/components/CompetitorComparison.tsx`
-   - Score comparison table with domain names prominent
-   - Actionable insights with quick fixes, effort estimates, impact indicators
-   - "See recommendation ↑" links to scroll to related recommendations
-   - "Copy Plan" button to export action plan to clipboard
-   - Competitor-specific insights showing what competitors do differently
-   - 2-minute timeout handling with retry button
-   - Neutral language ("This Site" vs "You")
+3. **Enhanced HistoricalTracking Component** (`src/components/HistoricalTracking.tsx`):
+   - **Line Chart**: SVG-based with gradient fill, hover tooltips, current report indicator
+   - **Date Filtering**: Last 30 days, Last 3 months, All time toggle buttons
+   - **Compare Mode**: Select two analyses for side-by-side comparison
+   - **Comparison View**: Shows all dimension scores with delta calculations
+   - **CSV Export**: Download history as CSV file
+   - **Re-analyse Button**: Start new analysis from component header
 
-4. **Railway Service**: Updated to handle `competitor_analysis` job type
-   - `railway/src/server.ts` - Routes competitor analysis requests
-   - `railway/src/queue/worker.ts` - Processes competitor URLs
-   - `railway/src/utils/supabase.ts` - `saveCompetitorAnalysis()` function
+4. **Updated History API** (`/api/reports/history`):
+   - Now uses `normalized_url` index for faster queries
+   - Fallback to manual filtering for pre-migration data
 
 ---
 
@@ -40,58 +45,35 @@ Implemented full competitor comparison feature allowing Pro users to analyse up 
 
 ### Git Status
 - Branch: `main`
-- All changes committed and pushed
-- Latest commit: `6848c17` - "feat: Complete P1-P3 competitive insights enhancements"
+- Changes: Uncommitted (ready to commit)
+- Files modified:
+  - `supabase/migrations/010_historical_tracking.sql` (new)
+  - `src/app/api/reports/reanalyze/route.ts` (new)
+  - `src/app/api/reports/history/route.ts` (updated)
+  - `src/components/HistoricalTracking.tsx` (rewritten)
+  - `CHANGELOG.md` (updated)
 
 ### Deployments
-- **Vercel (Frontend)**: Auto-deploys from GitHub - https://pirouette-app.vercel.app
-- **Railway (Analysis Worker)**: Auto-deploys from GitHub - https://pirouette-production.up.railway.app
-- **Supabase**: Database migration `009_competitor_analyses.sql` applied
+- **Vercel (Frontend)**: Will auto-deploy after push
+- **Railway (Analysis Worker)**: No changes needed
+- **Supabase**: Migration `010_historical_tracking.sql` needs to be applied
 
-### Test Report
-- URL: https://pirouette-app.vercel.app/report/9c70c267-80f1-4402-9b8b-576cc45219e5
-- Has 2 competitors analysed: stripe.com (61/100), apple.com (67/100)
-- notion.so (75/100) outperforms both - no gaps visible
+### Database Migration Required
+```sql
+-- Run in Supabase SQL Editor
+-- Copy contents from supabase/migrations/010_historical_tracking.sql
+```
 
 ---
 
-## Next Task: 57 - Historical Tracking Visualization
+## All Tasks Complete! 🎉
 
-**Priority**: Medium  
-**Dependencies**: 14, 11, 19, 27 (all completed)
+No more pending tasks in the current sprint. The following features are now implemented:
 
-### Description
-Enhance the "First Analysis" section to display historical data when multiple analyses exist for the same URL, including score trend charts, improvement percentages, and date comparisons.
-
-### Key Deliverables
-1. **Database Changes**
-   - Add `previous_analysis_id` field to link analyses
-   - Add `version` counter for sequence tracking
-   - Indexes for efficient URL-based queries
-
-2. **Backend Endpoints**
-   - `/api/analyses/history/:url` - Get all analyses for URL
-   - `/api/analyses/reanalyze` - Create new linked analysis
-   - URL normalization (www vs non-www, trailing slashes)
-
-3. **Frontend Components**
-   - Update "First Analysis" section for conditional rendering
-   - Create `AnalysisHistory.tsx` component with:
-     - Line chart showing score trends over time
-     - Delta indicators (↑/↓) with percentages
-     - Date comparison between first/latest
-     - List of previous analyses
-
-4. **Visualization**
-   - Score trend chart (consider Chart.js or similar)
-   - Colour coding (green for improvements, red for declines)
-   - Hover tooltips with metric details
-
-### Files to Focus On
-- `src/app/report/[id]/page.tsx` - Main report page
-- `src/app/report/[id]/components/` - Report components
-- `supabase/migrations/` - New migration needed
-- `src/app/api/` - New API routes
+| Task | Feature | Status |
+|------|---------|--------|
+| 56 | Competitor Comparison Analysis | ✅ Done |
+| 57 | Historical Tracking Visualization | ✅ Done |
 
 ---
 
@@ -115,25 +97,25 @@ Enhance the "First Analysis" section to display historical data when multiple an
 
 ### Taskmaster Commands
 ```bash
-task-master next              # Get next task
-task-master show 57           # View task details
-task-master set-status --id=57 --status=in-progress
-task-master expand --id=57 --research  # Break into subtasks
+task-master list              # View all tasks
+task-master next              # Get next task (none available)
+task-master list --status=done  # View completed tasks
 ```
 
 ---
 
-## Recent Commits (Newest First)
+## Recent Commits
 
+### Session Work (Not Yet Committed)
+- feat: Add historical tracking database migration (010)
+- feat: Add /api/reports/reanalyze endpoint
+- feat: Enhanced HistoricalTracking with line chart, filtering, comparison
+- docs: Update CHANGELOG with Task 57 details
+
+### Previous Session (30 Nov 2025)
 1. `6848c17` - feat: Complete P1-P3 competitive insights enhancements
 2. `d3f834e` - feat: Add actionable insights to competitive gaps & advantages
 3. `e8dc30b` - style: Make competitor domain names prominent in table header
-4. `9cdbbb0` - refactor: Use neutral language in competitor comparison
-5. `ff1b30c` - fix: Add retry support for timed out competitor analyses
-6. `de51de0` - feat: Add 2-minute timeout for stuck competitor analyses
-7. `3bf284d` - chore: Trigger Railway redeploy for competitor analysis support
-8. `5a7c77f` - fix: Change competitor URL inputs from type=url to type=text
-9. `bcaed68` - feat: Add competitor comparison analysis (Task 56)
 
 ---
 
@@ -146,13 +128,18 @@ pwd  # Should be /Users/tomeldridge/pirouette
 cat package.json | grep name  # Should show "pirouette"
 
 # Check task status
-task-master list --status=pending
+task-master list --status=pending  # Should be empty
 
-# Start Task 57
-task-master set-status --id=57 --status=in-progress
-task-master show 57
+# Apply database migration (via Supabase Dashboard)
+# Go to SQL Editor → Run 010_historical_tracking.sql
+
+# Stage and commit changes
+git add -A
+git status
+git commit -m "feat: Add enhanced historical tracking with line chart, filtering, and comparison (Task 57)"
+git push
 ```
 
 ---
 
-*Handover created: 30 November 2025 ~08:30 UTC*
+*Handover created: 30 November 2025 ~09:30 UTC*

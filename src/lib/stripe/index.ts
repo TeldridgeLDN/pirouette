@@ -52,15 +52,15 @@ export const stripe = {
 export const STRIPE_CONFIG = {
   // Price IDs (set in environment variables)
   prices: {
-    pro_29: process.env.STRIPE_PRO_29_PRICE_ID || '',
-    pro_49: process.env.STRIPE_PRO_49_PRICE_ID || '',
+    pro_monthly: process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '',
+    pro_annual: process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '',
     agency: process.env.STRIPE_AGENCY_PRICE_ID || '',
   },
   
-  // Plan mapping
+  // Plan mapping - all Pro prices map to 'pro' plan
   planFromPrice: {
-    [process.env.STRIPE_PRO_29_PRICE_ID || '']: 'pro_29' as const,
-    [process.env.STRIPE_PRO_49_PRICE_ID || '']: 'pro_49' as const,
+    [process.env.STRIPE_PRO_MONTHLY_PRICE_ID || '']: 'pro' as const,
+    [process.env.STRIPE_PRO_ANNUAL_PRICE_ID || '']: 'pro' as const,
     [process.env.STRIPE_AGENCY_PRICE_ID || '']: 'agency' as const,
   },
   
@@ -77,7 +77,8 @@ export const STRIPE_CONFIG = {
 // Types
 // ============================================================================
 
-export type PlanType = 'free' | 'pro_29' | 'pro_49' | 'agency';
+export type PlanType = 'free' | 'pro' | 'agency';
+export type BillingCycle = 'monthly' | 'annual';
 
 export interface CreateCheckoutOptions {
   userId: string;
@@ -346,18 +347,29 @@ export function getPlanFromPriceId(priceId: string): PlanType {
 }
 
 /**
- * Gets price ID for a plan
+ * Gets price ID for a plan and billing cycle
  */
-export function getPriceIdForPlan(plan: PlanType): string | null {
+export function getPriceIdForPlan(plan: PlanType, billingCycle: BillingCycle = 'monthly'): string | null {
   switch (plan) {
-    case 'pro_29':
-      return STRIPE_CONFIG.prices.pro_29 || null;
-    case 'pro_49':
-      return STRIPE_CONFIG.prices.pro_49 || null;
+    case 'pro':
+      return billingCycle === 'annual' 
+        ? STRIPE_CONFIG.prices.pro_annual || null
+        : STRIPE_CONFIG.prices.pro_monthly || null;
     case 'agency':
       return STRIPE_CONFIG.prices.agency || null;
     default:
       return null;
   }
+}
+
+/**
+ * Gets all valid price IDs for validation
+ */
+export function getValidPriceIds(): string[] {
+  return [
+    STRIPE_CONFIG.prices.pro_monthly,
+    STRIPE_CONFIG.prices.pro_annual,
+    STRIPE_CONFIG.prices.agency,
+  ].filter(Boolean);
 }
 

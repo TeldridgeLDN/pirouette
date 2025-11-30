@@ -6,14 +6,16 @@
  * Creates a Stripe Checkout session for subscription purchase.
  * 
  * Request Body:
- * - priceId: string - The Stripe price ID for the plan
+ * - plan: string - The plan to subscribe to ('pro_29' or 'pro')
+ * - billingCycle: 'monthly' | 'annual' - Billing frequency
+ * - priceId: string (optional) - Direct price ID override
  * - includeTrial: boolean (optional) - Whether to include trial period
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
-import { createCheckoutSession, getOrCreateCustomer, STRIPE_CONFIG } from '@/lib/stripe';
+import { createCheckoutSession, getOrCreateCustomer, getPriceIdForPlan, getValidPriceIds, BillingCycle } from '@/lib/stripe';
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,14 +31,19 @@ export async function POST(request: NextRequest) {
     
     // 2. Parse request body
     const body = await request.json().catch(() => ({}));
-    const { priceId, includeTrial = true } = body;
+    const { plan, billingCycle = 'monthly', priceId: directPriceId, includeTrial = true } = body;
     
-    // 3. Validate price ID
-    const validPriceIds = [
-      STRIPE_CONFIG.prices.pro_29,
-      STRIPE_CONFIG.prices.pro_49,
-      STRIPE_CONFIG.prices.agency,
-    ].filter(Boolean);
+    // 3. Determine price ID from plan + billingCycle, or use direct priceId
+    let priceId = directPriceId;
+    
+    if (!priceId && plan) {
+      // Map old plan names to new ones
+      const mappedPlan = plan === 'pro_29' ? 'pro' : plan;
+      priceId = getPriceIdForPlan(mappedPlan, billingCycle as BillingCycle);
+    }
+    
+    // 4. Validate price ID
+    const validPriceIds = getValidPriceIds();
     
     if (!priceId || !validPriceIds.includes(priceId)) {
       return NextResponse.json(

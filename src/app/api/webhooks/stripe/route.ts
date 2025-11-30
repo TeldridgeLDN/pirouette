@@ -137,8 +137,9 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     return;
   }
   
-  // Determine plan from price ID
+  // Determine plan from price ID (returns 'pro' or 'agency')
   const plan = getPlanFromPriceId(priceId);
+  console.log(`Subscription plan determined: ${plan} from price ${priceId}`);
   
   // Determine if subscription is active
   const isActive = status === 'active' || status === 'trialing';

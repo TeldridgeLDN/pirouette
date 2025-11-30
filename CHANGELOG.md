@@ -4,6 +4,51 @@ All notable changes to Pirouette will be documented in this file.
 
 ## [Unreleased]
 
+### Changed
+- **Stripe Integration Simplified** (Payment System)
+  - Unified plan naming: all Pro plans now use `pro` internally (monthly/annual handled by price ID)
+  - New environment variables: `STRIPE_PRO_MONTHLY_PRICE_ID` and `STRIPE_PRO_ANNUAL_PRICE_ID`
+  - Checkout endpoint now accepts `plan` + `billingCycle` (handles monthly/annual toggle)
+  - Backwards compatible: existing `pro_29` and `pro_49` plans still work in database
+  - Added `normalizePlan()` utility for consistent plan handling across codebase
+  - Updated `features.ts` to treat all Pro variants equally for feature access
+  - Stripe webhook now writes `pro` for new subscriptions
+
+### Added
+- **Scaling Economics Documentation** (`docs/SCALING_ECONOMICS.md`)
+  - Comprehensive breakdown of infrastructure costs across all tiers
+  - Service-by-service tier limits and upgrade triggers (Vercel, Railway, Supabase, Clerk, Stripe)
+  - Break-even analysis: profitable from 1st paying customer at £5/mo base costs
+  - Revenue projections from launch to 1,000 paid users
+  - Upgrade timeline predictions based on usage patterns
+  - Cost optimization strategies for screenshots, compute, and database
+  - Monitoring checklist and emergency scaling playbook
+  - Key insight: Supabase storage (screenshots) likely first upgrade trigger (~200 analyses)
+
+### Added (Task 57 - Historical Tracking Visualization)
+- **Enhanced Historical Tracking** (Pro Feature)
+  - New database migration `010_historical_tracking.sql` with:
+    - `previous_analysis_id` field to link analyses for same URL
+    - `version` counter for tracking analysis sequence number
+    - `normalized_url` field for efficient URL matching
+    - Auto-trigger to set fields on new report insert
+    - Backfill query for existing data
+  - New `/api/reports/reanalyze` endpoint for one-click re-analysis
+  - Upgraded line chart visualization with:
+    - SVG-based interactive line chart with gradient fill
+    - Hover tooltips showing score and date
+    - Current analysis indicator with highlight ring
+    - Chronological ordering with smart X-axis labels
+  - Date filtering options: Last 30 days, Last 3 months, All time
+  - Compare specific analyses feature:
+    - Select two analyses from table for side-by-side comparison
+    - Detailed comparison view showing all dimension differences
+    - Delta indicators for each score change
+  - CSV export functionality for historical data
+  - Re-analyse button to start new analysis from historical view
+  - Improved API using `normalized_url` index for faster queries
+  - 📸 **Promotional screenshot**: `.playwright-mcp/historical-tracking-new-full.png`
+
 ### Added
 - **Real Benchmark Data System** (Pro UX Enhancement)
   - Analyzed 36 award-winning sites using Pirouette's own scoring system

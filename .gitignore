@@ -32,3 +32,9 @@ out/
 .env.local
 .env*.local
 .vercel
+
+# TypeScript build cache
+tsconfig.tsbuildinfo
+
+# Playwright MCP test screenshots
+.playwright-mcp/
