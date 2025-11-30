@@ -169,8 +169,10 @@ export default function TrafficContext({
   onTrafficUpdate,
   className = '' 
 }: TrafficContextProps) {
+  // All hooks must be called unconditionally at the top (React hooks rules)
   const [isExpanded, setIsExpanded] = useState(false);
   const [localTraffic, setLocalTraffic] = useState(weeklyVisitors);
+  const [isEditing, setIsEditing] = useState(false);
   
   const handleTrafficUpdate = (newTraffic: number) => {
     setLocalTraffic(newTraffic);
@@ -228,8 +230,6 @@ export default function TrafficContext({
       </div>
     );
   }
-  
-  const [isEditing, setIsEditing] = useState(false);
   
   const classification = getTrafficClassification(localTraffic);
   const badge = getTrafficTierBadge(classification.tier);

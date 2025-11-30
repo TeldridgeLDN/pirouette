@@ -104,8 +104,10 @@ export async function POST(
     }
     
     // Update the report with the new traffic value
+    // Note: weekly_traffic column may not be in generated Supabase types
     const { error: updateError } = await supabaseAdmin
       .from('reports')
+      // @ts-expect-error - weekly_traffic column exists but may not be in generated types
       .update({ weekly_traffic: trafficValue })
       .eq('id', reportId);
     

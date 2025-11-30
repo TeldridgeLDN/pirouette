@@ -47,6 +47,10 @@ All notable changes to Pirouette will be documented in this file.
   - Free users see upgrade prompt instead of input field
   - Help text linking to Google Analytics for finding traffic data
 
+### Fixed
+- **TrafficContext React Hooks Bug** - Fixed hooks order violation where `useState(isEditing)` was called after an early return. All hooks now called unconditionally at component top, following React rules of hooks.
+- **Traffic API Type Error** - Fixed TypeScript build error in `/api/reports/[id]/traffic` route where Supabase types didn't include `weekly_traffic` column.
+
 ### Changed
 - **Neutral Language in Recommendations** - Changed "Your page" to "This page" throughout recommendations to support users analysing competitor/third-party sites
 - **Unified Card System for Recommendations & Designer's Eye Review** (UX Improvement)
