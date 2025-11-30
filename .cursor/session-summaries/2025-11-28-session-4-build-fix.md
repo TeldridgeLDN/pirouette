@@ -76,3 +76,4 @@ Run `npx supabase gen types typescript` after adding these tables to regenerate.
 *Session completed: 28 Nov 2025*
 *Pirouette is now live in production! 🎉*
 
+

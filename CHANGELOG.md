@@ -36,6 +36,24 @@ All notable changes to Pirouette will be documented in this file.
     - Free users see blurred preview with "Unlock Action Items" upgrade prompt
     - Violet/indigo gradient styling to distinguish from other sections
 
+### Added (Task 56 - Competitor Comparison Analysis)
+- **Competitor Analysis Feature** (Pro Feature)
+  - Pro users can analyse up to 3 competitor URLs for side-by-side comparison
+  - New database table `competitor_analyses` with full schema and RLS policies
+  - New API endpoint `/api/competitors/analyze` (POST: start analysis, GET: fetch results)
+  - CompetitorComparison component wired up with:
+    - URL input form for adding competitors
+    - Loading states with status indicators during analysis
+    - Comparison table showing all dimensions side-by-side
+    - Crown 👑 indicator for best scores, warning ⚠️ for below average
+    - Competitive Insights section showing gaps and advantages
+    - "Add more competitors" expansion when under limit
+  - Railway service updated to handle competitor analysis:
+    - New `saveCompetitorAnalysis` function for competitor results
+    - `updateCompetitorProgress` for status tracking
+    - Worker handles `isCompetitorAnalysis` flag to route results correctly
+  - Free users see locked preview with upgrade prompt
+
 ### Added (Task 55 - Traffic Context Input)
 - **Traffic Input for Report Page** (Pro Feature)
   - Pro users can add/update weekly traffic data directly on the report page

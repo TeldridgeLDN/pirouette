@@ -1635,6 +1635,7 @@ export default function ReportPage({ params }: PageProps) {
               }}
               competitors={[]}
               isPro={isPro}
+              reportId={reportId || undefined}
             />
           </section>
         )}

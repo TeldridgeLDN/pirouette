@@ -20,13 +20,18 @@ const supabase_1 = require("../utils/supabase");
  * Process a single analysis job
  */
 async function processAnalysisJob(job) {
-    const { jobId, url, userId, weeklyTraffic } = job.data;
+    const { jobId, url, userId, weeklyTraffic, isCompetitorAnalysis } = job.data;
     const startTime = Date.now();
-    console.log(`[Worker] Processing job ${jobId}: ${url}`);
+    const jobType = isCompetitorAnalysis ? 'competitor' : 'standard';
+    console.log(`[Worker] Processing ${jobType} job ${jobId}: ${url}`);
     console.log(`[Worker] Job attempt: ${job.attemptsMade + 1}/${job.opts.attempts || 3}`);
     try {
         // Update job to show it's being processed
         await job.updateProgress({ status: 'starting', progress: 0 });
+        // For competitor analysis, update the competitor_analyses table
+        if (isCompetitorAnalysis) {
+            await (0, supabase_1.updateCompetitorProgress)(jobId, 'processing');
+        }
         // Run the analysis
         const report = await (0, analyzer_1.analyzeWebsite)({ jobId, url, userId }, async (progress) => {
             // Update BullMQ job progress
@@ -37,7 +42,16 @@ async function processAnalysisJob(job) {
             });
         });
         const analysisTime = Date.now() - startTime;
-        console.log(`[Worker] Job ${jobId} completed successfully in ${analysisTime}ms`);
+        // Save results differently based on job type
+        if (isCompetitorAnalysis) {
+            // Save to competitor_analyses table
+            await (0, supabase_1.saveCompetitorAnalysis)(jobId, report);
+            console.log(`[Worker] Competitor analysis ${jobId} saved successfully in ${analysisTime}ms`);
+        }
+        else {
+            // Standard job - report is already saved by analyzeWebsite
+            console.log(`[Worker] Job ${jobId} completed successfully in ${analysisTime}ms`);
+        }
         console.log(`[Worker] Overall score: ${report.overallScore}`);
         return {
             success: true,
@@ -49,8 +63,13 @@ async function processAnalysisJob(job) {
     catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         console.error(`[Worker] Job ${jobId} failed:`, errorMessage);
-        // Update job status to failed in Supabase
-        await (0, supabase_1.updateJobStatus)(jobId, 'failed', errorMessage);
+        // Update job status to failed in appropriate table
+        if (isCompetitorAnalysis) {
+            await (0, supabase_1.updateCompetitorProgress)(jobId, 'failed', errorMessage);
+        }
+        else {
+            await (0, supabase_1.updateJobStatus)(jobId, 'failed', errorMessage);
+        }
         // Determine if we should retry
         const isRetryable = isRetryableError(error);
         if (!isRetryable) {

@@ -8,6 +8,8 @@ exports.uploadScreenshot = uploadScreenshot;
 exports.updateJobProgress = updateJobProgress;
 exports.saveReport = saveReport;
 exports.updateJobStatus = updateJobStatus;
+exports.updateCompetitorProgress = updateCompetitorProgress;
+exports.saveCompetitorAnalysis = saveCompetitorAnalysis;
 const supabase_js_1 = require("@supabase/supabase-js");
 let supabase = null;
 /**
@@ -146,10 +148,74 @@ async function updateJobStatus(jobId, status, errorMsg) {
         console.error('[Supabase] Status update failed:', err);
     }
 }
+/**
+ * Update competitor analysis progress
+ */
+async function updateCompetitorProgress(competitorId, status, errorMsg) {
+    try {
+        const client = getSupabaseClient();
+        const updates = {
+            status,
+            updated_at: new Date().toISOString(),
+        };
+        if (status === 'completed') {
+            updates.completed_at = new Date().toISOString();
+        }
+        if (errorMsg) {
+            updates.error_message = errorMsg;
+        }
+        const { error } = await client.from('competitor_analyses').update(updates).eq('id', competitorId);
+        if (error) {
+            console.error(`[Supabase] Competitor status update FAILED for ${competitorId}:`, error.message);
+            return;
+        }
+        console.log(`[Supabase] Competitor ${competitorId} status: ${status}`);
+    }
+    catch (err) {
+        console.error('[Supabase] Competitor status update failed:', err);
+    }
+}
+/**
+ * Save competitor analysis results
+ */
+async function saveCompetitorAnalysis(competitorId, report) {
+    try {
+        const client = getSupabaseClient();
+        const { error } = await client
+            .from('competitor_analyses')
+            .update({
+            status: 'completed',
+            overall_score: report.overallScore,
+            colors_score: report.dimensionScores.colors,
+            whitespace_score: report.dimensionScores.whitespace,
+            complexity_score: report.dimensionScores.complexity,
+            typography_score: report.dimensionScores.typography,
+            layout_score: report.dimensionScores.layout,
+            cta_score: report.dimensionScores.ctaProminence,
+            hierarchy_score: report.dimensionScores.hierarchy || null,
+            dimensions: report.dimensions,
+            screenshot_url: report.screenshot,
+            completed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+        })
+            .eq('id', competitorId);
+        if (error) {
+            console.error(`[Supabase] Competitor analysis save FAILED for ${competitorId}:`, error.message);
+            throw error;
+        }
+        console.log(`[Supabase] Competitor analysis saved: ${competitorId}`);
+    }
+    catch (err) {
+        console.error('[Supabase] Competitor analysis save failed:', err);
+        throw err;
+    }
+}
 exports.default = {
     getSupabaseClient,
     uploadScreenshot,
     updateJobProgress,
     saveReport,
     updateJobStatus,
+    updateCompetitorProgress,
+    saveCompetitorAnalysis,
 };

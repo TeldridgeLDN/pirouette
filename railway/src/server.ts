@@ -21,6 +21,7 @@ import {
   closeConnection,
   type AnalysisJobData,
 } from './queue/config';
+import { saveCompetitorAnalysis, updateCompetitorProgress } from './utils/supabase';
 import { initCronJobs, stopCronJobs, runJobManually } from './cron';
 
 const app = express();
@@ -109,7 +110,7 @@ app.get('/queue/stats', async (req, res) => {
 
 app.post('/analyze', async (req, res) => {
   try {
-    const { jobId, url, userId, weeklyTraffic } = req.body;
+    const { jobId, url, userId, weeklyTraffic, isCompetitorAnalysis, reportId } = req.body;
 
     if (!jobId || !url) {
       return res.status(400).json({
@@ -133,21 +134,46 @@ app.post('/analyze', async (req, res) => {
         userId: userId || 'anonymous',
         weeklyTraffic,
         createdAt: new Date().toISOString(),
+        isCompetitorAnalysis: isCompetitorAnalysis || false,
+        reportId: reportId,
       };
       
       await addAnalysisJob(queue, jobData);
       
       return res.status(202).json({
         success: true,
-        message: 'Job queued for processing',
+        message: isCompetitorAnalysis ? 'Competitor analysis queued' : 'Job queued for processing',
         jobId,
         mode: 'queued',
       });
     }
 
     // Direct processing mode (development without Redis)
-    console.log('[Server] Processing job directly (no queue)');
+    console.log(`[Server] Processing ${isCompetitorAnalysis ? 'competitor analysis' : 'job'} directly (no queue)`);
     
+    // For competitor analysis, update competitor_analyses table instead
+    if (isCompetitorAnalysis) {
+      await updateCompetitorProgress(jobId, 'processing');
+      
+      const report = await analyzeWebsite(
+        { jobId, url, userId: userId || 'anonymous' },
+        async (progress) => {
+          console.log('[Server] Competitor progress:', progress);
+        }
+      );
+      
+      // Save to competitor_analyses table
+      await saveCompetitorAnalysis(jobId, report);
+      
+      return res.status(200).json({
+        success: true,
+        report,
+        mode: 'direct',
+        isCompetitorAnalysis: true,
+      });
+    }
+    
+    // Standard analysis
     const report = await analyzeWebsite(
       { jobId, url, userId: userId || 'anonymous' },
       async (progress) => {

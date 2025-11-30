@@ -63,3 +63,4 @@ COMMENT ON COLUMN reports.weekly_traffic IS 'Weekly visitor count at time of ana
 -- WHERE table_name = 'reports' AND column_name = 'weekly_traffic';
 -- ================================================================
 
+

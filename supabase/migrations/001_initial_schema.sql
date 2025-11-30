@@ -243,3 +243,4 @@ CREATE TRIGGER update_patterns_updated_at
 
 
 
+

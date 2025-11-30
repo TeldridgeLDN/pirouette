@@ -18,6 +18,8 @@ export interface AnalysisJobData {
   userId: string;
   weeklyTraffic?: number;
   createdAt: string;
+  isCompetitorAnalysis?: boolean;
+  reportId?: string; // Link back to user's report for competitor analysis
 }
 
 export interface AnalysisJobResult {

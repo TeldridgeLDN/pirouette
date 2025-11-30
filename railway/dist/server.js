@@ -18,6 +18,7 @@ require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const analyzer_1 = require("./analyzer");
 const config_1 = require("./queue/config");
+const supabase_1 = require("./utils/supabase");
 const cron_1 = require("./cron");
 const app = (0, express_1.default)();
 const PORT = process.env.PORT || 3001;
@@ -84,7 +85,7 @@ app.get('/queue/stats', async (req, res) => {
 // ============================================================================
 app.post('/analyze', async (req, res) => {
     try {
-        const { jobId, url, userId, weeklyTraffic } = req.body;
+        const { jobId, url, userId, weeklyTraffic, isCompetitorAnalysis, reportId } = req.body;
         if (!jobId || !url) {
             return res.status(400).json({
                 error: 'Missing required fields: jobId, url',
@@ -105,17 +106,35 @@ app.post('/analyze', async (req, res) => {
                 userId: userId || 'anonymous',
                 weeklyTraffic,
                 createdAt: new Date().toISOString(),
+                isCompetitorAnalysis: isCompetitorAnalysis || false,
+                reportId: reportId,
             };
             await (0, config_1.addAnalysisJob)(queue, jobData);
             return res.status(202).json({
                 success: true,
-                message: 'Job queued for processing',
+                message: isCompetitorAnalysis ? 'Competitor analysis queued' : 'Job queued for processing',
                 jobId,
                 mode: 'queued',
             });
         }
         // Direct processing mode (development without Redis)
-        console.log('[Server] Processing job directly (no queue)');
+        console.log(`[Server] Processing ${isCompetitorAnalysis ? 'competitor analysis' : 'job'} directly (no queue)`);
+        // For competitor analysis, update competitor_analyses table instead
+        if (isCompetitorAnalysis) {
+            await (0, supabase_1.updateCompetitorProgress)(jobId, 'processing');
+            const report = await (0, analyzer_1.analyzeWebsite)({ jobId, url, userId: userId || 'anonymous' }, async (progress) => {
+                console.log('[Server] Competitor progress:', progress);
+            });
+            // Save to competitor_analyses table
+            await (0, supabase_1.saveCompetitorAnalysis)(jobId, report);
+            return res.status(200).json({
+                success: true,
+                report,
+                mode: 'direct',
+                isCompetitorAnalysis: true,
+            });
+        }
+        // Standard analysis
         const report = await (0, analyzer_1.analyzeWebsite)({ jobId, url, userId: userId || 'anonymous' }, async (progress) => {
             console.log('[Server] Progress:', progress);
         });
