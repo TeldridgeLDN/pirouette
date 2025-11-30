@@ -647,17 +647,21 @@ function ComparisonTable({ userReport, competitors }: { userReport: CompetitorRe
       <thead>
         <tr className="border-b border-slate-200">
           <th className="py-3 px-2 text-left text-sm font-medium text-slate-500">Dimension</th>
-          <th className="py-3 px-2 text-center text-sm font-medium text-indigo-600 bg-indigo-50 rounded-t">
-            This Site
-            <div className="text-xs font-normal text-slate-400 truncate max-w-24">
+          <th className="py-3 px-2 text-center bg-indigo-50 rounded-t">
+            <div className="text-base font-semibold text-indigo-600">
               {formatUrl(userReport.url)}
+            </div>
+            <div className="text-xs font-normal text-slate-400">
+              This Site
             </div>
           </th>
           {competitors.map((comp, idx) => (
-            <th key={comp.id} className="py-3 px-2 text-center text-sm font-medium text-slate-500">
-              {comp.name || `Competitor ${idx + 1}`}
-              <div className="text-xs font-normal text-slate-400 truncate max-w-24">
+            <th key={comp.id} className="py-3 px-2 text-center">
+              <div className="text-base font-semibold text-slate-700">
                 {formatUrl(comp.url)}
+              </div>
+              <div className="text-xs font-normal text-slate-400">
+                {comp.name || `Competitor ${idx + 1}`}
               </div>
             </th>
           ))}
