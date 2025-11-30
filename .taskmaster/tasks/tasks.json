@@ -1575,7 +1575,7 @@
         "description": "Develop the \"Compare with Competitors\" feature allowing Pro users to analyze up to 3 competitor URLs, run analysis using Pro quota, store results, and display comparative metrics highlighting strengths and weaknesses.",
         "details": "1. **Backend Implementation**:\n   - Create a new API endpoint `/api/competitors/analyze` that accepts up to 3 competitor URLs\n   - Extend the analysis service to handle competitor websites using the same analysis pipeline\n   - Implement quota tracking for competitor analysis (counts against Pro user's quota)\n   - Create a new database table `competitor_analyses` with schema:\n     ```sql\n     CREATE TABLE competitor_analyses (\n       id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),\n       user_id UUID REFERENCES users(id),\n       report_id UUID REFERENCES reports(id),\n       competitor_url TEXT NOT NULL,\n       results JSONB NOT NULL,\n       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()\n     );\n     ```\n   - Add indexes for efficient querying: `CREATE INDEX ON competitor_analyses (user_id, report_id);`\n\n2. **Frontend Implementation**:\n   - Replace the \"coming soon\" alert in the competitor analysis section with functional UI\n   - Create a form component allowing users to input up to 3 competitor URLs\n   - Implement validation for valid URLs and maximum limit\n   - Add loading states during analysis\n   - Design and implement comparison visualization components:\n     - Radar chart showing all dimensions\n     - Bar chart comparing overall scores\n     - Table view with detailed metrics\n   - Highlight metrics where user's site performs better (green) or worse (red) than competitors\n   - Implement tooltips explaining each comparison metric\n\n3. **Data Visualization**:\n   - Use Chart.js or similar library for radar and bar charts\n   - Create a color-coded comparison table component\n   - Implement sorting functionality to compare by different metrics\n   - Add export functionality for comparison data (CSV/PDF)\n\n4. **Pro Feature Gating**:\n   - Ensure the feature is only available to Pro subscribers\n   - Show appropriate upgrade prompts for non-Pro users\n   - Add competitor analysis to Pro feature marketing materials\n\n5. **User Experience**:\n   - Implement clear instructions for competitor analysis\n   - Add tooltips explaining how to interpret comparison results\n   - Create helpful empty states and error handling\n   - Implement success notifications when analysis completes",
         "testStrategy": "1. **Unit Testing**:\n   - Test the competitor analysis API endpoint with valid and invalid inputs\n   - Verify quota tracking logic works correctly for Pro users\n   - Test database operations for storing competitor analysis results\n   - Validate URL parsing and normalization functions\n\n2. **Integration Testing**:\n   - Verify the full analysis pipeline works for competitor URLs\n   - Test that competitor results are correctly associated with the user's report\n   - Ensure Pro subscription check works properly\n   - Test quota consumption and limits\n\n3. **UI Testing**:\n   - Verify form validation for competitor URLs\n   - Test loading states and progress indicators\n   - Ensure charts and tables render correctly with various data sets\n   - Verify color coding correctly highlights strengths/weaknesses\n   - Test responsive design on different screen sizes\n\n4. **User Acceptance Testing**:\n   - Verify the complete flow from URL input to results display\n   - Test with real competitor websites across different industries\n   - Ensure comparison metrics are meaningful and accurate\n   - Verify export functionality produces correct data\n\n5. **Performance Testing**:\n   - Test with multiple concurrent competitor analyses\n   - Verify system handles large competitor websites\n   - Ensure database queries are optimized for quick retrieval of comparison data",
-        "status": "in-progress",
+        "status": "done",
         "dependencies": [
           "53",
           "15",
@@ -1585,7 +1585,7 @@
         ],
         "priority": "high",
         "subtasks": [],
-        "updatedAt": "2025-11-30T07:04:09.832Z"
+        "updatedAt": "2025-11-30T07:11:58.644Z"
       },
       {
         "id": "57",
@@ -1606,9 +1606,9 @@
     ],
     "metadata": {
       "version": "1.0.0",
-      "lastModified": "2025-11-30T07:04:09.835Z",
+      "lastModified": "2025-11-30T07:11:58.646Z",
       "taskCount": 57,
-      "completedCount": 54,
+      "completedCount": 55,
       "tags": [
         "master"
       ]

@@ -320,4 +320,4 @@ process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 export default app;
-// Trigger redeploy Sat Nov 29 12:42:17 GMT 2025
+// Trigger redeploy Sun Nov 30 07:25:00 GMT 2025 - Added competitor analysis support
