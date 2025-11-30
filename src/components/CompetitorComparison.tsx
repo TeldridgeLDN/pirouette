@@ -727,9 +727,60 @@ function ScoreCell({ score, isMax, isMin }: { score: number | null; isMax?: bool
   );
 }
 
+// Actionable insights for each dimension
+const DIMENSION_INSIGHTS: Record<string, {
+  quickFix: string;
+  effort: string;
+  impact: 'high' | 'medium' | 'low';
+  keepTip: string;
+}> = {
+  'Colours': {
+    quickFix: 'Simplify to 3-4 colours with one accent colour for CTAs',
+    effort: '2 hours',
+    impact: 'medium',
+    keepTip: 'Consistent palette builds brand recognition',
+  },
+  'Whitespace': {
+    quickFix: 'Increase padding around key elements by 20-30%',
+    effort: '1 hour',
+    impact: 'medium',
+    keepTip: 'Breathing room improves readability and focus',
+  },
+  'Complexity': {
+    quickFix: 'Remove one section or consolidate similar content blocks',
+    effort: '2-4 hours',
+    impact: 'high',
+    keepTip: 'Simpler pages convert up to 35% better',
+  },
+  'Typography': {
+    quickFix: 'Limit to 2 font families and increase heading/body contrast',
+    effort: '1-2 hours',
+    impact: 'medium',
+    keepTip: 'Clear hierarchy guides users through content',
+  },
+  'Layout': {
+    quickFix: 'Align elements to a consistent grid and reduce asymmetry',
+    effort: '2-3 hours',
+    impact: 'medium',
+    keepTip: 'Predictable layouts reduce cognitive load',
+  },
+  'CTA': {
+    quickFix: 'Increase button contrast and use action-oriented text',
+    effort: '30 mins',
+    impact: 'high',
+    keepTip: 'CTAs directly impact conversion rates',
+  },
+  'Hierarchy': {
+    quickFix: 'Make primary heading 2x larger than body text',
+    effort: '1 hour',
+    impact: 'high',
+    keepTip: 'Clear hierarchy helps users find key info fast',
+  },
+};
+
 function CompetitiveInsights({ userReport, competitors }: { userReport: CompetitorReport; competitors: CompetitorReport[] }) {
-  const gaps: { dimension: string; gap: number; competitor: string }[] = [];
-  const advantages: { dimension: string; lead: number }[] = [];
+  const gaps: { dimension: string; gap: number; competitor: string; icon: string }[] = [];
+  const advantages: { dimension: string; lead: number; icon: string }[] = [];
   
   DIMENSIONS.forEach((dim) => {
     if (dim.key === 'overall_score') return; // Skip overall for insights
@@ -743,17 +794,22 @@ function CompetitiveInsights({ userReport, competitors }: { userReport: Competit
       
       const diff = userScore - compScore;
       if (diff < -10) {
-        gaps.push({
-          dimension: dim.name,
-          gap: Math.abs(diff),
-          competitor: comp.name || `Competitor ${idx + 1}`,
-        });
+        // Only add gap if not already added for this dimension
+        if (!gaps.find(g => g.dimension === dim.name)) {
+          gaps.push({
+            dimension: dim.name,
+            gap: Math.abs(diff),
+            competitor: comp.name || `Competitor ${idx + 1}`,
+            icon: dim.icon,
+          });
+        }
       } else if (diff > 10) {
         // Only add advantage if not already added
         if (!advantages.find(a => a.dimension === dim.name)) {
           advantages.push({
             dimension: dim.name,
             lead: diff,
+            icon: dim.icon,
           });
         }
       }
@@ -764,43 +820,130 @@ function CompetitiveInsights({ userReport, competitors }: { userReport: Competit
   gaps.sort((a, b) => b.gap - a.gap);
   advantages.sort((a, b) => b.lead - a.lead);
 
+  // Calculate estimated overall improvement from closing gaps
+  const estimatedImprovement = Math.round(gaps.reduce((acc, gap) => acc + (gap.gap * 0.15), 0));
+
   return (
-    <div className="grid md:grid-cols-2 gap-6">
-      {/* Competitive Gaps */}
-      <div className="bg-red-50 rounded-xl p-4">
-        <h4 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
-          <span>📉</span> Competitive Gaps
-        </h4>
-        {gaps.length > 0 ? (
-          <ul className="space-y-2">
-            {gaps.slice(0, 3).map((gap, idx) => (
-              <li key={idx} className="text-sm text-red-700">
-                <span className="font-medium">{gap.dimension}</span> is {gap.gap} points behind {gap.competitor}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-red-600">No significant gaps found! 🎉</p>
-        )}
+    <div className="space-y-6">
+      <div className="grid md:grid-cols-2 gap-6">
+        {/* Competitive Gaps */}
+        <div className="bg-red-50 rounded-xl p-4">
+          <h4 className="font-semibold text-red-900 mb-3 flex items-center gap-2">
+            <span>📉</span> Competitive Gaps
+          </h4>
+          {gaps.length > 0 ? (
+            <div className="space-y-4">
+              {gaps.slice(0, 3).map((gap, idx) => {
+                const insight = DIMENSION_INSIGHTS[gap.dimension];
+                return (
+                  <div key={idx} className="bg-white/60 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-red-800 flex items-center gap-1.5">
+                        <span>{gap.icon}</span> {gap.dimension}
+                      </span>
+                      <span className="text-xs text-red-600 font-medium">
+                        -{gap.gap} pts vs {gap.competitor}
+                      </span>
+                    </div>
+                    {insight && (
+                      <>
+                        <p className="text-sm text-red-700 mb-2">
+                          <span className="font-medium">Quick fix:</span> {insight.quickFix}
+                        </p>
+                        <div className="flex items-center gap-3 text-xs">
+                          <span className="text-red-600">
+                            ⏱️ {insight.effort}
+                          </span>
+                          <span className={`px-1.5 py-0.5 rounded ${
+                            insight.impact === 'high' 
+                              ? 'bg-red-200 text-red-800' 
+                              : 'bg-red-100 text-red-700'
+                          }`}>
+                            {insight.impact === 'high' ? '🔥 High impact' : '📊 Medium impact'}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <span className="text-2xl mb-2 block">🎉</span>
+              <p className="text-sm text-red-700 font-medium">No significant gaps!</p>
+              <p className="text-xs text-red-600 mt-1">Outperforming competitors across the board</p>
+            </div>
+          )}
+        </div>
+
+        {/* Advantages */}
+        <div className="bg-emerald-50 rounded-xl p-4">
+          <h4 className="font-semibold text-emerald-900 mb-3 flex items-center gap-2">
+            <span>🏆</span> Advantages
+          </h4>
+          {advantages.length > 0 ? (
+            <div className="space-y-4">
+              {advantages.slice(0, 3).map((adv, idx) => {
+                const insight = DIMENSION_INSIGHTS[adv.dimension];
+                return (
+                  <div key={idx} className="bg-white/60 rounded-lg p-3">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-emerald-800 flex items-center gap-1.5">
+                        <span>{adv.icon}</span> {adv.dimension}
+                      </span>
+                      <span className="text-xs text-emerald-600 font-medium">
+                        +{adv.lead} pts ahead
+                      </span>
+                    </div>
+                    {insight && (
+                      <p className="text-sm text-emerald-700">
+                        <span className="font-medium">Keep it up:</span> {insight.keepTip}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-4">
+              <span className="text-2xl mb-2 block">💪</span>
+              <p className="text-sm text-emerald-700 font-medium">Room to grow</p>
+              <p className="text-xs text-emerald-600 mt-1">Implement recommendations to build advantages</p>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Advantages */}
-      <div className="bg-emerald-50 rounded-xl p-4">
-        <h4 className="font-semibold text-emerald-900 mb-3 flex items-center gap-2">
-          <span>🏆</span> Advantages
-        </h4>
-        {advantages.length > 0 ? (
-          <ul className="space-y-2">
-            {advantages.slice(0, 3).map((adv, idx) => (
-              <li key={idx} className="text-sm text-emerald-700">
-                <span className="font-medium">{adv.dimension}</span> is {adv.lead} points ahead of competitors
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-emerald-600">Implement recommendations to build advantages</p>
-        )}
-      </div>
+      {/* Action Summary */}
+      {gaps.length > 0 && (
+        <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+          <div className="flex items-start gap-3">
+            <span className="text-xl">💡</span>
+            <div>
+              <h4 className="font-semibold text-slate-900 mb-1">Quick Action Plan</h4>
+              <p className="text-sm text-slate-600 mb-2">
+                Closing these {gaps.length} gap{gaps.length > 1 ? 's' : ''} could improve your overall score by approximately <span className="font-semibold text-indigo-600">+{estimatedImprovement} points</span>.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {gaps.slice(0, 3).map((gap, idx) => {
+                  const insight = DIMENSION_INSIGHTS[gap.dimension];
+                  return (
+                    <span 
+                      key={idx}
+                      className="inline-flex items-center gap-1 px-2 py-1 bg-white rounded-full text-xs text-slate-700 border border-slate-200"
+                    >
+                      <span>{gap.icon}</span>
+                      {gap.dimension}
+                      {insight && <span className="text-slate-400">• {insight.effort}</span>}
+                    </span>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
