@@ -352,7 +352,7 @@ function AddCompetitorsForm({
           {urls.map((url, idx) => (
             <input
               key={idx}
-              type="url"
+              type="text"
               placeholder={idx === 0 ? 'Competitor 1 URL (e.g., competitor.com)' : `Competitor ${idx + 1} URL (optional)`}
               value={url}
               onChange={(e) => {
@@ -503,7 +503,7 @@ function AddMoreCompetitors({ currentCount, urls, setUrls, onSubmit, isLoading, 
       {urls.slice(0, remainingSlots).map((url, idx) => (
         <input
           key={idx}
-          type="url"
+          type="text"
           placeholder={`Competitor URL ${currentCount + idx + 1}`}
           value={url}
           onChange={(e) => {
