@@ -227,6 +227,7 @@ export default function CompetitorComparison({
         body: JSON.stringify({
           reportId,
           competitors: [url],
+          retry: true, // Flag to reset and re-trigger existing analysis
         }),
       });
       

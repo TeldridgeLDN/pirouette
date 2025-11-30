@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
     
     // 3. Parse request body
     const body = await request.json().catch(() => ({}));
-    const { reportId, competitors } = body;
+    const { reportId, competitors, retry } = body;
     
     // 4. Validate reportId
     if (!reportId || typeof reportId !== 'string') {
@@ -240,6 +240,57 @@ export async function POST(request: NextRequest) {
       .select('id, competitor_url, status')
       .eq('report_id', reportId)
       .eq('user_id', user.id) as { data: CompetitorAnalysisRecord[] | null; error: Error | null };
+    
+    // 8a. Handle retry mode - reset and re-trigger existing analyses
+    if (retry === true) {
+      const retryResults: CompetitorAnalysisRecord[] = [];
+      
+      for (const url of validatedUrls) {
+        const normalizedUrl = url.toLowerCase();
+        const existingAnalysis = (existingAnalyses || []).find(
+          a => a.competitor_url.toLowerCase() === normalizedUrl
+        );
+        
+        if (existingAnalysis) {
+          // Reset the status and trigger new analysis
+          await supabaseAdmin
+            .from('competitor_analyses')
+            .update({
+              status: 'processing',
+              overall_score: 0,
+              colors_score: null,
+              whitespace_score: null,
+              complexity_score: null,
+              typography_score: null,
+              layout_score: null,
+              cta_score: null,
+              hierarchy_score: null,
+              dimensions: {},
+              screenshot_url: null,
+              error_message: null,
+              completed_at: null,
+              updated_at: new Date().toISOString(),
+            } as never)
+            .eq('id', existingAnalysis.id);
+          
+          // Trigger Railway analysis
+          triggerCompetitorAnalysis(existingAnalysis.id, url, user.id, reportId);
+          
+          retryResults.push({
+            id: existingAnalysis.id,
+            competitor_url: url,
+            status: 'processing',
+          });
+        }
+      }
+      
+      return NextResponse.json({
+        success: true,
+        message: `Retrying analysis for ${retryResults.length} competitor(s)`,
+        analyses: retryResults,
+        isRetry: true,
+      });
+    }
     
     const existingUrls = new Set(
       (existingAnalyses || []).map(a => a.competitor_url.toLowerCase())
