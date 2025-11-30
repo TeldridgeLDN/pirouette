@@ -289,7 +289,7 @@ export default function CompetitorComparison({
           )}
         </div>
         <p className="text-sm text-slate-600 mt-1">
-          See how you stack up against {allCompetitors.length} competitor{allCompetitors.length > 1 ? 's' : ''}
+          Comparison against {allCompetitors.length} competitor{allCompetitors.length > 1 ? 's' : ''}
         </p>
       </div>
 
@@ -335,14 +335,14 @@ function LockedPreview() {
         </div>
         <h3 className="font-semibold text-slate-900 mb-2">Competitor Comparison</h3>
         <p className="text-sm text-slate-600 mb-4">
-          See how your landing page compares to up to 3 competitors
+          Compare this landing page against up to 3 competitors
         </p>
         
         {/* Mock comparison preview */}
         <div className="bg-slate-50 rounded-lg p-4 mb-6">
           <div className="grid grid-cols-4 gap-2 text-xs text-slate-400 mb-2">
             <div>Dimension</div>
-            <div className="text-center">You</div>
+            <div className="text-center">This Site</div>
             <div className="text-center blur-sm">Comp A</div>
             <div className="text-center blur-sm">Comp B</div>
           </div>
@@ -361,7 +361,7 @@ function LockedPreview() {
         <div className="flex flex-wrap gap-2 justify-center mb-6">
           <span className="px-3 py-1 bg-slate-100 rounded-full text-xs text-slate-600">Side-by-side scores</span>
           <span className="px-3 py-1 bg-slate-100 rounded-full text-xs text-slate-600">Competitive gaps</span>
-          <span className="px-3 py-1 bg-slate-100 rounded-full text-xs text-slate-600">Your advantages</span>
+          <span className="px-3 py-1 bg-slate-100 rounded-full text-xs text-slate-600">Advantages</span>
         </div>
         
         <Link
@@ -448,7 +448,7 @@ function AddCompetitorsForm({
         </form>
         
         <p className="text-xs text-slate-400 mt-4">
-          Each competitor analysis uses your Pro quota
+          Each competitor analysis uses Pro quota
         </p>
       </div>
     </div>
@@ -489,7 +489,7 @@ function ProcessingState({ analyses, onRetry, retryingUrl }: { analyses: Competi
           {isRetrying
             ? 'Starting new analysis, this usually takes 30-60 seconds...'
             : allTimedOut 
-              ? 'The analysis service is taking longer than expected. You can retry or try again later.'
+              ? 'The analysis service is taking longer than expected. Click Retry or try again later.'
               : hasTimedOut 
                 ? 'Some analyses timed out. Others are still processing.'
                 : 'This usually takes 30-60 seconds per competitor'
@@ -648,7 +648,7 @@ function ComparisonTable({ userReport, competitors }: { userReport: CompetitorRe
         <tr className="border-b border-slate-200">
           <th className="py-3 px-2 text-left text-sm font-medium text-slate-500">Dimension</th>
           <th className="py-3 px-2 text-center text-sm font-medium text-indigo-600 bg-indigo-50 rounded-t">
-            You
+            This Site
             <div className="text-xs font-normal text-slate-400 truncate max-w-24">
               {formatUrl(userReport.url)}
             </div>
@@ -780,10 +780,10 @@ function CompetitiveInsights({ userReport, competitors }: { userReport: Competit
         )}
       </div>
 
-      {/* Your Advantages */}
+      {/* Advantages */}
       <div className="bg-emerald-50 rounded-xl p-4">
         <h4 className="font-semibold text-emerald-900 mb-3 flex items-center gap-2">
-          <span>🏆</span> Your Advantages
+          <span>🏆</span> Advantages
         </h4>
         {advantages.length > 0 ? (
           <ul className="space-y-2">
