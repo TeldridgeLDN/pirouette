@@ -85,6 +85,7 @@ export default function CompetitorComparison({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [urls, setUrls] = useState(['', '', '']);
+  const [retryingUrl, setRetryingUrl] = useState<string | null>(null);
   
   // Convert completed analyses to competitor reports format
   const completedCompetitors: CompetitorReport[] = analyses
@@ -218,7 +219,7 @@ export default function CompetitorComparison({
   // Handle retry for timed out analyses
   const handleRetry = async (url: string) => {
     setError(null);
-    setIsLoading(true);
+    setRetryingUrl(url);
     
     try {
       const response = await fetch('/api/competitors/analyze', {
@@ -237,21 +238,21 @@ export default function CompetitorComparison({
         throw new Error(data.error || 'Failed to retry competitor analysis');
       }
       
-      // Refresh analyses
+      // Refresh analyses - this will show the new 'processing' status
       await fetchAnalyses();
       
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to retry analysis');
     } finally {
-      setIsLoading(false);
+      setRetryingUrl(null);
     }
   };
 
   // Check if any analyses have timed out
   const hasTimedOut = analyses.some(a => a.status === 'timed_out');
   
-  // Show processing state while analyses are running (or timed out)
-  if ((hasProcessing || hasTimedOut) && allCompetitors.length === 0) {
+  // Show processing state while analyses are running (or timed out or retrying)
+  if ((hasProcessing || hasTimedOut || retryingUrl) && allCompetitors.length === 0) {
     return (
       <ProcessingState
         analyses={analyses}
@@ -259,6 +260,7 @@ export default function CompetitorComparison({
           // Show form for adding more competitors
         }}
         onRetry={handleRetry}
+        retryingUrl={retryingUrl}
       />
     );
   }
@@ -453,17 +455,23 @@ function AddCompetitorsForm({
   );
 }
 
-function ProcessingState({ analyses, onRetry }: { analyses: CompetitorAnalysis[]; onAddMore: () => void; onRetry?: (url: string) => void }) {
+function ProcessingState({ analyses, onRetry, retryingUrl }: { analyses: CompetitorAnalysis[]; onAddMore: () => void; onRetry?: (url: string) => void; retryingUrl?: string | null }) {
   const hasTimedOut = analyses.some(a => a.status === 'timed_out');
   const allTimedOut = analyses.every(a => a.status === 'timed_out' || a.status === 'failed');
+  const isRetrying = !!retryingUrl;
   
   return (
     <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
       <div className="text-center">
         <div className={`w-12 h-12 mx-auto mb-4 rounded-full flex items-center justify-center ${
-          allTimedOut ? 'bg-amber-100' : 'bg-indigo-100'
+          isRetrying ? 'bg-indigo-100' : allTimedOut ? 'bg-amber-100' : 'bg-indigo-100'
         }`}>
-          {allTimedOut ? (
+          {isRetrying ? (
+            <svg className="animate-spin h-6 w-6 text-indigo-600" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            </svg>
+          ) : allTimedOut ? (
             <svg className="h-6 w-6 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -475,14 +483,16 @@ function ProcessingState({ analyses, onRetry }: { analyses: CompetitorAnalysis[]
           )}
         </div>
         <h3 className="font-semibold text-slate-900 mb-2">
-          {allTimedOut ? 'Analysis Timed Out' : 'Analysing Competitors'}
+          {isRetrying ? 'Retrying Analysis...' : allTimedOut ? 'Analysis Timed Out' : 'Analysing Competitors'}
         </h3>
         <p className="text-sm text-slate-600 mb-6">
-          {allTimedOut 
-            ? 'The analysis service is taking longer than expected. You can retry or try again later.'
-            : hasTimedOut 
-              ? 'Some analyses timed out. Others are still processing.'
-              : 'This usually takes 30-60 seconds per competitor'
+          {isRetrying
+            ? 'Starting new analysis, this usually takes 30-60 seconds...'
+            : allTimedOut 
+              ? 'The analysis service is taking longer than expected. You can retry or try again later.'
+              : hasTimedOut 
+                ? 'Some analyses timed out. Others are still processing.'
+                : 'This usually takes 30-60 seconds per competitor'
           }
         </p>
         
@@ -497,14 +507,15 @@ function ProcessingState({ analyses, onRetry }: { analyses: CompetitorAnalysis[]
                 {formatUrl(analysis.competitor_url)}
               </span>
               <StatusBadge 
-                status={analysis.status} 
+                status={retryingUrl === analysis.competitor_url ? 'retrying' : analysis.status} 
                 onRetry={onRetry ? () => onRetry(analysis.competitor_url) : undefined}
+                isRetrying={retryingUrl === analysis.competitor_url}
               />
             </div>
           ))}
         </div>
         
-        {allTimedOut && (
+        {allTimedOut && !isRetrying && (
           <p className="text-xs text-slate-500 mt-4">
             The analysis service may be temporarily unavailable. Please try again in a few minutes.
           </p>
@@ -514,8 +525,9 @@ function ProcessingState({ analyses, onRetry }: { analyses: CompetitorAnalysis[]
   );
 }
 
-function StatusBadge({ status, onRetry }: { status: string; onRetry?: () => void }) {
+function StatusBadge({ status, onRetry, isRetrying }: { status: string; onRetry?: () => void; isRetrying?: boolean }) {
   switch (status) {
+    case 'retrying':
     case 'pending':
     case 'processing':
       return (
@@ -524,7 +536,7 @@ function StatusBadge({ status, onRetry }: { status: string; onRetry?: () => void
             <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
             <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
           </svg>
-          Processing
+          {status === 'retrying' ? 'Retrying...' : 'Processing'}
         </span>
       );
     case 'completed':
@@ -552,7 +564,7 @@ function StatusBadge({ status, onRetry }: { status: string; onRetry?: () => void
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           Timed out
-          {onRetry && (
+          {onRetry && !isRetrying && (
             <button 
               onClick={onRetry}
               className="text-indigo-600 hover:text-indigo-700 underline"
