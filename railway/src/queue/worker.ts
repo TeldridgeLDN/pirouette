@@ -45,7 +45,7 @@ async function processAnalysisJob(
     
     // Run the analysis
     const report = await analyzeWebsite(
-      { jobId, url, userId },
+      { jobId, url, userId, isCompetitorAnalysis },
       async (progress) => {
         // Update BullMQ job progress
         await job.updateProgress({

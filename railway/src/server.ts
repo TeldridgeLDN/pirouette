@@ -156,7 +156,7 @@ app.post('/analyze', async (req, res) => {
       await updateCompetitorProgress(jobId, 'processing');
       
       const report = await analyzeWebsite(
-        { jobId, url, userId: userId || 'anonymous' },
+        { jobId, url, userId: userId || 'anonymous', isCompetitorAnalysis: true },
         async (progress) => {
           console.log('[Server] Competitor progress:', progress);
         }

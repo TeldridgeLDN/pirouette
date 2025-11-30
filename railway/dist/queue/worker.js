@@ -33,7 +33,7 @@ async function processAnalysisJob(job) {
             await (0, supabase_1.updateCompetitorProgress)(jobId, 'processing');
         }
         // Run the analysis
-        const report = await (0, analyzer_1.analyzeWebsite)({ jobId, url, userId }, async (progress) => {
+        const report = await (0, analyzer_1.analyzeWebsite)({ jobId, url, userId, isCompetitorAnalysis }, async (progress) => {
             // Update BullMQ job progress
             await job.updateProgress({
                 status: progress.step,

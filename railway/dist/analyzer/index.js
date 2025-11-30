@@ -593,7 +593,10 @@ async function analyzeWebsite(job, onProgress) {
             };
             // Step 8: Save to database (90%)
             await reportProgress(90, 'saving', 'Saving report...');
-            await (0, supabase_1.saveReport)(jobId, userId, url, report);
+            // Only save to reports table for standard analyses (not competitor analyses)
+            if (!job.isCompetitorAnalysis) {
+                await (0, supabase_1.saveReport)(jobId, userId, url, report);
+            }
             console.log(`[Analyzer] Analysis complete:`, {
                 overallScore: report.overallScore,
                 dimensions: Object.keys(report.dimensionScores).length,

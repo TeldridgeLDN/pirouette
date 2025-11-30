@@ -122,7 +122,7 @@ app.post('/analyze', async (req, res) => {
         // For competitor analysis, update competitor_analyses table instead
         if (isCompetitorAnalysis) {
             await (0, supabase_1.updateCompetitorProgress)(jobId, 'processing');
-            const report = await (0, analyzer_1.analyzeWebsite)({ jobId, url, userId: userId || 'anonymous' }, async (progress) => {
+            const report = await (0, analyzer_1.analyzeWebsite)({ jobId, url, userId: userId || 'anonymous', isCompetitorAnalysis: true }, async (progress) => {
                 console.log('[Server] Competitor progress:', progress);
             });
             // Save to competitor_analyses table

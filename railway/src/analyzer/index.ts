@@ -13,6 +13,7 @@ export interface AnalysisJob {
   jobId: string;
   url: string;
   userId: string;
+  isCompetitorAnalysis?: boolean; // Skip saving to reports table if true
 }
 
 export interface AnalysisProgress {
@@ -735,7 +736,11 @@ export async function analyzeWebsite(
       
       // Step 8: Save to database (90%)
       await reportProgress(90, 'saving', 'Saving report...');
-      await saveReport(jobId, userId, url, report);
+      
+      // Only save to reports table for standard analyses (not competitor analyses)
+      if (!job.isCompetitorAnalysis) {
+        await saveReport(jobId, userId, url, report);
+      }
       
       console.log(`[Analyzer] Analysis complete:`, {
         overallScore: report.overallScore,
