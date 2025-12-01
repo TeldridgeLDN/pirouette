@@ -32,8 +32,8 @@ export default function Home() {
       {/* Pricing */}
       <PricingSection />
       
-      {/* Testimonials */}
-      <TestimonialsSection />
+      {/* Analysis Insights */}
+      <AnalysisInsightsSection />
       
       {/* Final CTA */}
       <FinalCTASection />
@@ -602,28 +602,31 @@ function PricingSection() {
 }
 
 // ============================================================================
-// TESTIMONIALS SECTION
+// ANALYSIS INSIGHTS SECTION
 // ============================================================================
 
-function TestimonialsSection() {
-  const testimonials = [
+function AnalysisInsightsSection() {
+  const insights = [
     {
-      quote: "Pirouette helped us identify issues we'd never have spotted ourselves. Our conversion rate increased by 23% after implementing the recommendations.",
-      author: "Sarah Chen",
-      role: "Founder, TechStart",
-      avatar: "SC",
+      finding: "Missing trust signals above the fold",
+      impact: "Adding social proof typically increases conversions by 15-20%",
+      commonIn: "SaaS landing pages",
+      icon: "🛡️",
+      color: "from-amber-500 to-orange-500",
     },
     {
-      quote: "As a developer with no design background, this tool is invaluable. It gives me confidence that my landing pages follow best practices.",
-      author: "Marcus Johnson",
-      role: "Indie Hacker",
-      avatar: "MJ",
+      finding: "CTA button fails contrast guidelines",
+      impact: "Fixing accessibility issues reduces bounce rates significantly",
+      commonIn: "Dark-themed sites",
+      icon: "🎨",
+      color: "from-rose-500 to-pink-500",
     },
     {
-      quote: "We use Pirouette for every client project now. The ROI-prioritised recommendations make it easy to focus on what matters most.",
-      author: "Emma Williams",
-      role: "Agency Director",
-      avatar: "EW",
+      finding: "Too many font families (5+)",
+      impact: "Simplifying to 2 fonts improves readability and load times",
+      commonIn: "Agency portfolios",
+      icon: "✏️",
+      color: "from-violet-500 to-purple-500",
     },
   ];
 
@@ -633,47 +636,52 @@ function TestimonialsSection() {
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-sm font-medium mb-4">
-            Testimonials
+            Real Findings
           </div>
           <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-            Loved by Founders & Agencies
+            What Our Analysis Reveals
           </h2>
           <p className="text-lg text-slate-600">
-            See what our users say about improving their landing pages with Pirouette.
+            Common issues we find on landing pages — and the impact of fixing them.
           </p>
         </div>
         
-        {/* Testimonials Grid */}
+        {/* Insights Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {testimonials.map((testimonial) => (
+          {insights.map((insight) => (
             <div 
-              key={testimonial.author}
+              key={insight.finding}
               className="bg-white rounded-2xl p-8 border border-slate-100 hover:shadow-lg transition-all duration-300"
             >
-              {/* Stars */}
-              <div className="flex gap-1 mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <StarIcon key={i} className="w-5 h-5 text-amber-400" />
-                ))}
+              {/* Icon */}
+              <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${insight.color} flex items-center justify-center text-2xl mb-4`}>
+                {insight.icon}
               </div>
               
-              {/* Quote */}
-              <p className="text-slate-600 mb-6 italic">
-                &ldquo;{testimonial.quote}&rdquo;
+              {/* Finding */}
+              <h3 className="font-heading font-semibold text-lg text-slate-900 mb-3">
+                &ldquo;{insight.finding}&rdquo;
+              </h3>
+              
+              {/* Impact */}
+              <p className="text-slate-600 mb-4">
+                <span className="text-emerald-600 font-medium">→</span> {insight.impact}
               </p>
               
-              {/* Author */}
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold">
-                  {testimonial.avatar}
-                </div>
-                <div>
-                  <div className="font-semibold text-slate-900">{testimonial.author}</div>
-                  <div className="text-sm text-slate-500">{testimonial.role}</div>
-                </div>
+              {/* Common In */}
+              <div className="inline-flex items-center gap-2 px-3 py-1 bg-slate-100 rounded-full text-sm text-slate-600">
+                <span>Common in:</span>
+                <span className="font-medium text-slate-700">{insight.commonIn}</span>
               </div>
             </div>
           ))}
+        </div>
+        
+        {/* Bottom CTA */}
+        <div className="text-center mt-12">
+          <p className="text-slate-500 text-sm">
+            Wonder what issues your page has? Find out in 30 seconds.
+          </p>
         </div>
       </div>
     </section>
