@@ -52,7 +52,7 @@ export async function sendAnalysisCompleteEmail(params: {
 }) {
   return sendEmail({
     to: params.to,
-    subject: `Your analysis is ready - Score: ${params.overallScore}/100`,
+    subject: `Analysis complete - Score: ${params.overallScore}/100`,
     react: AnalysisCompleteEmail({
       firstName: params.firstName,
       url: params.url,
@@ -147,13 +147,20 @@ export async function sendPaymentFailedEmail(params: {
   to: string;
   firstName?: string;
   amount: string;
+  retryCount?: number; // Retry attempt number for dunning sequence
 }) {
+  const isFinalWarning = (params.retryCount || 1) >= 3;
+  const subject = isFinalWarning
+    ? 'Action needed: Your Pro access is at risk ⚠️'
+    : 'Quick heads up about your payment';
+    
   return sendEmail({
     to: params.to,
-    subject: 'Action required: Payment failed ⚠️',
+    subject,
     react: PaymentFailedEmail({
       firstName: params.firstName,
       amount: params.amount,
+      retryCount: params.retryCount,
       updatePaymentUrl: `${EMAIL_CONFIG.appUrl}/dashboard/billing`,
     }),
     tags: [{ name: 'type', value: 'payment_failed' }],
@@ -193,14 +200,16 @@ export async function sendFriendSignedUpEmail(params: {
   to: string;
   firstName?: string;
   friendName: string;
+  referralCode?: string;
 }) {
   return sendEmail({
     to: params.to,
-    subject: `${params.friendName} just signed up! 🎉`,
+    subject: `${params.friendName} signed up using your link! 🎉`,
     react: FriendSignedUpEmail({
       firstName: params.firstName,
       friendName: params.friendName,
       referralUrl: `${EMAIL_CONFIG.appUrl}/dashboard`,
+      referralCode: params.referralCode,
     }),
     tags: [{ name: 'type', value: 'referral_signup' }],
   });
@@ -215,15 +224,17 @@ export async function sendRewardEarnedEmail(params: {
   firstName?: string;
   friendName: string;
   totalRewards: number;
+  referralCode?: string;
 }) {
   return sendEmail({
     to: params.to,
-    subject: 'You earned a free month! 🎁',
+    subject: 'You earned a free month of Pro! 🎁',
     react: RewardEarnedEmail({
       firstName: params.firstName,
       friendName: params.friendName,
       totalRewards: params.totalRewards,
       dashboardUrl: `${EMAIL_CONFIG.appUrl}/dashboard`,
+      referralCode: params.referralCode,
     }),
     tags: [{ name: 'type', value: 'referral_reward' }],
   });
