@@ -105,14 +105,18 @@ export default function ProductHuntWelcomePage() {
           </div>
         </div>
 
-        {/* Social Proof */}
+        {/* Benchmark Proof */}
         <div className="text-center mb-16">
-          <p className="text-slate-500 text-sm mb-4">Trusted by founders building</p>
-          <div className="flex items-center justify-center gap-8 opacity-50">
-            <span className="text-slate-400 font-semibold">SaaS</span>
-            <span className="text-slate-400 font-semibold">E-commerce</span>
-            <span className="text-slate-400 font-semibold">Agencies</span>
-            <span className="text-slate-400 font-semibold">Portfolios</span>
+          <p className="text-slate-500 text-sm mb-4">Benchmarked against 36 award-winning sites</p>
+          <div className="flex items-center justify-center flex-wrap gap-4">
+            <span className="text-slate-600 font-semibold">Stripe</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-600 font-semibold">Linear</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-600 font-semibold">Vercel</span>
+            <span className="text-slate-300">•</span>
+            <span className="text-slate-600 font-semibold">Notion</span>
+            <span className="text-slate-400 text-sm">+ 32 more</span>
           </div>
         </div>
 

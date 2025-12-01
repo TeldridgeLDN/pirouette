@@ -21,7 +21,7 @@ export default function Home() {
       <HeroSection />
       
       {/* Social Proof Bar */}
-      <SocialProofBar />
+      <BenchmarkProofBar />
       
       {/* How It Works */}
       <HowItWorksSection />
@@ -198,24 +198,35 @@ function HeroSection() {
 }
 
 // ============================================================================
-// SOCIAL PROOF BAR
+// BENCHMARK PROOF BAR
 // ============================================================================
 
-function SocialProofBar() {
+function BenchmarkProofBar() {
+  const benchmarkedSites = [
+    { name: 'Stripe', score: 85 },
+    { name: 'Linear', score: 82 },
+    { name: 'Vercel', score: 78 },
+    { name: 'Notion', score: 76 },
+    { name: 'Intercom', score: 75 },
+  ];
+
   return (
     <section className="py-12 bg-white border-y border-slate-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <p className="text-sm font-medium text-slate-500 mb-6">
-            Trusted by founders and agencies building better landing pages
+            Benchmarked against 36 award-winning sites
           </p>
-          <div className="flex items-center justify-center gap-12 opacity-50 grayscale">
-            {/* Placeholder logos - replace with actual logos */}
-            {['Startup A', 'Agency B', 'Brand C', 'Company D', 'Studio E'].map((name) => (
-              <div key={name} className="text-slate-400 font-heading font-bold text-lg">
-                {name}
+          <div className="flex items-center justify-center flex-wrap gap-x-8 gap-y-4">
+            {benchmarkedSites.map((site) => (
+              <div key={site.name} className="flex items-center gap-2 text-slate-600">
+                <span className="font-heading font-semibold">{site.name}</span>
+                <span className="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 rounded-full font-medium">
+                  {site.score}/100
+                </span>
               </div>
             ))}
+            <span className="text-slate-400 text-sm">+ 31 more</span>
           </div>
         </div>
       </div>
