@@ -12,7 +12,7 @@ import { supabaseAdmin } from '@/lib/supabase/server';
 
 // Rate limit configuration per plan
 const PLAN_LIMITS: Record<string, number> = {
-  free: 1,      // 1 per week
+  free: 3,      // 3 per week
   pro_29: -1,   // Unlimited
   pro_49: -1,   // Unlimited
   agency: -1,   // Unlimited

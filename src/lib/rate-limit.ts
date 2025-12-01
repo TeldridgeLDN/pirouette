@@ -4,9 +4,9 @@
  * 
  * Implements rate limiting based on user authentication and subscription plan.
  * 
- * Rate Limits (per PRD):
+ * Rate Limits:
  * - Anonymous (no account): 1 analysis per IP per day
- * - Free account: 1 analysis per week
+ * - Free account: 3 analyses per week
  * - Pro users: Unlimited analyses
  * 
  * NOTE: TypeScript checking disabled due to Supabase type generation issues.
@@ -45,7 +45,7 @@ export interface AnonymousRateLimitResult extends RateLimitResult {
 // ============================================================================
 
 const RATE_LIMITS: Record<UserPlan, number> = {
-  free: 1, // 1 per week
+  free: 3, // 3 per week (upgrade from anonymous 1/day)
   pro_29: -1, // Unlimited
   pro_49: -1, // Unlimited
   agency: -1, // Unlimited
@@ -175,7 +175,7 @@ export async function checkRateLimit(clerkUserId: string): Promise<RateLimitResu
       remaining,
       resetAt: new Date(Date.now() + RATE_LIMIT_WINDOW_MS),
       message: remaining === 0 
-        ? 'You\'ve used your free analysis this week. Upgrade to Pro for unlimited analyses.'
+        ? 'You\'ve used your 3 free analyses this week. Upgrade to Pro for unlimited analyses.'
         : undefined,
     };
   }
@@ -218,7 +218,7 @@ export async function checkRateLimit(clerkUserId: string): Promise<RateLimitResu
     remaining,
     resetAt,
     message: remaining === 0 
-      ? `You've used your free analysis this week. ${resetAt ? `Try again ${formatResetTime(resetAt)}.` : ''} Upgrade to Pro for unlimited analyses.`
+      ? `You've used your 3 free analyses this week. ${resetAt ? `Try again ${formatResetTime(resetAt)}.` : ''} Upgrade to Pro for unlimited analyses.`
       : undefined,
   };
 }
@@ -368,7 +368,7 @@ export async function checkAnonymousRateLimit(ip: string): Promise<AnonymousRate
     ip,
     suggestSignup: remaining === 0,
     message: remaining === 0
-      ? `You've used your free analysis today. ${resetAt ? `Try again ${formatResetTimeHours(resetAt)}.` : ''} Create a free account to analyse more pages!`
+      ? `You've used your free analysis today. ${resetAt ? `Try again ${formatResetTimeHours(resetAt)}.` : ''} Create a free account for 3 analyses per week!`
       : undefined,
   };
 }

@@ -267,7 +267,7 @@ export default function HeroAnalyzeForm({ className = '' }: HeroAnalyzeFormProps
                 onClick={() => trackSignupStarted('rate_limit_hero', 'free')}
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-700 underline"
               >
-                Create a free account for weekly analyses →
+                Create a free account for 3 analyses per week →
               </Link>
               <span className="hidden sm:inline text-slate-300">|</span>
               <a 

@@ -97,7 +97,7 @@ function formatResetDate(date: Date): string {
 function getHeadline(trigger: string, featureName?: string): string {
   switch (trigger) {
     case 'rate_limit':
-      return "You've used your free analysis this week";
+      return "You've used your 3 free analyses this week";
     case 'pro_feature':
       return featureName 
         ? `${featureName} is a Pro feature`

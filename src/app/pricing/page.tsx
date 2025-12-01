@@ -150,7 +150,7 @@ function PricingCards({
       annualPrice: 0,
       description: 'Perfect for trying out Pirouette',
       features: [
-        { text: '1 analysis per week', included: true },
+        { text: '3 analyses per week', included: true },
         { text: '7 dimension scores', included: true },
         { text: 'Top 3 recommendations', included: true },
         { text: 'Reports saved 30 days', included: true },
@@ -410,7 +410,7 @@ function CheckoutButton({
 
 function FeatureComparisonTable() {
   const features = [
-    { name: 'Analyses per week', free: '1', pro: 'Unlimited', agency: 'Unlimited' },
+    { name: 'Analyses per week', free: '3', pro: 'Unlimited', agency: 'Unlimited' },
     { name: '7 dimension scores', free: true, pro: true, agency: true },
     { name: 'Revenue impact estimates', free: true, pro: true, agency: true },
     { name: 'ROI-prioritised suggestions', free: true, pro: true, agency: true },

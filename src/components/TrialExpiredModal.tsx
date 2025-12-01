@@ -17,7 +17,7 @@ interface TrialExpiredModalProps {
 }
 
 const FEATURES_LOSING = [
-  { icon: '⚡', name: 'Unlimited Analyses', current: 'Unlimited', after: '1 per week' },
+  { icon: '⚡', name: 'Unlimited Analyses', current: 'Unlimited', after: '3 per week' },
   { icon: '📈', name: 'Historical Tracking', current: '✓', after: '✗' },
   { icon: '🆚', name: 'Competitor Comparison', current: '✓', after: '✗' },
   { icon: '📄', name: 'Export as PDF', current: '✓', after: '✗' },

@@ -29,15 +29,17 @@ export function TrialStartedEmail({
   trialEndDate,
   dashboardUrl = 'https://pirouette.app/dashboard',
 }: TrialStartedEmailProps) {
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
+  
   return (
-    <BaseEmail previewText="Your Pirouette Pro trial has started!">
+    <BaseEmail previewText="Your 14-day Pro trial is live! Let's make some magic ✨">
       <EmailHeading>
-        Your Pro Trial Has Started! 🚀
+        You&apos;re in! 🎉
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Hey ${firstName}, ` : ''}Welcome to Pirouette Pro! 
-        You now have access to all premium features for the next 14 days.
+        {greeting}, your Pirouette Pro trial just kicked off. For the next 14 days, 
+        you&apos;ve got the full toolkit at your fingertips.
       </EmailText>
 
       <Section style={{
@@ -52,7 +54,7 @@ export function TrialStartedEmail({
           fontSize: '14px',
           margin: '0',
         }}>
-          ✨ Your trial ends on <strong>{trialEndDate}</strong>
+          ✨ Your trial runs until <strong>{trialEndDate}</strong> — no card required
         </Text>
       </Section>
 
@@ -62,23 +64,23 @@ export function TrialStartedEmail({
         fontWeight: '600',
         margin: '0 0 16px 0',
       }}>
-        What&apos;s Included:
+        Here&apos;s what you&apos;ve unlocked:
       </Text>
 
       <Section style={{ marginBottom: '24px' }}>
         {[
-          '📊 Unlimited analyses',
-          '📈 Historical tracking',
-          '🏆 Industry benchmarking',
-          '📄 PDF exports',
-          '🔄 Competitor comparison',
+          { icon: '📊', text: 'Unlimited analyses — go wild' },
+          { icon: '📈', text: 'Historical tracking — watch your scores climb' },
+          { icon: '🏆', text: 'Industry benchmarks — see how you stack up' },
+          { icon: '📄', text: 'PDF exports — share with clients & stakeholders' },
+          { icon: '🔍', text: 'Competitor comparison — spy on the competition' },
         ].map((feature, i) => (
           <Text key={i} style={{
             color: '#334155',
             fontSize: '14px',
             margin: '0 0 8px 0',
           }}>
-            {feature}
+            {feature.icon} {feature.text}
           </Text>
         ))}
       </Section>
@@ -90,7 +92,8 @@ export function TrialStartedEmail({
       <EmailDivider />
 
       <EmailMuted>
-        Add a payment method anytime to continue after your trial.
+        Loving it? You can upgrade anytime in Settings → Billing. 
+        No pressure—we&apos;ll remind you before your trial ends.
       </EmailMuted>
     </BaseEmail>
   );
@@ -111,42 +114,58 @@ export function TrialEndingEmail({
   daysRemaining,
   upgradeUrl = 'https://pirouette.app/pricing',
 }: TrialEndingEmailProps) {
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
+  const dayWord = daysRemaining === 1 ? 'day' : 'days';
+  
   return (
-    <BaseEmail previewText={`Your Pirouette trial ends in ${daysRemaining} days`}>
+    <BaseEmail previewText={`Quick heads up: ${daysRemaining} ${dayWord} left on your Pro trial ⏰`}>
       <EmailHeading>
-        Your Trial Ends in {daysRemaining} Day{daysRemaining > 1 ? 's' : ''} ⏰
+        {daysRemaining} {dayWord} left on your trial ⏰
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Hey ${firstName}, ` : ''}Just a heads up - your Pirouette Pro 
-        trial is almost over. Add a payment method to keep your premium features.
+        {greeting}, just a friendly nudge—your Pirouette Pro trial wraps up in {daysRemaining} {dayWord}.
+      </EmailText>
+      
+      <EmailText>
+        If you&apos;ve been finding the unlimited analyses and benchmarking useful, 
+        now&apos;s a good time to lock in your subscription so there&apos;s no gap in access.
       </EmailText>
 
       <Section style={{
-        backgroundColor: '#fef3c7',
-        border: '1px solid #fcd34d',
+        backgroundColor: '#f8fafc',
         borderRadius: '8px',
         padding: '16px',
         marginBottom: '24px',
       }}>
         <Text style={{
-          color: '#92400e',
+          color: '#334155',
+          fontSize: '14px',
+          margin: '0 0 8px 0',
+          fontWeight: '600',
+        }}>
+          What happens after your trial:
+        </Text>
+        <Text style={{
+          color: '#64748b',
           fontSize: '14px',
           margin: '0',
         }}>
-          ⚠️ Without upgrading, you&apos;ll lose access to unlimited analyses, 
-          historical tracking, and all Pro features.
+          → You&apos;ll move to the free plan (3 analyses per week)<br />
+          → Your history & reports stay safe—they&apos;re not going anywhere<br />
+          → You can upgrade anytime to get Pro back
         </Text>
       </Section>
 
       <EmailButton href={upgradeUrl}>
-        Continue with Pro →
+        Keep Pro Features →
       </EmailButton>
 
       <EmailDivider />
 
       <EmailMuted>
-        Questions? Reply to this email and we&apos;ll help.
+        Not the right time? No worries—your data will be here when you&apos;re ready. 
+        Questions? Just reply to this email.
       </EmailMuted>
     </BaseEmail>
   );
@@ -171,17 +190,30 @@ export function SubscriptionConfirmedEmail({
   nextBillingDate,
   dashboardUrl = 'https://pirouette.app/dashboard',
 }: SubscriptionConfirmedEmailProps) {
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
+  
   return (
-    <BaseEmail previewText="Welcome to Pirouette Pro - Your subscription is confirmed!">
+    <BaseEmail previewText="You're officially Pro! Here's your receipt 🧾">
       <EmailHeading>
-        You&apos;re Now a Pro! 🎉
+        Welcome to the Pro club! 🏆
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Hey ${firstName}, ` : ''}Thank you for subscribing to 
-        Pirouette Pro! Your account has been upgraded and all premium features 
-        are now unlocked.
+        {greeting}, thanks for going Pro! You now have unlimited access to everything 
+        Pirouette has to offer. Time to make some landing pages shine.
       </EmailText>
+
+      <Section style={{
+        backgroundColor: '#f0fdf4',
+        border: '1px solid #86efac',
+        borderRadius: '8px',
+        padding: '16px',
+        marginBottom: '24px',
+      }}>
+        <Text style={{ color: '#166534', fontSize: '14px', margin: '0', fontWeight: '600' }}>
+          ✓ Subscription confirmed
+        </Text>
+      </Section>
 
       <Section style={{
         backgroundColor: '#f8fafc',
@@ -189,21 +221,21 @@ export function SubscriptionConfirmedEmail({
         padding: '16px',
         marginBottom: '24px',
       }}>
-        <Text style={{ color: '#64748b', fontSize: '12px', margin: '0 0 4px 0' }}>
+        <Text style={{ color: '#64748b', fontSize: '12px', margin: '0 0 4px 0', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
           Plan
         </Text>
-        <Text style={{ color: '#0f172a', fontSize: '16px', fontWeight: '600', margin: '0 0 12px 0' }}>
+        <Text style={{ color: '#0f172a', fontSize: '16px', fontWeight: '600', margin: '0 0 16px 0' }}>
           {planName}
         </Text>
         
-        <Text style={{ color: '#64748b', fontSize: '12px', margin: '0 0 4px 0' }}>
+        <Text style={{ color: '#64748b', fontSize: '12px', margin: '0 0 4px 0', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
           Amount
         </Text>
-        <Text style={{ color: '#0f172a', fontSize: '16px', fontWeight: '600', margin: '0 0 12px 0' }}>
+        <Text style={{ color: '#0f172a', fontSize: '16px', fontWeight: '600', margin: '0 0 16px 0' }}>
           {amount}
         </Text>
         
-        <Text style={{ color: '#64748b', fontSize: '12px', margin: '0 0 4px 0' }}>
+        <Text style={{ color: '#64748b', fontSize: '12px', margin: '0 0 4px 0', textTransform: 'uppercase' as const, letterSpacing: '0.5px' }}>
           Next billing date
         </Text>
         <Text style={{ color: '#0f172a', fontSize: '16px', fontWeight: '600', margin: '0' }}>
@@ -218,7 +250,8 @@ export function SubscriptionConfirmedEmail({
       <EmailDivider />
 
       <EmailMuted>
-        Manage your subscription anytime in Settings → Billing.
+        Need to update your billing info or cancel? Head to Settings → Billing anytime.
+        Questions? Just reply to this email.
       </EmailMuted>
     </BaseEmail>
   );
@@ -231,40 +264,61 @@ export function SubscriptionConfirmedEmail({
 interface PaymentFailedEmailProps {
   firstName?: string;
   amount: string;
+  retryCount?: number;
   updatePaymentUrl?: string;
 }
 
 export function PaymentFailedEmail({ 
   firstName,
   amount,
+  retryCount = 1,
   updatePaymentUrl = 'https://pirouette.app/dashboard/billing',
 }: PaymentFailedEmailProps) {
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
+  
+  // Different messaging based on retry count
+  const isFirstAttempt = retryCount <= 1;
+  const isFinalWarning = retryCount >= 3;
+  
+  const headline = isFinalWarning 
+    ? 'Action needed: Pro access at risk' 
+    : 'Quick heads up about your payment';
+    
+  const urgency = isFinalWarning
+    ? 'Your Pro access will be paused if we can\'t process payment soon.'
+    : 'We\'ll retry automatically, but updating your card now ensures no interruption.';
+  
   return (
-    <BaseEmail previewText="Action required: Your Pirouette payment failed">
+    <BaseEmail previewText={isFirstAttempt ? 'Quick heads up: payment didn\'t go through' : 'Action needed: update your payment method'}>
       <EmailHeading>
-        Payment Failed ⚠️
+        {headline} ⚠️
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Hey ${firstName}, ` : ''}We couldn&apos;t process your 
-        payment of {amount} for Pirouette Pro. Please update your payment 
-        method to keep your subscription active.
+        {greeting}, we tried to charge {amount} for your Pirouette Pro subscription, 
+        but the payment didn&apos;t go through.
+      </EmailText>
+      
+      <EmailText>
+        {urgency}
       </EmailText>
 
       <Section style={{
-        backgroundColor: '#fef2f2',
-        border: '1px solid #fecaca',
+        backgroundColor: isFinalWarning ? '#fef2f2' : '#fef3c7',
+        border: `1px solid ${isFinalWarning ? '#fecaca' : '#fcd34d'}`,
         borderRadius: '8px',
         padding: '16px',
         marginBottom: '24px',
       }}>
         <Text style={{
-          color: '#991b1b',
+          color: isFinalWarning ? '#991b1b' : '#92400e',
           fontSize: '14px',
           margin: '0',
         }}>
-          🚨 Your Pro access will be suspended if payment isn&apos;t received 
-          within 7 days.
+          {isFinalWarning 
+            ? '⏰ This is your final reminder before access is paused'
+            : '💳 Common causes: expired card, insufficient funds, or new card needed'
+          }
         </Text>
       </Section>
 
@@ -275,7 +329,8 @@ export function PaymentFailedEmail({
       <EmailDivider />
 
       <EmailMuted>
-        If you&apos;re having trouble, reply to this email and we&apos;ll help.
+        Having billing issues? Just reply to this email—we&apos;re happy to help sort it out. 
+        No judgement, these things happen.
       </EmailMuted>
     </BaseEmail>
   );
@@ -296,15 +351,16 @@ export function SubscriptionCancelledEmail({
   endDate,
   reactivateUrl = 'https://pirouette.app/pricing',
 }: SubscriptionCancelledEmailProps) {
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
+  
   return (
-    <BaseEmail previewText="Your Pirouette subscription has been cancelled">
+    <BaseEmail previewText="Your Pro subscription has been cancelled—here's what happens next">
       <EmailHeading>
-        Subscription Cancelled 😢
+        We&apos;re sorry to see you go 💙
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Hey ${firstName}, ` : ''}We&apos;re sorry to see you go. 
-        Your Pirouette Pro subscription has been cancelled.
+        {greeting}, your Pirouette Pro subscription has been cancelled as requested.
       </EmailText>
 
       <Section style={{
@@ -314,17 +370,26 @@ export function SubscriptionCancelledEmail({
         marginBottom: '24px',
       }}>
         <Text style={{
+          color: '#0f172a',
+          fontSize: '14px',
+          margin: '0 0 12px 0',
+          fontWeight: '600',
+        }}>
+          What happens next:
+        </Text>
+        <Text style={{
           color: '#334155',
           fontSize: '14px',
           margin: '0',
         }}>
-          You&apos;ll have access to Pro features until <strong>{endDate}</strong>. 
-          After that, your account will revert to the free plan.
+          → Pro features stay active until <strong>{endDate}</strong><br />
+          → After that, you&apos;ll move to the free plan (3 analyses/week)<br />
+          → All your reports and history are safe—nothing gets deleted
         </Text>
       </Section>
 
       <EmailText>
-        Changed your mind? You can reactivate anytime before your access ends.
+        Changed your mind? You can reactivate anytime—your data will be waiting.
       </EmailText>
 
       <EmailButton href={reactivateUrl}>
@@ -334,7 +399,8 @@ export function SubscriptionCancelledEmail({
       <EmailDivider />
 
       <EmailMuted>
-        We&apos;d love to know why you left. Reply to this email with feedback.
+        Got 30 seconds? We&apos;d love to know what we could have done better. 
+        Just hit reply—your feedback genuinely helps us improve.
       </EmailMuted>
     </BaseEmail>
   );

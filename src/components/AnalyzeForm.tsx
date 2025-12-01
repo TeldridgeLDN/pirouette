@@ -305,7 +305,7 @@ export default function AnalyzeForm({
       {/* Free tier note */}
       {isSignedIn && (
         <p className="mt-2 text-xs text-gray-500 text-center">
-          Free accounts: 1 analysis per week • Pro accounts: Unlimited
+          Free accounts: 3 analyses per week • Pro accounts: Unlimited
         </p>
       )}
     </form>

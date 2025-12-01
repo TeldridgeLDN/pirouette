@@ -144,8 +144,8 @@ export default function EmailCaptureModal({
                   </svg>
                 </div>
                 <div>
-                  <div className="font-medium text-slate-900">Get 4 free analyses per month</div>
-                  <div className="text-sm text-slate-500">1 per week vs 1 per day for anonymous</div>
+                  <div className="font-medium text-slate-900">Get 3 analyses per week</div>
+                  <div className="text-sm text-slate-500">3x more than anonymous daily limit</div>
                 </div>
               </li>
               <li className="flex items-start gap-3">

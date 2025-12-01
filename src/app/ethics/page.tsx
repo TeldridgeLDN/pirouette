@@ -112,7 +112,7 @@ export default function CrawlerEthicsPage() {
             </p>
             <ul className="list-disc pl-6 text-slate-600 space-y-2">
               <li><strong>One request per analysis</strong> - We don&apos;t make multiple requests for a single URL</li>
-              <li><strong>User rate limits</strong> - Free users can analyse 1 site per day/week, preventing spam</li>
+              <li><strong>User rate limits</strong> - Anonymous users get 1 analysis per day; registered free users get 3 per week</li>
               <li><strong>30-second timeout</strong> - We don&apos;t wait indefinitely for slow pages</li>
               <li><strong>Queue system</strong> - Analyses are queued to prevent server overload</li>
               <li><strong>No retry flooding</strong> - Failed requests aren&apos;t immediately retried</li>

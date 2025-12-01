@@ -454,7 +454,7 @@ function PricingSection() {
       period: 'forever',
       description: 'Perfect for trying out Pirouette',
       features: [
-        '1 analysis per week',
+        '3 analyses per week',
         '7 dimension scores',
         'Top 3 recommendations',
         'Basic report export',

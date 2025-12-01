@@ -6,9 +6,9 @@
  * Creates a new analysis job and triggers the Railway analysis service.
  * Supports both authenticated and anonymous users with different rate limits.
  * 
- * Rate Limits (per PRD):
+ * Rate Limits:
  * - Anonymous (no account): 1 analysis per IP per day
- * - Free account: 1 analysis per week
+ * - Free account: 3 analyses per week
  * - Pro users: Unlimited analyses
  * 
  * Request Body:

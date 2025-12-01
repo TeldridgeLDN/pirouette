@@ -96,7 +96,7 @@ export default function TermsOfServicePage() {
             <h2 className="text-xl font-semibold text-slate-900 mb-4">5. Subscriptions and Payments</h2>
             <h3 className="text-lg font-medium text-slate-800 mb-3">5.1 Free Tier</h3>
             <p className="text-slate-600 mb-4">
-              Free accounts are limited to one analysis per week. Anonymous users (without accounts) are limited to one analysis per day.
+              Free accounts are limited to three analyses per week. Anonymous users (without accounts) are limited to one analysis per day.
             </p>
             
             <h3 className="text-lg font-medium text-slate-800 mb-3">5.2 Paid Subscriptions</h3>

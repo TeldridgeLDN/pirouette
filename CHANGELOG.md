@@ -5,6 +5,73 @@ All notable changes to Pirouette will be documented in this file.
 ## [Unreleased]
 
 ### Changed
+- **Free Account Rate Limits Increased** - Free registered accounts now get 3 analyses per week (up from 1). This makes signing up more valuable than anonymous usage (1/day), creating a clearer upgrade path. Anonymous IP rate limit unchanged at 1/day.
+
+### Improved
+- **Design Insights Card Contrast** - Fixed low contrast text in Designer's Eye Review insights cards. Each category (strength/improvement/critical) now uses explicit darker text colours (900/800/700 shades) with increased border contrast for better readability
+
+### Added
+- **Cross-Project Skills Integration with Orchestrator**
+  - Created `docs/ORCHESTRATOR_INTEGRATION.md` documenting bi-directional skill sharing
+  - Skills now synced to global `~/.claude/skills/` for use across all projects
+  - New script `sync-sibling-skills.sh` in Orchestrator syncs Pirouette skills globally
+  - Documented what Pirouette contributes (skills, templates, patterns)
+  - Documented what Pirouette inherited (design analyzers from portfolio-redesign, protocols from Orchestrator)
+  - Added to Orchestrator registry at `Docs/SIBLING_PROJECT_SKILLS.md`
+  - Detailed reference at `Docs/PIROUETTE_SKILLS_LIBRARY.md`
+
+- **Pirouette Skills Library & Templates** (Meta-Learning Documentation)
+  - Extracted reusable patterns from Pirouette development for future projects
+  - **5 Skills** (`.cursor/skills/`):
+    - `project-scaffolder.md` - Full SaaS project scaffolding from idea to tasks
+    - `skill-import-assistant.md` - Safe cross-project code import workflow
+    - `prd-progress-tracker.md` - Track implementation against PRD requirements
+    - `email-touchpoint-mapper.md` - Plan & implement 8 core SaaS emails
+    - `scaling-calculator.md` - Infrastructure cost projections & upgrade triggers
+  - **4 Templates** (`.taskmaster/templates/`):
+    - `prd-alignment-check.md` - PRD vs implementation tracking template
+    - `session-summary.md` - Session wrap-up documentation template
+    - `scaling-economics.md` - Infrastructure cost documentation template
+    - `email-touchpoints.md` - Email planning checklist template
+  - **2 Patterns** (`docs/patterns/`):
+    - `feature-gating-pattern.md` - Free/Pro feature boundary patterns
+    - `database-migration-pattern.md` - SQL migration naming & organisation
+  - README indexes for both skills and templates directories
+  - Based on learnings from: PRD alignment (97%), skill import (4 weeks saved), 8 email touchpoints, 10 database migrations
+
+- **Pirouette Favicon & Brand Icon**
+  - Custom SVG favicon with gradient brand colours (#6366F1 → #8B5CF6 → #A855F7)
+  - Stylized "P" letterform with spinning motion accent (representing the pirouette name)
+  - Multiple sizes generated: 16x16, 32x32, 180x180 (Apple), 192x192, 512x512
+  - favicon.ico for legacy browser support
+  - Web manifest (manifest.json) for PWA support with theme colour
+  - Generation script at `scripts/generate-favicons.js` for regenerating icons
+
+- **Email Triggers Implementation** (Task 58)
+  - All 8 email touchpoints now wired up and sending automatically
+  - **Welcome Email** - Sent via Clerk webhook on `user.created` event
+  - **Analysis Complete Email** - Sent via Railway worker notification endpoint after job completion
+    - New `/api/notifications/analysis-complete` endpoint
+    - Contextual messaging based on score (85+, 70+, 55+, below)
+  - **Trial Started Email** - Sent via Stripe webhook on `customer.subscription.created` with `trialing` status
+  - **Trial Ending Email** - Sent via Railway cron job at 9am UTC (3 days and 1 day reminders)
+    - New `/api/notifications/trial-ending` endpoint
+    - New `railway/src/cron/trial-ending.ts` cron job
+  - **Subscription Confirmed Email** - Sent via Stripe webhook when subscription becomes `active` (non-trial)
+  - **Payment Failed Email** - Sent via Stripe webhook on `invoice.payment_failed`
+    - Dunning sequence with escalating urgency based on retry count
+  - **Subscription Cancelled Email** - Sent via Stripe webhook on `customer.subscription.deleted`
+  - **Referral Emails** - Friend signed up + Reward earned
+    - Friend signed up: Sent when referee claims a referral code
+    - Reward earned: Sent when referred friend upgrades to Pro
+    - Referral reward processing integrated with Stripe webhook
+  - All email templates updated with improved copywriting:
+    - Professional but friendly/playful tone
+    - Contextual messaging based on user state
+    - Clear CTAs and next steps
+    - UK English throughout
+
+### Changed
 - **Stripe Integration Simplified** (Payment System)
   - Unified plan naming: all Pro plans now use `pro` internally (monthly/annual handled by price ID)
   - New environment variables: `STRIPE_PRO_MONTHLY_PRICE_ID` and `STRIPE_PRO_ANNUAL_PRICE_ID`
@@ -481,7 +548,7 @@ All notable changes to Pirouette will be documented in this file.
   - 7-day free trial support
 
 - **Plan-Based Access Control**
-  - Rate limiting by plan (Free: 1/week, Pro: unlimited)
+  - Rate limiting by plan (Free: 3/week, Pro: unlimited)
   - Feature gating system (`src/lib/features.ts`)
   - `useFeatureAccess` React hook
   - `FeatureGate` component for conditional feature rendering
