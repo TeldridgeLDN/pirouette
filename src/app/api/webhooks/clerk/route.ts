@@ -3,7 +3,7 @@
  * 
  * Syncs Clerk user events to Supabase database
  * Events handled:
- * - user.created → Create user in Supabase
+ * - user.created → Create user in Supabase + Send welcome email
  * - user.updated → Update user in Supabase
  * - user.deleted → Delete user from Supabase
  */
@@ -14,6 +14,7 @@ import { WebhookEvent } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { NextResponse } from 'next/server';
 import type { InsertUser, UpdateUser } from '@/lib/supabase/types';
+import { sendWelcomeEmail } from '@/lib/email';
 
 export async function POST(req: Request) {
   // Get the Svix headers for verification
@@ -99,6 +100,18 @@ export async function POST(req: Request) {
           // User can be synced later if needed
         } else {
           console.log(`✅ User created in Supabase: ${id}`);
+        }
+
+        // Send welcome email (don't fail webhook if email fails)
+        try {
+          await sendWelcomeEmail({
+            to: primaryEmail.email_address,
+            firstName: first_name || undefined,
+          });
+          console.log(`📧 Welcome email sent to: ${primaryEmail.email_address}`);
+        } catch (emailError) {
+          // Log but don't fail the webhook - user is still created
+          console.error('Failed to send welcome email:', emailError);
         }
 
         break;

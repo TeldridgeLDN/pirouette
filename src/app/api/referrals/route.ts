@@ -3,6 +3,7 @@
  * 
  * GET /api/referrals - Get user's referral data (code, stats, history)
  * POST /api/referrals/track - Track referral link click
+ * POST /api/referrals (action: claim) - Claim a referral (sends email to referrer)
  * 
  * TODO: Full implementation pending Supabase type generation
  */
@@ -10,6 +11,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@clerk/nextjs/server';
 import { supabaseAdmin } from '@/lib/supabase/server';
+import { sendFriendSignedUpEmail } from '@/lib/email';
 
 // Types for Supabase query results (not in generated types yet)
 interface UserRow {
@@ -100,14 +102,14 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
       }
       
-      // Get the referrer
+      // Get the referrer with email info
       const { data: referrerData, error: referrerError } = await supabase
         .from('users')
-        .select('id, referral_code')
+        .select('id, email, name, referral_code')
         .eq('referral_code', referralCode)
         .single();
       
-      const referrer = referrerData as { id: string; referral_code: string } | null;
+      const referrer = referrerData as { id: string; email: string; name: string | null; referral_code: string } | null;
       
       if (referrerError || !referrer) {
         return NextResponse.json({ error: 'Invalid referral code' }, { status: 400 });
@@ -116,11 +118,11 @@ export async function POST(request: NextRequest) {
       // Get the new user (referee)
       const { data: refereeData, error: refereeError } = await supabase
         .from('users')
-        .select('id, referred_by')
+        .select('id, name, referred_by')
         .eq('clerk_id', userId)
         .single();
       
-      const referee = refereeData as { id: string; referred_by: string | null } | null;
+      const referee = refereeData as { id: string; name: string | null; referred_by: string | null } | null;
       
       if (refereeError || !referee) {
         return NextResponse.json({ error: 'User not found' }, { status: 404 });
@@ -143,6 +145,23 @@ export async function POST(request: NextRequest) {
         refereeId: referee.id,
         timestamp: new Date().toISOString()
       });
+      
+      // Send email to referrer notifying them of the signup
+      try {
+        const referrerFirstName = referrer.name?.split(' ')[0] || undefined;
+        const refereeName = referee.name || 'A friend';
+        
+        await sendFriendSignedUpEmail({
+          to: referrer.email,
+          firstName: referrerFirstName,
+          friendName: refereeName,
+          referralCode: referrer.referral_code,
+        });
+        console.log(`[Referral] 📧 Friend signed up email sent to ${referrer.email}`);
+      } catch (emailError) {
+        // Log but don't fail the claim if email fails
+        console.error('[Referral] Failed to send friend signed up email:', emailError);
+      }
       
       return NextResponse.json({ 
         success: true,

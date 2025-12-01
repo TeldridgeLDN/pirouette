@@ -91,16 +91,36 @@ export function DesignersEyeReview({ reportId, isPro }: DesignersEyeReviewProps)
     }
   };
 
-  const getCategoryStyles = (category: string) => {
+  const getCategoryStyles = (category: string): { container: string; title: string; description: string; suggestion: string } => {
     switch (category) {
       case 'strength':
-        return 'bg-emerald-50 border-emerald-200 text-emerald-800';
+        return {
+          container: 'bg-emerald-50 border-emerald-300',
+          title: 'text-emerald-900',
+          description: 'text-emerald-800',
+          suggestion: 'text-emerald-700'
+        };
       case 'improvement':
-        return 'bg-amber-50 border-amber-200 text-amber-800';
+        return {
+          container: 'bg-amber-50 border-amber-300',
+          title: 'text-amber-900',
+          description: 'text-amber-800',
+          suggestion: 'text-amber-700'
+        };
       case 'critical':
-        return 'bg-rose-50 border-rose-200 text-rose-800';
+        return {
+          container: 'bg-rose-50 border-rose-300',
+          title: 'text-rose-900',
+          description: 'text-rose-800',
+          suggestion: 'text-rose-700'
+        };
       default:
-        return 'bg-slate-50 border-slate-200 text-slate-800';
+        return {
+          container: 'bg-slate-50 border-slate-300',
+          title: 'text-slate-900',
+          description: 'text-slate-700',
+          suggestion: 'text-slate-600'
+        };
     }
   };
 
@@ -400,25 +420,28 @@ export function DesignersEyeReview({ reportId, isPro }: DesignersEyeReviewProps)
               <div>
                 <h4 className="text-sm font-medium text-slate-700 mb-3">Design Insights</h4>
                 <div className="space-y-2">
-                  {review.insights.map((insight, idx) => (
-                    <div 
-                      key={idx}
-                      className={`p-3 rounded-lg border ${getCategoryStyles(insight.category)}`}
-                    >
-                      <div className="flex items-start gap-2">
-                        <span className="text-sm mt-0.5">{getCategoryIcon(insight.category)}</span>
-                        <div className="flex-1">
-                          <h5 className="font-medium text-sm">{insight.title}</h5>
-                          <p className="text-xs mt-1 opacity-90">{insight.description}</p>
-                          {insight.suggestion && (
-                            <p className="text-xs mt-2 font-medium">
-                              💡 {insight.suggestion}
-                            </p>
-                          )}
+                  {review.insights.map((insight, idx) => {
+                    const styles = getCategoryStyles(insight.category);
+                    return (
+                      <div 
+                        key={idx}
+                        className={`p-3 rounded-lg border ${styles.container}`}
+                      >
+                        <div className="flex items-start gap-2">
+                          <span className={`text-sm mt-0.5 ${styles.title}`}>{getCategoryIcon(insight.category)}</span>
+                          <div className="flex-1">
+                            <h5 className={`font-semibold text-sm ${styles.title}`}>{insight.title}</h5>
+                            <p className={`text-xs mt-1 ${styles.description}`}>{insight.description}</p>
+                            {insight.suggestion && (
+                              <p className={`text-xs mt-2 font-medium ${styles.suggestion}`}>
+                                💡 {insight.suggestion}
+                              </p>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

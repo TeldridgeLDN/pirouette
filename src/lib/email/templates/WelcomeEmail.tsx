@@ -20,19 +20,30 @@ interface WelcomeEmailProps {
 }
 
 export default function WelcomeEmail({ 
-  firstName = 'there',
+  firstName,
   dashboardUrl = 'https://pirouette.app/dashboard',
 }: WelcomeEmailProps) {
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
+  
   return (
-    <BaseEmail previewText="Welcome to Pirouette - Let's get you design confident!">
+    <BaseEmail previewText="Welcome to Pirouette! Your landing page's new best friend 🎨">
       <EmailHeading>
-        Welcome to Pirouette{firstName ? `, ${firstName}` : ''}! 🎉
+        Welcome aboard! 🎉
       </EmailHeading>
       
       <EmailText>
-        You&apos;ve just taken the first step towards design confidence. 
-        Pirouette analyses your landing pages against patterns from 50+ 
-        award-winning sites to give you actionable, data-driven recommendations.
+        {greeting}, thanks for joining Pirouette!
+      </EmailText>
+      
+      <EmailText>
+        You know that nagging feeling when you look at your landing page and think 
+        &quot;something&apos;s off, but I can&apos;t put my finger on it&quot;? That&apos;s 
+        exactly why we built this.
+      </EmailText>
+      
+      <EmailText>
+        Pirouette analyses your pages against patterns from 50+ award-winning sites 
+        and tells you <em>exactly</em> what to fix—with time estimates and everything.
       </EmailText>
 
       <EmailDivider />
@@ -43,14 +54,14 @@ export default function WelcomeEmail({
         fontWeight: '600',
         margin: '0 0 16px 0',
       }}>
-        Here&apos;s what you can do:
+        Here&apos;s how to get started:
       </Text>
 
       <Section style={{ marginBottom: '24px' }}>
         {[
-          { icon: '🎯', title: 'Run your first analysis', desc: 'Enter any URL and get scores in 30 seconds' },
-          { icon: '💡', title: 'Get recommendations', desc: 'See prioritised fixes with estimated impact' },
-          { icon: '📊', title: 'Track progress', desc: 'Watch your scores improve over time' },
+          { icon: '🎯', title: 'Run your first analysis', desc: 'Paste any URL and get your score in under 30 seconds' },
+          { icon: '💡', title: 'Get prioritised recommendations', desc: 'We rank fixes by impact so you know what to tackle first' },
+          { icon: '📊', title: 'Track your progress', desc: 'Re-analyse after changes and watch your scores climb' },
         ].map((item, i) => (
           <div key={i} style={{ 
             display: 'flex', 
@@ -86,13 +97,14 @@ export default function WelcomeEmail({
       </Section>
 
       <EmailButton href={dashboardUrl}>
-        Go to Dashboard →
+        Analyse Your First Page →
       </EmailButton>
 
       <EmailDivider />
 
       <EmailMuted>
-        Questions? Just reply to this email - we&apos;re here to help.
+        Got questions? Just hit reply—we read every email and actually respond 
+        (shocking, we know).
       </EmailMuted>
     </BaseEmail>
   );

@@ -22,22 +22,26 @@ interface FriendSignedUpEmailProps {
   firstName?: string;
   friendName: string;
   referralUrl?: string;
+  referralCode?: string;
 }
 
 export function FriendSignedUpEmail({ 
   firstName,
   friendName,
   referralUrl = 'https://pirouette.app/dashboard',
+  referralCode,
 }: FriendSignedUpEmailProps) {
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
+  
   return (
-    <BaseEmail previewText={`${friendName} just signed up using your referral!`}>
+    <BaseEmail previewText={`Cha-ching! ${friendName} just signed up using your link 🎉`}>
       <EmailHeading>
-        Your Friend Signed Up! 🎉
+        Someone used your link! 🎉
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Hey ${firstName}, ` : ''}Great news - <strong>{friendName}</strong> just 
-        signed up for Pirouette using your referral link!
+        {greeting}, just wanted to let you know—<strong>{friendName}</strong> signed up 
+        for Pirouette using your referral link.
       </EmailText>
 
       <Section style={{
@@ -53,23 +57,25 @@ export function FriendSignedUpEmail({
           fontSize: '16px',
           margin: '0',
         }}>
-          🎁 You&apos;ll earn a <strong>free month of Pro</strong> when they upgrade!
+          🎁 If they upgrade to Pro, you&apos;ll get a <strong>free month</strong>!
         </Text>
       </Section>
 
       <EmailText>
-        Keep sharing your link to earn more rewards. Remember, you can earn 
-        up to 12 free months per year!
+        The more friends you refer, the more free months you rack up. You can earn 
+        up to 12 free months per year—that&apos;s a whole year of Pro on us.
       </EmailText>
 
       <EmailButton href={referralUrl}>
-        View Referral Status →
+        Check Your Referral Stats →
       </EmailButton>
 
       <EmailDivider />
 
       <EmailMuted>
-        Share your link: pirouette.app/r/YOURCODE
+        {referralCode 
+          ? `Your link: pirouette.app/r/${referralCode}` 
+          : 'Keep sharing your referral link to earn more!'}
       </EmailMuted>
     </BaseEmail>
   );
@@ -84,6 +90,7 @@ interface RewardEarnedEmailProps {
   friendName: string;
   totalRewards: number;
   dashboardUrl?: string;
+  referralCode?: string;
 }
 
 export function RewardEarnedEmail({ 
@@ -91,16 +98,19 @@ export function RewardEarnedEmail({
   friendName,
   totalRewards,
   dashboardUrl = 'https://pirouette.app/dashboard',
+  referralCode,
 }: RewardEarnedEmailProps) {
+  const greeting = firstName ? `${firstName}, this is big` : 'This is big';
+  
   return (
-    <BaseEmail previewText={`You earned a free month! ${friendName} upgraded to Pro.`}>
+    <BaseEmail previewText={`You just earned a free month! ${friendName} went Pro 🎁`}>
       <EmailHeading>
-        You Earned a Free Month! 🎁
+        Free month unlocked! 🎁
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Amazing news, ${firstName}! ` : 'Amazing news! '}<strong>{friendName}</strong> just 
-        upgraded to Pirouette Pro, and you&apos;ve earned a free month!
+        {greeting}—<strong>{friendName}</strong> just upgraded to Pirouette Pro, 
+        which means you&apos;ve earned yourself a free month.
       </EmailText>
 
       <Section style={{
@@ -125,14 +135,14 @@ export function RewardEarnedEmail({
           fontWeight: 'bold',
           margin: '8px 0 0 0',
         }}>
-          +1 Free Month
+          +1 Free Month Added
         </Text>
         <Text style={{
           color: '#6366f1',
           fontSize: '14px',
           margin: '4px 0 0 0',
         }}>
-          Applied to your next billing cycle
+          We&apos;ll apply this to your next billing cycle automatically
         </Text>
       </Section>
 
@@ -147,22 +157,25 @@ export function RewardEarnedEmail({
           fontSize: '14px',
           margin: '0',
         }}>
-          Total free months earned: <strong>{totalRewards}</strong>
+          📊 Your referral scorecard: <strong>{totalRewards} free month{totalRewards !== 1 ? 's' : ''}</strong> earned
         </Text>
       </Section>
 
       <EmailText>
-        Keep sharing to earn more! Each friend who upgrades = another free month.
+        Want more? Every friend who upgrades = another free month. You can stack 
+        up to 12 months per year—that&apos;s a full year of Pro, free.
       </EmailText>
 
       <EmailButton href={dashboardUrl}>
-        Share More →
+        Keep the Streak Going →
       </EmailButton>
 
       <EmailDivider />
 
       <EmailMuted>
-        Maximum 12 free months per year. Thank you for spreading the word!
+        {referralCode 
+          ? `Your referral link: pirouette.app/r/${referralCode}` 
+          : 'Thanks for spreading the word about Pirouette!'}
       </EmailMuted>
     </BaseEmail>
   );
