@@ -28,10 +28,33 @@ function getScoreColor(score: number): string {
   return '#ef4444'; // red
 }
 
-function getScoreEmoji(score: number): string {
-  if (score >= 80) return '🎉';
-  if (score >= 60) return '👍';
-  return '💪';
+function getScoreMessage(score: number): { emoji: string; headline: string; message: string } {
+  if (score >= 85) {
+    return {
+      emoji: '🏆',
+      headline: 'Impressive!',
+      message: 'This page is performing in the top tier. A few tweaks and it could be competing with the best in class.',
+    };
+  }
+  if (score >= 70) {
+    return {
+      emoji: '🎯',
+      headline: 'Looking good!',
+      message: 'Above average, but there\'s room to shine. The recommendations in the report highlight where to focus.',
+    };
+  }
+  if (score >= 55) {
+    return {
+      emoji: '💡',
+      headline: 'Solid foundation',
+      message: 'Good bones here, but some targeted improvements could significantly boost conversions.',
+    };
+  }
+  return {
+    emoji: '💪',
+    headline: 'Room to grow',
+    message: 'Good news: several high-impact opportunities identified. The fixes in the report could transform this page.',
+  };
 }
 
 export default function AnalysisCompleteEmail({ 
@@ -42,17 +65,18 @@ export default function AnalysisCompleteEmail({
   topRecommendation,
 }: AnalysisCompleteEmailProps) {
   const scoreColor = getScoreColor(overallScore);
-  const scoreEmoji = getScoreEmoji(overallScore);
+  const { emoji, headline, message } = getScoreMessage(overallScore);
+  const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
 
   return (
-    <BaseEmail previewText={`Your design analysis is ready - Score: ${overallScore}/100`}>
+    <BaseEmail previewText={`Analysis complete: ${overallScore}/100 ${emoji}`}>
       <EmailHeading>
-        Your Analysis is Ready! {scoreEmoji}
+        {headline} {emoji}
       </EmailHeading>
       
       <EmailText>
-        {firstName ? `Hey ${firstName}, ` : ''}We&apos;ve finished analysing your landing page. 
-        Here&apos;s a quick summary:
+        {greeting}, the analysis is ready! We&apos;ve just finished putting this landing 
+        page through its paces.
       </EmailText>
 
       {/* URL analysed */}
@@ -94,7 +118,7 @@ export default function AnalysisCompleteEmail({
           fontSize: '14px',
           margin: '0 0 8px 0',
         }}>
-          Your Overall Design Score
+          Design Score
         </Text>
         <div style={{
           display: 'inline-block',
@@ -116,6 +140,15 @@ export default function AnalysisCompleteEmail({
         </Text>
       </Section>
 
+      <Text style={{ 
+        color: '#475569', 
+        fontSize: '16px', 
+        lineHeight: '24px',
+        marginBottom: '24px' 
+      }}>
+        {message}
+      </Text>
+
       {/* Top recommendation */}
       {topRecommendation && (
         <Section style={{
@@ -133,7 +166,7 @@ export default function AnalysisCompleteEmail({
             letterSpacing: '0.5px',
             fontWeight: '600',
           }}>
-            💡 Top Recommendation
+            🎯 Top Quick Win
           </Text>
           <Text style={{
             color: '#78350f',
@@ -152,12 +185,12 @@ export default function AnalysisCompleteEmail({
       <EmailDivider />
 
       <EmailText>
-        Your report includes detailed scores across 7 dimensions, prioritised 
-        recommendations, and comparisons to industry benchmarks.
+        The full report includes detailed scores across 7 dimensions, prioritised 
+        recommendations sorted by impact, and benchmarks against award-winning sites.
       </EmailText>
 
       <EmailMuted>
-        This analysis was powered by patterns from 50+ award-winning sites.
+        Questions about the results? Just reply—we&apos;re always happy to help.
       </EmailMuted>
     </BaseEmail>
   );

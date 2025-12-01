@@ -22,7 +22,7 @@ import { trackAnalysisSubmitted, trackUpgradeClicked } from '@/lib/analytics';
 // ============================================================================
 
 interface DashboardAnalyzeFormProps {
-  userPlan: 'free' | 'pro_29' | 'pro_49' | 'agency';
+  userPlan: 'free' | 'pro' | 'pro_29' | 'pro_49' | 'agency';
   analysesUsed: number;
   resetDate?: Date;
 }

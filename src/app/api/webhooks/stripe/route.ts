@@ -5,17 +5,23 @@
  * 
  * Handles subscription lifecycle events from Stripe:
  * - checkout.session.completed: New subscription created
- * - customer.subscription.updated: Subscription changed
- * - customer.subscription.deleted: Subscription cancelled
+ * - customer.subscription.updated: Subscription changed (+ send Trial Started / Subscription Confirmed email)
+ * - customer.subscription.deleted: Subscription cancelled (+ send Subscription Cancelled email)
  * - invoice.payment_succeeded: Payment successful
- * - invoice.payment_failed: Payment failed
+ * - invoice.payment_failed: Payment failed (+ send Payment Failed email)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { supabaseAdmin } from '@/lib/supabase/server';
-import { constructWebhookEvent, getPlanFromPriceId } from '@/lib/stripe';
+import { constructWebhookEvent, getPlanFromPriceId, stripe } from '@/lib/stripe';
+import {
+  sendTrialStartedEmail,
+  sendSubscriptionConfirmedEmail,
+  sendSubscriptionCancelledEmail,
+  sendPaymentFailedEmail,
+} from '@/lib/email';
 
 // ============================================================================
 // Types
@@ -143,27 +149,42 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
   
   // Determine if subscription is active
   const isActive = status === 'active' || status === 'trialing';
+  const isTrial = status === 'trialing';
   
   const supabase = supabaseAdmin;
   
   // Find user by Stripe customer ID
   interface UserRow {
     id: string;
+    email: string;
+    name: string | null;
+    plan: string | null;
   }
   
-  const { data: user, error: findError } = await supabase
+  let user: UserRow | null = null;
+  
+  const { data: foundUser, error: findError } = await supabase
     .from('users')
-    .select('id')
+    .select('id, email, name, plan')
     .eq('stripe_customer_id', customerId)
     .single() as { data: UserRow | null; error: Error | null };
   
-  if (findError || !user) {
+  if (findError || !foundUser) {
     // Try to find by metadata
     const userId = subscription.metadata?.userId;
     if (!userId) {
       console.error('Could not find user for customer:', customerId);
       return;
     }
+    
+    // Get user by ID
+    const { data: userById } = await supabase
+      .from('users')
+      .select('id, email, name, plan')
+      .eq('id', userId)
+      .single() as { data: UserRow | null; error: Error | null };
+    
+    user = userById;
     
     // Update user with customer ID and plan
     const { error: updateError } = await supabase
@@ -178,20 +199,114 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
     if (updateError) {
       console.error('Error updating user subscription:', updateError);
     }
+  } else {
+    user = foundUser;
+    
+    // Update existing user
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({
+        stripe_subscription_id: subscription.id,
+        plan: isActive ? plan : 'free',
+      } as never)
+      .eq('id', foundUser.id);
+    
+    if (updateError) {
+      console.error('Error updating user subscription:', updateError);
+    }
+  }
+  
+  // Send appropriate email if user found and subscription is newly active
+  if (user && isActive) {
+    const firstName = user.name?.split(' ')[0] || undefined;
+    const wasFreePlan = !user.plan || user.plan === 'free';
+    
+    // Only send email if upgrading from free (avoid duplicate emails on renewals)
+    if (wasFreePlan) {
+      try {
+        if (isTrial) {
+          // Trial started
+          const trialEnd = subscription.trial_end 
+            ? new Date(subscription.trial_end * 1000) 
+            : new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+          
+          await sendTrialStartedEmail({
+            to: user.email,
+            firstName,
+            trialEndDate: trialEnd,
+          });
+          console.log(`📧 Trial started email sent to ${user.email}`);
+        } else {
+          // Subscription confirmed (not trial)
+          const priceAmount = subscription.items.data[0]?.price.unit_amount || 0;
+          const currency = subscription.items.data[0]?.price.currency || 'gbp';
+          const interval = subscription.items.data[0]?.price.recurring?.interval || 'month';
+          
+          const amount = new Intl.NumberFormat('en-GB', {
+            style: 'currency',
+            currency: currency.toUpperCase(),
+          }).format(priceAmount / 100);
+          
+          // Access current_period_end from subscription item (Stripe API v2025+)
+          const periodEnd = (subscription as unknown as { current_period_end?: number }).current_period_end
+            || subscription.items.data[0]?.current_period_end;
+          const nextBilling = periodEnd
+            ? new Date(periodEnd * 1000)
+            : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+          
+          await sendSubscriptionConfirmedEmail({
+            to: user.email,
+            firstName,
+            planName: `Pirouette Pro (${interval}ly)`,
+            amount: `${amount}/${interval}`,
+            nextBillingDate: nextBilling,
+          });
+          console.log(`📧 Subscription confirmed email sent to ${user.email}`);
+          
+          // Trigger referral reward if this user was referred
+          // This calls the referral reward endpoint which will send an email to the referrer
+          triggerReferralReward(user.id).catch((err) => {
+            console.error('Failed to trigger referral reward:', err);
+          });
+        }
+      } catch (emailError) {
+        console.error('Failed to send subscription email:', emailError);
+      }
+    }
+  }
+}
+
+/**
+ * Trigger referral reward processing (non-blocking)
+ * Called when a user upgrades to Pro to reward their referrer
+ */
+async function triggerReferralReward(userId: string): Promise<void> {
+  const rewardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://pirouette.app'}/api/referrals/reward`;
+  const secret = process.env.INTERNAL_API_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (!secret) {
+    console.warn('[Referral] No API key for referral reward endpoint');
     return;
   }
   
-  // Update existing user
-  const { error: updateError } = await supabase
-    .from('users')
-    .update({
-      stripe_subscription_id: subscription.id,
-      plan: isActive ? plan : 'free',
-    } as never)
-    .eq('id', user.id);
-  
-  if (updateError) {
-    console.error('Error updating user subscription:', updateError);
+  try {
+    const response = await fetch(rewardUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${secret}`,
+      },
+      body: JSON.stringify({ refereeUserId: userId }),
+    });
+    
+    if (response.ok) {
+      const result = await response.json();
+      console.log('[Referral] Reward processed:', result);
+    } else {
+      console.warn(`[Referral] Reward endpoint returned ${response.status}`);
+    }
+  } catch (error) {
+    console.error('[Referral] Error calling reward endpoint:', error);
   }
 }
 
@@ -210,6 +325,19 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   
   const supabase = supabaseAdmin;
   
+  // Get user info for email
+  interface UserRow {
+    id: string;
+    email: string;
+    name: string | null;
+  }
+  
+  const { data: user } = await supabase
+    .from('users')
+    .select('id, email, name')
+    .eq('stripe_customer_id', customerId)
+    .single() as { data: UserRow | null; error: Error | null };
+  
   // Downgrade user to free plan
   const { error } = await supabase
     .from('users')
@@ -221,6 +349,30 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   
   if (error) {
     console.error('Error downgrading user after subscription deletion:', error);
+  }
+  
+  // Send cancellation email
+  if (user) {
+    try {
+      const firstName = user.name?.split(' ')[0] || undefined;
+      
+      // Access end date is the current period end (user already paid for this period)
+      // Use type assertion for Stripe API v2025+ compatibility
+      const periodEndCancelled = (subscription as unknown as { current_period_end?: number }).current_period_end
+        || subscription.items.data[0]?.current_period_end;
+      const endDate = periodEndCancelled
+        ? new Date(periodEndCancelled * 1000)
+        : new Date();
+      
+      await sendSubscriptionCancelledEmail({
+        to: user.email,
+        firstName,
+        endDate,
+      });
+      console.log(`📧 Subscription cancelled email sent to ${user.email}`);
+    } catch (emailError) {
+      console.error('Failed to send cancellation email:', emailError);
+    }
   }
 }
 
@@ -292,6 +444,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   interface UserPaymentState {
     id: string;
     email: string;
+    name: string | null;
     payment_status: string | null;
     payment_retry_count: number | null;
     payment_failed_at: string | null;
@@ -299,7 +452,7 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
   
   const { data: user, error: findError } = await supabase
     .from('users')
-    .select('id, email, payment_status, payment_retry_count, payment_failed_at')
+    .select('id, email, name, payment_status, payment_retry_count, payment_failed_at')
     .eq('stripe_customer_id', customerId)
     .single() as { data: UserPaymentState | null; error: Error | null };
   
@@ -346,9 +499,27 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
     console.log(`Payment failure recorded for ${user.email}: attempt ${currentRetryCount}, status ${newStatus}`);
   }
   
-  // TODO: Send dunning email based on retry count
-  // - Attempt 1: "Payment failed - update your card"
-  // - Attempt 2: "Action required - Pro access ending soon"
-  // - Attempt 3: "Your Pro access has been suspended"
+  // Send payment failed email (dunning sequence based on retry count)
+  try {
+    const firstName = user.name?.split(' ')[0] || undefined;
+    
+    // Get invoice amount
+    const amount = invoice.amount_due
+      ? new Intl.NumberFormat('en-GB', {
+          style: 'currency',
+          currency: (invoice.currency || 'gbp').toUpperCase(),
+        }).format(invoice.amount_due / 100)
+      : 'your subscription';
+    
+    await sendPaymentFailedEmail({
+      to: user.email,
+      firstName,
+      amount,
+      retryCount: currentRetryCount,
+    });
+    console.log(`📧 Payment failed email (attempt ${currentRetryCount}) sent to ${user.email}`);
+  } catch (emailError) {
+    console.error('Failed to send payment failed email:', emailError);
+  }
 }
 

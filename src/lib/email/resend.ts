@@ -7,10 +7,26 @@
 import { Resend } from 'resend';
 
 // ============================================================================
-// Client
+// Client (lazy initialization to avoid build-time errors)
 // ============================================================================
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResendClient(): Resend {
+  if (!_resend) {
+    if (!process.env.RESEND_API_KEY) {
+      throw new Error('RESEND_API_KEY environment variable is not set');
+    }
+    _resend = new Resend(process.env.RESEND_API_KEY);
+  }
+  return _resend;
+}
+
+// Keep for backwards compatibility export
+const resend = { 
+  emails: { send: async (...args: Parameters<Resend['emails']['send']>) => getResendClient().emails.send(...args) },
+  batch: { send: async (...args: Parameters<Resend['batch']['send']>) => getResendClient().batch.send(...args) },
+};
 
 // ============================================================================
 // Configuration
