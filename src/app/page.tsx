@@ -89,8 +89,8 @@ function HeroSection() {
           
           {/* Subheadline */}
           <p className="text-lg sm:text-xl text-slate-600 mb-10 max-w-2xl mx-auto animate-slide-up" style={{ animationDelay: '100ms' }}>
-            Analyse your landing page against patterns from 50+ award-winning sites. 
-            Get actionable recommendations to improve conversions—no design experience needed.
+            Analyse any landing page against patterns from 50+ award-winning sites. 
+            See what makes great design work, then get recommendations to improve your own—no design experience needed.
           </p>
           
           {/* URL Input Form - No signup required! */}

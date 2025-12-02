@@ -170,7 +170,7 @@ export default function HeroAnalyzeForm({ className = '' }: HeroAnalyzeFormProps
                 if (errors.url) setErrors({});
                 if (rateLimitInfo) setRateLimitInfo(null);
               }}
-              placeholder="Enter your landing page URL..."
+              placeholder="Enter any landing page URL..."
               disabled={isLoading}
               className={`
                 w-full px-5 py-4 rounded-xl text-slate-900 placeholder-slate-400
