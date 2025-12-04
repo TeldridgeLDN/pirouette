@@ -107,7 +107,7 @@ export default function BaseEmail({ previewText, children }: BaseEmailProps) {
         <Container style={styles.container}>
           {/* Header */}
           <Section style={styles.header}>
-            <Link href="https://pirouette.app" style={styles.logo}>
+            <Link href="https://pirouette.design" style={styles.logo}>
               ✨ Pirouette
             </Link>
           </Section>
@@ -123,15 +123,15 @@ export default function BaseEmail({ previewText, children }: BaseEmailProps) {
               Pirouette - Design Confidence, Backed by Data
             </Text>
             <Text style={{ ...styles.footerText, marginTop: '12px' }}>
-              <Link href="https://pirouette.app" style={styles.footerLink}>
+              <Link href="https://pirouette.design" style={styles.footerLink}>
                 Visit Pirouette
               </Link>
               {' · '}
-              <Link href="https://pirouette.app/dashboard" style={styles.footerLink}>
+              <Link href="https://pirouette.design/dashboard" style={styles.footerLink}>
                 Dashboard
               </Link>
               {' · '}
-              <Link href="https://pirouette.app/dashboard/settings" style={styles.footerLink}>
+              <Link href="https://pirouette.design/dashboard/settings" style={styles.footerLink}>
                 Settings
               </Link>
             </Text>

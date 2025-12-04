@@ -326,8 +326,8 @@ export default function PrivacyPolicyPage() {
             </p>
             <div className="bg-slate-100 p-4 rounded-lg">
               <p className="text-slate-700 mb-0">
-                <strong>Email:</strong> privacy@pirouette.design<br />
-                <strong>Data Protection Contact:</strong> privacy@pirouette.design<br />
+                <strong>General:</strong> <a href="mailto:hello@pirouette.design" className="text-indigo-600 hover:text-indigo-700">hello@pirouette.design</a><br />
+                <strong>Privacy:</strong> <a href="mailto:privacy@pirouette.design" className="text-indigo-600 hover:text-indigo-700">privacy@pirouette.design</a><br />
                 <strong>Location:</strong> United Kingdom
               </p>
             </div>
@@ -345,5 +345,7 @@ export default function PrivacyPolicyPage() {
     </main>
   );
 }
+
+
 
 

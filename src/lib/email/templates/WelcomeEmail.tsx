@@ -21,7 +21,7 @@ interface WelcomeEmailProps {
 
 export default function WelcomeEmail({ 
   firstName,
-  dashboardUrl = 'https://pirouette.app/dashboard',
+  dashboardUrl = 'https://pirouette.design/dashboard',
 }: WelcomeEmailProps) {
   const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
   

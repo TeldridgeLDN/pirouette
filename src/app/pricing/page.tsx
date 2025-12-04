@@ -205,7 +205,7 @@ function PricingCards({
       ],
       cta: currentPlan === 'agency' ? 'Current Plan' : 'Contact Sales',
       ctaDisabled: currentPlan === 'agency',
-      href: 'mailto:hello@pirouette.app?subject=Agency%20Plan%20Enquiry',
+      href: 'mailto:hello@pirouette.design?subject=Agency%20Plan%20Enquiry',
       popular: false,
       badge: 'Coming Soon',
     },
@@ -676,8 +676,8 @@ function Footer() {
   return (
     <footer className="bg-slate-900 text-slate-400 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
-          <div className="md:col-span-2">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-8">
+          <div className="col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
                 <span className="text-white font-bold text-sm">P</span>
@@ -704,6 +704,15 @@ function Footer() {
               <li><Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
               <li><Link href="/ethics" className="hover:text-white transition-colors">Crawler Ethics</Link></li>
+            </ul>
+          </div>
+          
+          {/* Contact */}
+          <div>
+            <h4 className="font-semibold text-white mb-4">Contact</h4>
+            <ul className="space-y-2 text-sm">
+              <li><a href="mailto:hello@pirouette.design" className="hover:text-white transition-colors">hello@pirouette.design</a></li>
+              <li><a href="mailto:support@pirouette.design" className="hover:text-white transition-colors">Support</a></li>
             </ul>
           </div>
         </div>

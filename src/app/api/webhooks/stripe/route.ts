@@ -281,7 +281,7 @@ async function handleSubscriptionUpdate(subscription: Stripe.Subscription) {
  * Called when a user upgrades to Pro to reward their referrer
  */
 async function triggerReferralReward(userId: string): Promise<void> {
-  const rewardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://pirouette.app'}/api/referrals/reward`;
+  const rewardUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://pirouette.design'}/api/referrals/reward`;
   const secret = process.env.INTERNAL_API_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   
   if (!secret) {

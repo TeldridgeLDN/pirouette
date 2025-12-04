@@ -27,7 +27,7 @@ interface TrialStartedEmailProps {
 export function TrialStartedEmail({ 
   firstName,
   trialEndDate,
-  dashboardUrl = 'https://pirouette.app/dashboard',
+  dashboardUrl = 'https://pirouette.design/dashboard',
 }: TrialStartedEmailProps) {
   const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
   
@@ -112,7 +112,7 @@ interface TrialEndingEmailProps {
 export function TrialEndingEmail({ 
   firstName,
   daysRemaining,
-  upgradeUrl = 'https://pirouette.app/pricing',
+  upgradeUrl = 'https://pirouette.design/pricing',
 }: TrialEndingEmailProps) {
   const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
   const dayWord = daysRemaining === 1 ? 'day' : 'days';
@@ -188,7 +188,7 @@ export function SubscriptionConfirmedEmail({
   planName,
   amount,
   nextBillingDate,
-  dashboardUrl = 'https://pirouette.app/dashboard',
+  dashboardUrl = 'https://pirouette.design/dashboard',
 }: SubscriptionConfirmedEmailProps) {
   const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
   
@@ -272,7 +272,7 @@ export function PaymentFailedEmail({
   firstName,
   amount,
   retryCount = 1,
-  updatePaymentUrl = 'https://pirouette.app/dashboard/billing',
+  updatePaymentUrl = 'https://pirouette.design/dashboard/billing',
 }: PaymentFailedEmailProps) {
   const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
   
@@ -349,7 +349,7 @@ interface SubscriptionCancelledEmailProps {
 export function SubscriptionCancelledEmail({ 
   firstName,
   endDate,
-  reactivateUrl = 'https://pirouette.app/pricing',
+  reactivateUrl = 'https://pirouette.design/pricing',
 }: SubscriptionCancelledEmailProps) {
   const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
   

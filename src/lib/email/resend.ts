@@ -34,12 +34,12 @@ const resend = {
 
 export const EMAIL_CONFIG = {
   from: {
-    default: 'Pirouette <hello@pirouette.app>',
-    noreply: 'Pirouette <noreply@pirouette.app>',
-    support: 'Pirouette Support <support@pirouette.app>',
+    default: 'Pirouette <hello@pirouette.design>',
+    noreply: 'Pirouette <noreply@pirouette.design>',
+    support: 'Pirouette Support <support@pirouette.design>',
   },
-  replyTo: 'support@pirouette.app',
-  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://pirouette.app',
+  replyTo: 'support@pirouette.design',
+  appUrl: process.env.NEXT_PUBLIC_APP_URL || 'https://pirouette.design',
 };
 
 // ============================================================================

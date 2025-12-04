@@ -61,7 +61,7 @@ export async function GET() {
     };
     
     // Generate referral URL
-    const referralUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://pirouette.app'}/r/${user.referral_code}`;
+    const referralUrl = `${process.env.NEXT_PUBLIC_APP_URL || 'https://pirouette.design'}/r/${user.referral_code}`;
     
     return NextResponse.json({
       success: true,

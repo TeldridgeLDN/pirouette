@@ -217,8 +217,9 @@ export default function TermsOfServicePage() {
             </p>
             <div className="bg-slate-100 p-4 rounded-lg">
               <p className="text-slate-700">
-                <strong>Email:</strong> legal@pirouette.design<br />
-                <strong>Address:</strong> United Kingdom
+                <strong>General:</strong> <a href="mailto:hello@pirouette.design" className="text-indigo-600 hover:text-indigo-700">hello@pirouette.design</a><br />
+                <strong>Legal:</strong> <a href="mailto:legal@pirouette.design" className="text-indigo-600 hover:text-indigo-700">legal@pirouette.design</a><br />
+                <strong>Location:</strong> United Kingdom
               </p>
             </div>
           </section>

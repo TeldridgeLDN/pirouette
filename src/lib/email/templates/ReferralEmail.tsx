@@ -28,7 +28,7 @@ interface FriendSignedUpEmailProps {
 export function FriendSignedUpEmail({ 
   firstName,
   friendName,
-  referralUrl = 'https://pirouette.app/dashboard',
+  referralUrl = 'https://pirouette.design/dashboard',
   referralCode,
 }: FriendSignedUpEmailProps) {
   const greeting = firstName ? `Hey ${firstName}` : 'Hey there';
@@ -74,7 +74,7 @@ export function FriendSignedUpEmail({
 
       <EmailMuted>
         {referralCode 
-          ? `Your link: pirouette.app/r/${referralCode}` 
+          ? `Your link: pirouette.design/r/${referralCode}` 
           : 'Keep sharing your referral link to earn more!'}
       </EmailMuted>
     </BaseEmail>
@@ -97,7 +97,7 @@ export function RewardEarnedEmail({
   firstName,
   friendName,
   totalRewards,
-  dashboardUrl = 'https://pirouette.app/dashboard',
+  dashboardUrl = 'https://pirouette.design/dashboard',
   referralCode,
 }: RewardEarnedEmailProps) {
   const greeting = firstName ? `${firstName}, this is big` : 'This is big';
@@ -174,7 +174,7 @@ export function RewardEarnedEmail({
 
       <EmailMuted>
         {referralCode 
-          ? `Your referral link: pirouette.app/r/${referralCode}` 
+          ? `Your referral link: pirouette.design/r/${referralCode}` 
           : 'Thanks for spreading the word about Pirouette!'}
       </EmailMuted>
     </BaseEmail>
