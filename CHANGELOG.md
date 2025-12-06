@@ -4,6 +4,12 @@ All notable changes to Pirouette will be documented in this file.
 
 ## [Unreleased]
 
+### Security
+- **CRITICAL: Patched CVE-2025-55182 (React2Shell)** - Updated Next.js from `^15.0.3` to `15.5.7` to address remote code execution vulnerability in React Server Components. Threat actors are actively exploiting this vulnerability. See [Vercel advisory](https://vercel.com/blog/resources-for-protecting-against-react2shell).
+
+### Added
+- **Community Posts Playbook** (`docs/marketing/community-posts-playbook.md`) - Living document tracking what works when posting about Pirouette in various communities. Includes post templates, platform-specific insights, hook bank, UTM tracking conventions, and experiment log. First documented success: r/SideHustle end-of-year reciprocal post.
+
 ### Changed
 - **Free Account Rate Limits Increased** - Free registered accounts now get 3 analyses per week (up from 1). This makes signing up more valuable than anonymous usage (1/day), creating a clearer upgrade path. Anonymous IP rate limit unchanged at 1/day.
 

@@ -7,7 +7,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "screenshots:ph": "node scripts/capture-ph-screenshots.js",
+    "record:ph": "node scripts/record-ph-demo.js",
+    "record:ph:prod": "node scripts/record-ph-demo-prod.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.71.0",
@@ -16,7 +19,7 @@
     "@supabase/supabase-js": "^2.78.0",
     "jspdf": "^3.0.4",
     "jspdf-autotable": "^5.0.2",
-    "next": "^15.0.3",
+    "next": "^15.5.7",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "resend": "^6.5.2",
